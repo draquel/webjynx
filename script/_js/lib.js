@@ -8,12 +8,9 @@
 			$("#loader-page").fadeIn(50);
 			$("#menu li").removeClass("active");
 			$(this).parent().addClass("active");
-			var page="";
-			if(pg==='/pg/index'){page="/page/index.php";}
-			else{if(pg.charAt(pg.length-1)==="/"){page=pg.replace("/pg/","/page/")+"index.php";}else{page=pg.replace("/pg/","/page/")+".php";}}
 			$(target).fadeOut(250,function(){
-				if(page=="/page/index.php"){$("#menu").hide();}else{$("#menu").show();}
-				$.ajax({url:'/ajax.php',method:'POST',async:true,dataType:"json",data:"ari=4&p="+page,
+				if(pg=="/pg/index"){$("#menu").hide();}else{$("#menu").show();}
+				$.ajax({url:'/ajax.php',method:'POST',async:true,dataType:"json",data:"ari=4&p="+pg,
 					complete: function(xhr){
 						var data = JSON.parse(xhr.responseText);
 						$(target).html(data[0]);
