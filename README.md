@@ -1,4 +1,4 @@
-# webjynx
+# Webjynx AJAX Toolkit
 
 ## Requirements
 
@@ -18,3 +18,22 @@
 
 #### PHP
 * 
+
+## Documentation
+
+### About
+#### Purpose
+  To create a foundation for building custom web solutions.
+  
+#### Aproach
+  Single Page Javascript appliction driven on a LAMP backend
+  
+### Basic Usage
+
+## Integratable Third Party Apps
+* Wordpress
+* Box
+* Contact Mailers
+** Constant Contact
+
+##
