@@ -24,7 +24,7 @@
 			//Title & Meta-Description 
 			echo "<title>".$_SESSION['Title']." - ".$_SESSION['Page']['meta-title']."</title><meta name=\"description\" content=\"".$_SESSION['Page']['meta-description']."\">";
 			//Concatenate CSS Files
-			$bs_css = file_get_contents("css/bootstrap.min.css");
+			$bs_css = file_get_contents("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
 			$css = file_get_contents("css/main.css");
 			if(isMobile()){ $r_css = file_get_contents("css/main_m.css"); }else{ $r_css = file_get_contents("css/main_d.css"); }
 			echo "<style>\n\n".$bs_css."\n\n".$css."\n\n".$r_css."\n\n</style>";
