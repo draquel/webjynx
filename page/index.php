@@ -4,7 +4,7 @@
             <h1>Company Name</h1>
             <!--<img src="/img/logo.svg" alt="Company Name"/>-->
             <p class="headp">Tagline</p>
-            <a class='navl button' href="/pg/about/" target="#content">Link Button</a>
+            <a class='navl button' href="/pg/about/" target="#content">Page 1</a>
         </div>
     </div>
 	<div class="row" style="background-color:#262729;padding:175px 0;">
@@ -19,7 +19,7 @@
         <div class="col-xs-10 col-xs-offset-1 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-5 blue hideme">
     		<h2>MLorem ipsum dolor</h2>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer aliquam, quam vitae semper fringilla, nunc lectus pulvinar ante, a malesuada ante mi sed neque. Morbi sagittis metus quam, sed semper mi venenatis at. Praesent in diam eu justo consectetur dignissim. Donec pharetra, tortor et maximus hendrerit, ex risus semper erat, ac auctor odio nisi eget est. Fusce eget pulvinar nunc, vitae ultricies sapien. Aliquam at facilisis erat, accumsan scelerisque elit. Aenean viverra quis lacus vel dapibus. Fusce vestibulum ligula sed magna fringilla, non fringilla lectus faucibus. Sed dignissim dui a arcu ultricies facilisis. Donec pretium egestas lectus, vitae luctus lorem malesuada in.</p>
-        	<a class='navl button' href="/pg/about/principals" target="#content">Page 1</a>
+        	<a class='navl button' href="/pg/about/" target="#content">Page 1</a>
         </div>
     </div>
 <!--
@@ -37,7 +37,7 @@
         <div class="col-xs-10 col-xs-offset-1 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-1 col-lg-6 col-lg-offset-1 hideme">
             <h2>Lorem ipsum dolor</h2>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer aliquam, quam vitae semper fringilla, nunc lectus pulvinar ante, a malesuada ante mi sed neque. Morbi sagittis metus quam, sed semper mi venenatis at. Praesent in diam eu justo consectetur dignissim. Donec pharetra, tortor et maximus hendrerit, ex risus semper erat, ac auctor odio nisi eget est. Fusce eget pulvinar nunc, vitae ultricies sapien. Aliquam at facilisis erat, accumsan scelerisque elit. Aenean viverra quis lacus vel dapibus. Fusce vestibulum ligula sed magna fringilla, non fringilla lectus faucibus. Sed dignissim dui a arcu ultricies facilisis. Donec pretium egestas lectus, vitae luctus lorem malesuada in.</p>
-            <a class='navl button' href="/pg/blog" target="#content" style="padding:5px 30px;">Page 2</a>
+            <a class='navl button' href="/pg/about/other" target="#content" style="padding:5px 30px;">Page 2</a>
         </div>
     </div>
     <div class="row blue_bg" style="background-image:url('/img/stock_head2.svg');">
@@ -45,7 +45,7 @@
         <div class="col-xs-10 col-xs-offset-1 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-5 blue hideme">
             <h2>Lorem ipsum dolor</h2>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer aliquam, quam vitae semper fringilla, nunc lectus pulvinar ante, a malesuada ante mi sed neque. Morbi sagittis metus quam, sed semper mi venenatis at. Praesent in diam eu justo consectetur dignissim. Donec pharetra, tortor et maximus hendrerit, ex risus semper erat, ac auctor odio nisi eget est. Fusce eget pulvinar nunc, vitae ultricies sapien. Aliquam at facilisis erat, accumsan scelerisque elit. Aenean viverra quis lacus vel dapibus. Fusce vestibulum ligula sed magna fringilla, non fringilla lectus faucibus. Sed dignissim dui a arcu ultricies facilisis. Donec pretium egestas lectus, vitae luctus lorem malesuada in.</p>
-            <a class='navl button' href="/pg/blog" target="#content" style="padding:5px 30px;">Page 3</a>
+            <a class='navl button' href="/pg/sitemap" target="#content" style="padding:5px 30px;">Page 3</a>
         </div>
     </div>
     <div class="row">

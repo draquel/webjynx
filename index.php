@@ -12,10 +12,7 @@
 	$_SESSION['Title'] = "Company Name";
 	
 	require_once("script/_php/lib.php");
-	if(isset($_REQUEST['pg']) && $_REQUEST['pg'] != "" && $_REQUEST['pg'] != NULL && $_REQUEST['pg'] != "/"){
-		if(substr($_REQUEST['pg'],-1) != "/"){ $page = "/page/".$_REQUEST['pg'] .".php"; }else{ $page = "/page/".$_REQUEST['pg'] . "index.php";	}
-		foreach($_SESSION['Pages'] as $key => $value){ if($value['path-file'] == strtolower($page)){ $_SESSION['Page'] = $value; break;} }
-	}else{ $_SESSION['Page'] = $_SESSION['Pages'][0]; }
+	if(isset($_REQUEST['pg']) && $_REQUEST['pg'] != "" && $_REQUEST['pg'] != NULL){	foreach($_SESSION['Pages'] as $key => $value){ if($value['path-ui'] == strtolower($_REQUEST['pg'])){ $_SESSION['Page'] = $value; break;} } }else{ $_SESSION['Page'] = $_SESSION['Pages'][0]; }
 	if(isset($_REQUEST['a']) && $_REQUEST['a'] != "" && $_REQUEST['a'] != NULL){ $_SESSION['article'] = $_REQUEST['a']; }else{ $_SESSION['article'] = NULL; }
 ?>
 <!DOCTYPE html>
@@ -35,7 +32,7 @@
 			$head ="<!--Start Head Loader-->
         	<script type=\"text/javascript\">\n";
 			$head .= file_get_contents("script/_js/head.min.js")."\n";
-        	$head .= "</script>\n<script> head.load(\"/script/_js/jquery-3.1.0.min.js\",\"/script/_js/bootstrap.min.js\",\"/script/_js/analytics.js\",\"/script/_js/lib.js\"); </script>
+        	$head .= "</script>\n<script> head.load(\"https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js\",\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\",\"https://www.google-analytics.com/analytics.js\",\"/script/_js/lib.js\"); </script>
        		<!--End Head Loader-->";
 			echo $head;
 		?>
