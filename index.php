@@ -77,10 +77,11 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel">Hire Us</h4>
+                        <h4 class="modal-title" id="myModalLabel">Lorem ipsum dolor</h4>
                     </div>
                     <div class="modal-body">
                         <!-- Modal Content -->
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer aliquam, quam vitae semper fringilla, nunc lectus pulvinar ante, a malesuada ante mi sed neque. Morbi sagittis metus quam, sed semper mi venenatis at. Praesent in diam eu justo consectetur dignissim. Donec pharetra, tortor et maximus hendrerit, ex risus semper erat, ac auctor odio nisi eget est. Fusce eget pulvinar nunc, vitae ultricies sapien. Aliquam at facilisis erat, accumsan scelerisque elit. Aenean viverra quis lacus vel dapibus. Fusce vestibulum ligula sed magna fringilla, non fringilla lectus faucibus. Sed dignissim dui a arcu ultricies facilisis. Donec pretium egestas lectus, vitae luctus lorem malesuada in.</p>
                     </div>
                 </div>
             </div>
