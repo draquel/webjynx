@@ -52,7 +52,7 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                             </button>
-                            <a class="navbar-brand" href="/pg/index" target="#content"><img src="/img/logo.png" alt="Company Name" /></a>
+                            <a class="navbar-brand" href="/" target="#content"><img src="/img/logo.png" alt="Company Name" /></a>
                         </div>
                         <div id="navigation" class="collapse navbar-collapse navbar-ex1-collapse col-sm-12 col-md-9 col-lg-8"><?php $_REQUEST['dd'] = 1; include("menu.php"); ?></div>
                     </div>

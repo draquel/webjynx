@@ -16,7 +16,7 @@
 	$menu_nd = str_replace("\"dropdown\"","\"\"",$menu_nd);
 	$menu_nd = str_replace("<span class=\"caret\"></span>","",$menu_nd);
 	$fmenu = str_replace("\"collapse\"","\"\"",$menu_nd);
-	$fmenu = str_replace("<!--HOME-->","<li><a href=\"/pg/index\" target=\"#content\">Home</a></li>",$fmenu);
+	$fmenu = str_replace("<!--HOME-->","<li><a href=\"/\" target=\"#content\">Home</a></li>",$fmenu);
 	if(isset($_REQUEST['dd'])){ 
 		if(!isMobile() && $_REQUEST['dd'] == 1){ echo $menu; }
 		else{ 

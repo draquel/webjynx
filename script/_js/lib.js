@@ -9,7 +9,7 @@
 			$("#menu li").removeClass("active");
 			$(this).parent().addClass("active");
 			$(target).fadeOut(250,function(){
-				if(pg=="/pg/index"){$("#menu").hide();}else{$("#menu").show();}
+				if(pg=="/"){$("#menu").hide();}else{$("#menu").show();}
 				$.ajax({url:'/ajax.php',method:'POST',async:true,dataType:"json",data:"ari=4&p="+pg,
 					complete: function(xhr){
 						var data = JSON.parse(xhr.responseText);
