@@ -2,7 +2,8 @@
 	session_start();
 	
 	/* Page Index */
-	$_SESSION['Pages'] = array(	
+	$_SESSION['Pages'] = array(
+		array("id"=>-1,"meta-title"=>"HTTP 404 - Page Not Found","meta-description"=>"HTTP 404 - Page Not Found","path-ui"=>"/404","path-file"=>"/page/404.php"),
 		array("id"=>0,"meta-title"=>"Index","meta-description"=>"Welcome to our home page!","path-ui"=>"/","path-file"=>"/page/index.php"),
 		array("id"=>1,"meta-title"=>"About","meta-description"=>"We like stuff and want to work together on your things!","path-ui"=>"/pg/about/","path-file"=>"/page/about/index.php"),
 		array("id"=>2,"meta-title"=>"Other","meta-description"=>"Some more stuff we think is neat.","path-ui"=>"/pg/about/other","path-file"=>"/page/about/other.php"),
@@ -12,7 +13,13 @@
 	$_SESSION['Title'] = "Company Name";
 	
 	require_once("script/_php/lib.php");
-	if(isset($_REQUEST['pg']) && $_REQUEST['pg'] != "" && $_REQUEST['pg'] != NULL){	foreach($_SESSION['Pages'] as $key => $value){ if($value['path-ui'] == strtolower($_REQUEST['pg'])){ $_SESSION['Page'] = $value; break;} } }else{ $_SESSION['Page'] = $_SESSION['Pages'][0]; }
+	if(isset($_REQUEST['pg']) && $_REQUEST['pg'] != "" && $_REQUEST['pg'] != NULL){	
+		$found = false;
+		foreach($_SESSION['Pages'] as $page){ 
+			if($page['path-ui'] == "/pg/".strtolower($_REQUEST['pg'])){ $found = true; $_SESSION['Page'] = $page; break; }
+		}
+		if(!$found){ $_SESSION['Page'] = $_SESSION['Pages'][0]; }
+	}else{ $_SESSION['Page'] = $_SESSION['Pages'][1]; }
 	if(isset($_REQUEST['a']) && $_REQUEST['a'] != "" && $_REQUEST['a'] != NULL){ $_SESSION['article'] = $_REQUEST['a']; }else{ $_SESSION['article'] = NULL; }
 ?>
 <!DOCTYPE html>
@@ -20,6 +27,7 @@
     <head>
         <meta charset="utf-8">
         <meta name='viewport' content="width=device-width, initial-scale=0.65">
+        <script type="text/javascript">console.log("<?php echo $_REQUEST['pg']. " - ".$_SESSION['Page']['path-file']; ?>");</script>
         <?php
 			//Title & Meta-Description 
 			echo "<title>".$_SESSION['Title']." - ".$_SESSION['Page']['meta-title']."</title><meta name=\"description\" content=\"".$_SESSION['Page']['meta-description']."\">";

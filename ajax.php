@@ -87,18 +87,10 @@
 				$exist_f = false;
 				for($i = 0; $i < count($_SESSION['Pages']); $i++){ if($_SESSION['Pages'][$i]['path-ui'] == strtolower($page)){ $exist_i = true; $_SESSION['Page'] = $_SESSION['Pages'][$i]; break;} }
 				$exists_f = file_exists(ltrim($_SESSION['Page']['path-file'],"/"));
-				if($exist_i && $exists_f){
-					ob_start();
-					include ltrim($_SESSION['Page']['path-file'],"/");
-					$html = ob_get_clean();
-				}else{
-					$html = "<h1>HTTP 404 - Page Not Found</h1>\n";
-					if(!$exist_i){ $html .= "<p>The requested page ".$_REQUEST['p']." was not found in the index.</p>\n"; }
-					if($exist_i && !$exist_f){ $html .= "<p>The requested URL ".ltrim($_SESSION['Page']['path-file'],"/")." was not found on this server.</p>\n"; }
-					$html .= "<hr>
-					<address>".$_SERVER['SERVER_SOFTWARE']." Server at ".$_SERVER['SERVER_NAME']." Port 80</address>";
-					$_SESSION['Page'] = array("id"=>-1,"meta-title"=>"HTTP 404 - Page Not Found","meta-description"=>"HTTP 404 - Page Not Found","path-ui"=>"/404","path-file"=>"");
-				}
+				if(!$exist_i || !$exists_f){ $_SESSION['Page'] = $_SESSION['Pages'][0];	}
+				ob_start();
+				include ltrim($_SESSION['Page']['path-file'],"/");
+				$html = ob_get_clean();
 				$data = array($html,$_SESSION['Page']);
 				header("Content-Type: application/json");
 				echo json_encode($data);
