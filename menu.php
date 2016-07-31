@@ -19,8 +19,6 @@
 	$fmenu = str_replace("<!--HOME-->","<li><a href=\"/\" target=\"#content\">Home</a></li>",$fmenu);
 	if(isset($_REQUEST['dd'])){ 
 		if(!isMobile() && $_REQUEST['dd'] == 1){ echo $menu; }
-		else{ 
-			if($_REQUEST['dd'] == 0){ echo $fmenu; }else{ echo $menu_nd; }
-		}
+		else{ if($_REQUEST['dd'] == 0){ echo $fmenu; }else{ echo $menu_nd; } }
 	}else{ echo $menu_nd; }
 ?>
