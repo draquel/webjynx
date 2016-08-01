@@ -42,6 +42,7 @@ hr{ border-top: 1px solid #555759; }
 #pg-index .row{ padding:150px 0; }
 #pg-index h3{ font-size:30px; }
 
+#menu a{padding:50px 20px 50px 20px;}
 
 #contentWrapper{ min-height:600px; }
 #content{ width:100%;margin:0 0 50px 0; }
@@ -94,21 +95,12 @@ hr{ border-top: 1px solid #555759; }
 
 .hideme{ opacity:0; }
 
-.headp{ color:#555759;margin:25px 0 25px 18px }
-
 .pane-list{ font-size:24px; }
 .pane-list p{ padding:25px 0 !important; margin:0 !important; }
 
-.dropdown-menu a{padding:10px 15px 10px 15px !important;}
-.navbar-header{position:relative;}
-.navbar-toggle{position:absolute; padding:14px 15px !important; right:0; margin-top:18px !important;}
-.headp{font-size:22px;}
-#menu a{padding:50px 20px 50px 20px;}
-#LHeader{background-position:center;}
-#LHeader>div{margin-top:200px;margin-bottom:200px;}
-#Explore{padding:115px 0;}
-#Principals{padding-top:300px;}
-#Chair{padding-top:150px;}
+
+
+
 @media(max-width:991px) and (min-width:768px){
 	.navbar-header img{margin:0 auto;}
 	ul.nav{ width:90%; margin:0 auto; }
@@ -118,14 +110,12 @@ hr{ border-top: 1px solid #555759; }
 @media(min-width:992px){
 	#navigation{ float:right; } 
 	#footer ul.nav{ float:right; } 
-	#LHeader img{width:65%;}
 }
 @media(max-width:991px){
 	.navbar-brand{float:none;}
 	.container-fluid > .navbar-collapse, .container-fluid > .navbar-header, .container > .navbar-collapse, .container > .navbar-header{margin:0;}
 	#navigation{ width:100%;float:none; margin:0;} 
 	.hmenu div.col-md-4{ margin:30px 0; }
-	#LHeader img{width:100%;}
 }
 
 /* Bootstrap Overrides */
@@ -162,14 +152,20 @@ hr{ border-top: 1px solid #555759; }
 /*END Bootstrap Menu - Trigger ON-HOVER*/
 
 .dropdown-menu{ background-color:#E7E1E6; }
+.dropdown-menu a{padding:10px 15px 10px 15px !important;}
 .dropdown-menu > li > a{ font-weight:200;}
 .navbar{ margin-bottom: 0; border-radius: 0; }
+.navbar-header{position:relative;}
 .navbar-toggle{ border: #555759 solid 2px;}
-.navbar-toggle>span{background-color:#555759;}
+.navbar-toggle{position:absolute; padding:14px 15px !important; right:0; margin-top:18px !important;}
+.navbar-toggle > span{background-color:#555759;}
 
 .navbar-header img{ width:250px; height:26px; }
 .navbar-nav > li > a{color: #555759;}
 .navbar-nav > li > a:hover{color:#0071CE;}
+
+
+
 
 .modal-content{background-color:#E7E1E6;}
 .modal-body form{text-align:center;margin-top:40px;}
