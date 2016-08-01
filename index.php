@@ -27,6 +27,8 @@
     <head>
         <meta charset="utf-8">
         <meta name='viewport' content="width=device-width, initial-scale=0.65">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
         <script type="text/javascript">console.log("<?php echo $_REQUEST['pg']. " - ".$_SESSION['Page']['path-file']; ?>");</script>
         <?php
 			//Title & Meta-Description 
@@ -36,7 +38,7 @@
 			$css = file_get_contents("css/main.css");
 			if(isMobile()){ $r_css = file_get_contents("css/main_m.css"); }else{ $r_css = file_get_contents("css/main_d.css"); }
 			echo "<style>\n\n".$bs_css."\n\n".$css."\n\n".$r_css."\n\n</style>";
-			
+			//Load JS Libs
 			$head ="<!--Start Head Loader-->
         	<script type=\"text/javascript\">\n";
 			$head .= file_get_contents("script/_js/head.min.js")."\n";
@@ -63,7 +65,7 @@
                     </div>
                 </nav>
             </div>
-            <div id="contentWrapper" class="row"><div id="content"> <?php include(ltrim($_SESSION['Page']['path-file'],"/")); ?></div></div>
+            <div id="contentWrapper" class="row"><div id="content"><!-- Page Content --><?php include(ltrim($_SESSION['Page']['path-file'],"/")); ?></div></div>
             <div id="footer" class="row">
                 <div class="col-md-10 col-md-offset-1 col-lg-3 col-lg-offset-1">
                     <p>info@yourcompany.com<br>(123)456-7890</p>
@@ -106,7 +108,8 @@
 						}
 					}).done(function(){
 					/* Wordpress Integration - iFrame Height Message Handler */
-						/*$(window).on("message", function(event) {
+						/*
+						$(window).on("message", function(event) {
 							var h = 0;
 							var page = window.location.pathname;
 							if(event.originalEvent.origin !== "http://wordpress.company.com"){ return; } 
