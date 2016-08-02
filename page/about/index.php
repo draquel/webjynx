@@ -1,3 +1,4 @@
+<style></style>
 <div id="pg" class="container-fluid">
 	<div class="row blue_bg" style="background-image:url('/img/stock_head1.svg');">
     	<div></div>

@@ -1,13 +1,23 @@
-<div id="pg-index" class="container-fluid">
+<style>
+	/* Template Overrides */
+	#pg .row{ padding:150px 0; }
+	#pg h3{ font-size:30px; }
+	/* Page Specific */
+	#hmenu{ background-color:#262729 !important; padding:175px 0; }
+	#hmenu a{ color:#FFF; font-size:36px; position:relative; }
+	#hmenu a::after{ content:''; height:140%; width:80%; border-bottom: #FFF thin solid;  position: absolute; top: 0; left: 10%; -webkit-transition: width 1s, left 1s; transition: width 1s, left 1s;}
+	#hmenu a:hover::after{ left:0; width:100%; border-bottom: #0071CE thin solid; }
+	#hmenu a:hover{ color:#0071CE; text-decoration:none;}
+</style>
+<div id="pg" class="container-fluid">
 	<div class="row">
     	<div class="col-xs-6 col-xs-offset-1 col-sm-6 col-sm-offset-1 col-md-8 col-md-offset-1 col-lg-7 col-lg-offset-1">
             <h1>Company Name</h1>
-            <!--<img src="/img/logo.svg" alt="Company Name"/>-->
-            <p class="headp">Tagline</p>
+            <p>Tagline</p>
             <a class='navl button' href="/pg/about/" target="#content">Page 1</a>
         </div>
     </div>
-	<div class="row hmenu">
+	<div id="hmenu" class="row">
     	<div class="col-md-12 text-center">
 	        <div class="col-md-4 text-center"><a class='navl' href="/pg/about/" target="#content">PAGE 1</a></div>
         	<div class="col-md-4 text-center"><a class='navl' href="/pg/about/other" target="#content">PAGE 2</a></div>
@@ -22,16 +32,6 @@
         	<a class='navl button' href="/pg/about/" target="#content">Page 1</a>
         </div>
     </div>
-<!--
-    <div id="Explore" class="row">
-    	<div class="col-xs-12 col-sm-10 col-sm-offset-1 hideme">
-            <div class="col-md-12" style="margin-bottom:50px;"><h2>Lorem ipsum dolor</h2></div>
-            <div class="col-md-12 col-lg-4"><a class='navl' href="/pg/data/ii" target="#content"><div class="expimg" style="background-image:url('/img/BCIIP.svg')"></div></a><h3 class="text-center">The Case for Inclusive Innovation</h3></div>
-            <div class="col-md-12 col-lg-4"><a class='navl' href="/pg/data/we" target="#content"><div class="expimg" style="background-image:url('/img/WHGE.svg')"></div></a><h3 class="text-center">Women's High-Growth Entrepreneurship</h3></div>
-            <div class="col-md-12 col-lg-4"><a class='navl' href="/pg/data/clst" target="#content"><div class="expimg" style="background-image:url('/img/CPLS.svg')"></div></a><h3 class="text-center">Commercializing Life Sciences &amp; Tech</h3></div>
-        </div>
-    </div>
--->
     <div class="row">
     	<div></div>
         <div class="col-xs-10 col-xs-offset-1 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-1 col-lg-6 col-lg-offset-1 hideme">
