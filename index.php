@@ -34,17 +34,16 @@
 			//Title & Meta-Description 
 			echo "<title>".$_SESSION['Title']." - ".$_SESSION['Page']['meta-title']."</title><meta name=\"description\" content=\"".$_SESSION['Page']['meta-description']."\">";
 			//Concatenate CSS Files
-			$bs_css = file_get_contents("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
-			$css = file_get_contents("css/main.css");
-			if(isMobile()){ $r_css = file_get_contents("css/main_m.css"); }else{ $r_css = ""; }
-			echo "<style>\n\n".$bs_css."\n\n".$css."\n\n".$r_css."\n\n</style>";
+			$css = file_get_contents("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
+			$css .= "\n\n".file_get_contents("css/main.css");
+			echo "<style>".$css."</style>\n\n";
 			//Load JS Libs
-			$head ="<!--Start Head Loader-->
+			$headjs ="<!--Start Head Loader-->
         	<script type=\"text/javascript\">\n";
-			$head .= file_get_contents("script/_js/head.min.js")."\n";
-        	$head .= "</script>\n<script> head.load(\"https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js\",\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\",\"https://www.google-analytics.com/analytics.js\",\"/script/_js/lib.js\"); </script>
+			$headjs .= file_get_contents("script/_js/head.min.js")."\n";
+        	$headjs .= "</script>\n<script> head.load(\"https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js\",\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\",\"https://www.google-analytics.com/analytics.js\",\"/script/_js/lib.js\"); </script>
        		<!--End Head Loader-->";
-			echo $head;
+			echo $headjs;
 		?>
     </head>
     <body role="document">
@@ -100,7 +99,7 @@
 			head.ready(function() {
 				$(document).ready(function(){
 					var to = 500; var page = "";
-					/* Initialize Page Status / Preload img/* */
+				/* Initialize Page Status / Preload img/* */
 					$.ajax({
 						url: '/ajax.php',cache:false,method:'POST',async:true,dataType:"json",data:"ari=0",
 						complete: function(xhr){ 

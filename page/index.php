@@ -8,6 +8,7 @@
 	#hmenu a::after{ content:''; height:140%; width:80%; border-bottom: #FFF thin solid;  position: absolute; top: 0; left: 10%; -webkit-transition: width 1s, left 1s; transition: width 1s, left 1s;}
 	#hmenu a:hover::after{ left:0; width:100%; border-bottom: #0071CE thin solid; }
 	#hmenu a:hover{ color:#0071CE; text-decoration:none;}
+	#hmenu > div > div{ margin-bottom:24px !important;}
 </style>
 <div id="pg" class="container-fluid">
 	<div class="row">
