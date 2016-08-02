@@ -67,12 +67,14 @@
             </div>
             <div id="contentWrapper" class="row"><div id="content"><!-- Page Content --><?php include(ltrim($_SESSION['Page']['path-file'],"/")); ?></div></div>
             <div id="footer" class="row">
-                <div class="col-md-10 col-md-offset-1 col-lg-3 col-lg-offset-1">
-                    <p>info@yourcompany.com<br>(123)456-7890</p>
-                    <p><a href="https://twitter.com/" target="_blank"><img src="/img/twitter.svg" alt="Twitter" /></a><a href="https://www.facebook.com/" target="_blank"><img src="/img/facebook.svg" alt="Facebook" /></a><a href="https://www.linkedin.com/" target="_blank"><img src="/img/linkedin.svg" alt="LinkedIn" /></a></p>
+            	<div class="col-xs-10 col-xs-offset-1 col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                    <div class="col-md-12 col-lg-4" style="padding-top:15px !important;">
+                        <p>info@yourcompany.com<br>(123)456-7890</p>
+                        <p><a href="https://twitter.com/" target="_blank"><img src="/img/twitter.svg" alt="Twitter" /></a><a href="https://www.facebook.com/" target="_blank"><img src="/img/facebook.svg" alt="Facebook" /></a><a href="https://www.linkedin.com/" target="_blank"><img src="/img/linkedin.svg" alt="LinkedIn" /></a></p>
+                    </div>
+                    <div class="col-md-12 col-lg-8" id="fmenu"><?php $_REQUEST['dd'] = 0; include("menu.php"); ?></div>
                 </div>
-                <div class="col-md-12 col-lg-7" id="fmenu"><?php $_REQUEST['dd'] = 0; include("menu.php"); ?></div>
-                <div class="col-md-12 text-center" style="margin-top:50px;"><p style="font-size:9px;">&copy;<?php echo $_SESSION['Title']; ?> 2016 - All Rights Reserved</p><a href="http://www.kburkhart.com" target="_blank"><img src="/img/KBDicon.svg" alt="Katharine Burkhart Designs" /></a></div>
+            	<div class="col-md-12 text-center" style="margin-top:50px;"><p style="font-size:9px;">&copy;<?php echo $_SESSION['Title']; ?> 2016 - All Rights Reserved</p><a href="http://www.kburkhart.com" target="_blank"><img src="/img/KBDicon.svg" alt="Katharine Burkhart Designs" /></a></div>
             </div>
         </div>
        <!--End Page-->
@@ -107,29 +109,12 @@
 							preload(imgs,function(){setTimeout(function(){$("#loader-main").fadeOut(to,function(){$("#page").fadeIn(to);$(this).remove();});},to);});
 						}
 					}).done(function(){
-					/* Wordpress Integration - iFrame Height Message Handler */
-						/*
-						$(window).on("message", function(event) {
-							var h = 0;
-							var page = window.location.pathname;
-							if(event.originalEvent.origin !== "http://wordpress.company.com"){ return; } 
-							if(event.originalEvent.data[0] == 0 || event.originalEvent.data[0] == 11120 || event.originalEvent.data[0] == 35025){ if(event.originalEvent.data[0] == 0 && event.originalEvent.data[1].replace("/index.php","") == "/"){ h = 1800; }else{h = 5000;} }else{ if(event.originalEvent.data[0] > 20000){ h = event.originalEvent.data[0]/28; }else{ h = event.originalEvent.data[0]; } }
-							if(event.originalEvent.data[1] && page.includes("/pg/blog")){ window.history.pushState({"html":$("#content").html(),"url":"/page/blog"+encodeURI(event.originalEvent.data[1].replace("/index.php",""))},"","/pg/blog"+encodeURI(event.originalEvent.data[1].replace("/index.php",""))); }
-							$("#blog").css({height: h+"px"});
-						})
-						if(typeof deferBlog != 'undefined' && deferBlog){ $.ajax({url:'/ajax.php',method:'POST',async:true,dataType:"html",data:"ari=3",complete:function(xhr){ $("#blog").attr("src",xhr.responseText); } }); }
-						if(typeof deferBlogWidget != 'undefined' && deferBlogWidget){ loadBlog(blogAdd); }
-						*/
-						
 					/* Browser Nav Override */
 						$(window).bind('popstate',function(event){
 							if(event.originalEvent.state){
 								if(event.originalEvent.state.url == "/page/index.php"){ $("#menu").hide(); }else{ $("#menu").show(); }
-								/*Wordpress Integration - Iframe Address handling */
-								//if(!event.originalEvent.state.url.includes("/blog/")){ $("#content").html(event.originalEvent.state.html); }else{ goToPage("#content","/page/blog.php",null); }
 							}
 						})
-						
 					/* Window Scroll Event - Content Fade */
 						$(window).scroll(function(){
 							$('.hideme').each(function(i){
@@ -138,7 +123,6 @@
 								if( bottom_of_window > bottom_of_object ){ $(this).animate({'opacity':'1'},750); }
 							}); 
 						});
-						
 					/* Page Navigation */
 						$("#page").on("click","ul.nav a, .navbar-brand, .navl", function(event){
 							event.preventDefault();
@@ -146,15 +130,12 @@
 							if($(this).siblings().not(this).length === 0){ $(".navbar-collapse").collapse('hide'); }
 							if($("body").hasClass("noscroll")){ $("body").removeClass("noscroll"); }
 						});
-						
 					/* Mobile Menu - Toggle Page Scroll Lock */
 						$(".navbar-toggle").click(function(){ if($("body").hasClass("noscroll")){ $("body").removeClass("noscroll"); }else{ $("body").addClass("noscroll"); } });
 						$("input[type=text],textarea").inputDefault();
-						
 					/* Google Analytics */
 						//gaTracker("GA Tracking ID");
 						//gaTrack(page['path-ui'],page['meta-title']);
-						
 					/* Server Session Timer */
 						setSessTimeout();
 					});

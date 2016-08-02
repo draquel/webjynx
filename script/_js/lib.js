@@ -52,60 +52,16 @@
 		if(window.sess_left_sec > 0){ setTimeout(function(){ sessTime_left(); }, 1000);}
 		else{ location.reload(); }
 	}
-//jQuery labeless input field functionality
-	jQuery.fn.inputDefault = function(){ $(this).focus(function(){ if($(this).val() == $(this).attr('title')){ $(this).val(""); } }).blur(function(){ if($(this).val() == ""){ $(this).val($(this).attr('title')); } }); }
-//Wordpress iframe Integration
-	function loadBlog(src){	$("<iframe />").attr("style","width:100%;border:0;overflow:hidden;").attr("id","blog").attr('src',src).appendTo("#bcont"); }
-//FORM SUBMISSIONS
-	jQuery.fn.submitNLS = function(){
-		$(this).submit(function(e){
-			e.preventDefault();
-			$("#status").hide();
-			var name = $(this).find("[name=name]").val();
-			var company = $(this).find("[name=company]").val();
-			var email = $(this).find("[name=email]").val();
-			var reason = $(this).find("[name=reason]").val();
-			var error = false;
-			
-			if(name == "Full Name" || name == "" || name == null || typeof name == "undefined" || name.indexOf(" ") == -1){ $(this).find("[name=name]").css("border","3px solid red").css("margin","3px auto"); error = true; }else{ $(this).find("[name=name]").css("border","0").css("margin",""); }
-			if(company == "Company" || company == "" || company == null || typeof company == "undefined"){ $(this).find("[name=company]").css("border","3px solid red").css("margin","3px auto"); error = true; }else{ $(this).find("[name=company]").css("border","0").css("margin",""); }
-			if(email == "Email" || email == "" || email == null || typeof email == "undefined" || !validateEmail(email)){ $(this).find("[name=email]").css("border","3px solid red").css("margin","3px auto"); error = true; }else{ $(this).find("[name=email]").css("border","0").css("margin",""); }
-			if(reason == "Reason for Following" || reason == "" || reason == null || typeof reason == "undefined"){ $(this).find("[name=reason]").css("border","3px solid red").css("margin","3px auto"); error = true; }else{ $(this).find("[name=reason]").css("border","0").css("margin",""); }
-			if(!error){
-				$.ajax({
-					url: 'ajax.php',method:'POST',async:true,data:"ari=1&n="+name+"&c="+company+"&e="+email+"&r="+reason,
-					complete: function(){
-						$("#status").fadeIn();
-						$("input[type=text]").each(function(){ $(this).val($(this).attr('alt')); });
-					}
-				});
-			}
-		});
-	}
-	jQuery.fn.submitWWU = function(){
-		$(this).submit(function(e){
-			e.preventDefault();
-			$("#status").hide();
-			var name = $(this).find("[name=name]").val();
-			var company = $(this).find("[name=company]").val();
-			var email = $(this).find("[name=email]").val();
-			var message = $(this).find("[name=message]").val();
-			var error = false;
-			
-			if(name == "Full Name" || name == "" || name == null || typeof name == "undefined" || name.indexOf(" ") == -1){ $(this).find("[name=name]").css("border","3px solid red").css("margin","3px auto"); error = true; }else{ $(this).find("[name=name]").css("border","0").css("margin",""); }
-			if(company == "Company" || company == "" || company == null || typeof company == "undefined"){ $(this).find("[name=company]").css("border","3px solid red").css("margin","3px auto"); error = true; }else{ $(this).find("[name=company]").css("border","0").css("margin",""); }
-			if(email == "Email" || email == "" || email == null || typeof email == "undefined" || !validateEmail(email)){ $(this).find("[name=email]").css("border","3px solid red").css("margin","3px auto"); error = true; }else{ $(this).find("[name=email]").css("border","0").css("margin",""); }
-			if(message == "Message" || message == "" || message == null || typeof message == "undefined"){ $(this).find("[name=message]").css("border","3px solid red").css("margin","3px auto"); error = true; }else{ $(this).find("[name=message]").css("border","0").css("margin",""); }
-			if(!error){
-				$.ajax({
-					url: 'ajax.php',method:'POST',async:true,data:"ari=2&n="+name+"&c="+company+"&e="+email+"&m="+message,
-					complete: function(){
-						$("#status").fadeIn();
-						$("input[type=text]").each(function(){ $(this).val($(this).attr('alt')); });
-					}
-				});
-			}
-		});
+//Google Analytics
+	//Initialize Tracker
+	function gaTracker(id){
+		window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+		ga('create', id, 'auto');
+	};
+	//Track page view
+	function gaTrack(path, title) {
+		ga('set', { page: path, title: title });
+		ga('send', 'pageview');
 	}
 //MISC
 	function validateEmail(email) {
@@ -130,14 +86,4 @@
             cacheImage.src = images[i];
         }
 	}
-	//Google Analytics - Initialize Tracker
-	function gaTracker(id){
-		//$.getScript('//www.google-analytics.com/analytics.js');
-		window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-		ga('create', id, 'auto');
-	};
-	//Google Analytics - Track page view
-	function gaTrack(path, title) {
-		ga('set', { page: path, title: title });
-		ga('send', 'pageview');
-	}
+	jQuery.fn.inputDefault = function(){ $(this).focus(function(){ if($(this).val() == $(this).attr('title')){ $(this).val(""); } }).blur(function(){ if($(this).val() == ""){ $(this).val($(this).attr('title')); } }); }
