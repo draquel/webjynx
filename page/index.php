@@ -17,7 +17,7 @@
 <!--Page Content -->
     <div id="pg" class="container-fluid">
         <div class="row">
-            <div class="col-xs-6 col-xs-offset-1 col-sm-6 col-sm-offset-1 col-md-8 col-md-offset-1 col-lg-7 col-lg-offset-1">
+            <div class="col-xs-8 col-xs-offset-1 col-sm-8 col-sm-offset-1 col-md-8 col-md-offset-1 col-lg-7 col-lg-offset-1">
                 <h1>Company Name</h1>
                 <p>Tagline</p>
                 <a class='navl button' href="/pg/about/" target="#content">Page 1</a>
