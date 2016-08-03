@@ -10,15 +10,15 @@
 			$(this).parent().addClass("active");
 			$(target).fadeOut(250,function(){
 				if(pg=="/"){$("#menu").hide();}else{$("#menu").show();}
-				$.ajax({url:'/ajax.php',method:'POST',async:true,dataType:"json",data:"ari=4&p="+pg,
+				$.ajax({url:'/ajax.php',method:'POST',async:true,dataType:"json",data:"ari=2&p="+pg,
 					complete: function(xhr){
 						var data = JSON.parse(xhr.responseText);
 						$(target).html(data[0]);
-						window.history.pushState({"html":data[0],"url":data[1]['path-file']},data[1]['meta-title'],data[1]['path-ui']);
-						document.title = (document.title.split("-"))[0] +"- "+data[1]['meta-title'];
-						$("meta[name='description']").attr("content",data[1]['meta-description']);
-						gaTrack(data[1]['path-ui'],data[1]['meta-title']);
-						SCCallback(target,scrollto);
+						window.history.pushState({"html":data[0],"url":data[2]['path-file']},data[2]['meta-title'],data[2]['path-ui']);
+						document.title = (document.title.split("-"))[0] +"- "+data[2]['meta-title'];
+						$("meta[name='description']").attr("content",data[2]['meta-description']);
+						gaTrack(data[2]['path-ui'],data[2]['meta-title']);
+						preload(data[1],SCCallback(target,scrollto));
 					}
 				});
 			});
@@ -79,17 +79,19 @@
 		return rp.test(phone);
 	}
 	function preload(images,Callback) {
-		var imagesLength = images.length;
-		var loadedCounter = 0;
-		for (var i = 0; i < imagesLength; i++) {
-			var cacheImage = new Image();
-            cacheImage.onload = function(){
-                loadedCounter++;
-                if (loadedCounter == imagesLength-1) {
-                    if ($.isFunction(Callback)){ Callback(); }
-                }
-            };
-            cacheImage.src = images[i];
-        }
+		if(images && images != null){
+			var imagesLength = images.length;
+			var loadedCounter = 0;
+			for (var i = 0; i < imagesLength; i++) {
+				var cacheImage = new Image();
+				cacheImage.onload = function(){
+					loadedCounter++;
+					if (loadedCounter == imagesLength-1) {
+						if ($.isFunction(Callback)){ Callback(); }
+					}
+				};
+				cacheImage.src = images[i];
+			}
+		}else{ if($.isFunction(Callback)){ Callback(); } }
 	}
 	jQuery.fn.inputDefault = function(){ $(this).focus(function(){ if($(this).val() == $(this).attr('title')){ $(this).val(""); } }).blur(function(){ if($(this).val() == ""){ $(this).val($(this).attr('title')); } }); }

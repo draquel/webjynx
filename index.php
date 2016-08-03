@@ -13,14 +13,7 @@
 	$_SESSION['Title'] = "Company Name";
 	
 	require_once("script/_php/lib.php");
-	if(isset($_REQUEST['pg']) && $_REQUEST['pg'] != "" && $_REQUEST['pg'] != NULL){	
-		$found = false;
-		foreach($_SESSION['Pages'] as $page){ 
-			if($page['path-ui'] == "/pg/".strtolower($_REQUEST['pg'])){ $found = true; $_SESSION['Page'] = $page; break; }
-		}
-		if(!$found){ $_SESSION['Page'] = $_SESSION['Pages'][0]; }
-	}else{ $_SESSION['Page'] = $_SESSION['Pages'][1]; }
-	if(isset($_REQUEST['a']) && $_REQUEST['a'] != "" && $_REQUEST['a'] != NULL){ $_SESSION['article'] = $_REQUEST['a']; }else{ $_SESSION['article'] = NULL; }
+	if(isset($_REQUEST['pg']) && $_REQUEST['pg'] != "" && $_REQUEST['pg'] != NULL){	$found = false; foreach($_SESSION['Pages'] as $page){ if($page['path-ui'] == "/pg/".strtolower($_REQUEST['pg'])){ $found = true; $_SESSION['Page'] = $page; break; } } if(!$found){ $_SESSION['Page'] = $_SESSION['Pages'][0]; } }else{ $_SESSION['Page'] = $_SESSION['Pages'][1]; }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -52,14 +45,7 @@
             <div id="menu" class="row">
                 <nav class="navbar navbar">
                     <div id="head" class="col-xs-12 col-xs-offset-0 col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1">
-                        <div class="navbar-header col-sm-4 col-md-4 col-lg-4">
-                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            </button>
-                            <a class="navbar-brand" href="/" target="#content"><img src="/img/logo.png" alt="Company Name" /></a>
-                        </div>
+                        <div class="navbar-header col-sm-4 col-md-4 col-lg-4"><button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand" href="/" target="#content"><img src="/img/logo.png" alt="Company Name" /></a></div>
                         <div id="navigation" class="collapse navbar-collapse navbar-ex1-collapse col-sm-8 col-md-8 col-lg-8"><?php $_REQUEST['dd'] = 1; include("menu.php"); ?></div>
                     </div>
                 </nav>
@@ -67,10 +53,7 @@
             <div id="contentWrapper" class="row"><div id="content"><!-- Page Content --><?php include(ltrim($_SESSION['Page']['path-file'],"/")); ?></div></div>
             <div id="footer" class="row">
             	<div class="col-xs-12 col-xs-offset-0 col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1">
-                    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-                        <p>info@yourcompany.com<br>(123)456-7890</p>
-                        <p><a href="https://twitter.com/" target="_blank"><img src="/img/twitter.svg" alt="Twitter" /></a><a href="https://www.facebook.com/" target="_blank"><img src="/img/facebook.svg" alt="Facebook" /></a><a href="https://www.linkedin.com/" target="_blank"><img src="/img/linkedin.svg" alt="LinkedIn" /></a></p>
-                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4"><p>info@yourcompany.com<br>(123)456-7890</p><p><a href="https://twitter.com/" target="_blank"><img src="/img/twitter.svg" alt="Twitter" /></a><a href="https://www.facebook.com/" target="_blank"><img src="/img/facebook.svg" alt="Facebook" /></a><a href="https://www.linkedin.com/" target="_blank"><img src="/img/linkedin.svg" alt="LinkedIn" /></a></p></div>
                     <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8"><?php $_REQUEST['dd'] = 0; include("menu.php"); ?></div>
                 </div>
             	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center"><p>&copy;<?php echo $_SESSION['Title']; ?> 2016 - All Rights Reserved</p><a href="http://www.kburkhart.com" target="_blank"><img src="/img/KBDicon.svg" alt="Katharine Burkhart Designs" /></a></div>
@@ -81,27 +64,21 @@
         <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel">Lorem ipsum dolor</h4>
-                    </div>
-                    <div class="modal-body">
-                        <!-- Modal Content -->
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer aliquam, quam vitae semper fringilla, nunc lectus pulvinar ante, a malesuada ante mi sed neque. Morbi sagittis metus quam, sed semper mi venenatis at. Praesent in diam eu justo consectetur dignissim. Donec pharetra, tortor et maximus hendrerit, ex risus semper erat, ac auctor odio nisi eget est. Fusce eget pulvinar nunc, vitae ultricies sapien. Aliquam at facilisis erat, accumsan scelerisque elit. Aenean viverra quis lacus vel dapibus. Fusce vestibulum ligula sed magna fringilla, non fringilla lectus faucibus. Sed dignissim dui a arcu ultricies facilisis. Donec pretium egestas lectus, vitae luctus lorem malesuada in.</p>
-                    </div>
+                    <div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="myModalLabel">Lorem ipsum dolor</h4></div>
+                    <div class="modal-body"><!-- Modal Content --><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer aliquam, quam vitae semper fringilla, nunc lectus pulvinar ante, a malesuada ante mi sed neque. Morbi sagittis metus quam, sed semper mi venenatis at. Praesent in diam eu justo consectetur dignissim. Donec pharetra, tortor et maximus hendrerit, ex risus semper erat, ac auctor odio nisi eget est. Fusce eget pulvinar nunc, vitae ultricies sapien. Aliquam at facilisis erat, accumsan scelerisque elit. Aenean viverra quis lacus vel dapibus. Fusce vestibulum ligula sed magna fringilla, non fringilla lectus faucibus. Sed dignissim dui a arcu ultricies facilisis. Donec pretium egestas lectus, vitae luctus lorem malesuada in.</p></div>
                 </div>
             </div>
         </div>
         <!-- End Modal -->
         <img class="loader" id="loader-main" src="/img/loader-main.gif" alt="... Loading ..."/>
-        <a class="navl" style="display:none" href="/pg/sitemap" target="#content">Sitemap</a>
+        <a class="navl hidden" href="/pg/sitemap" target="#content">Sitemap</a>
         <script>
 			head.ready(function() {
 				$(document).ready(function(){
 					var to = 500; var page = "";
 				/* Initialize Page Status / Preload img/* */
 					$.ajax({
-						url: '/ajax.php',cache:false,method:'POST',async:true,dataType:"json",data:"ari=0",
+						url: '/ajax.php',cache:false,method:'POST',async:true,dataType:"json",data:"ari=1",
 						complete: function(xhr){ 
 							var data = JSON.parse(xhr.responseText); page = data[0]; var imgs = data[1];
 							if(page['path-file'] == "/page/index.php"){ $("#menu").hide(); }else{ $("#menu").show(); }
