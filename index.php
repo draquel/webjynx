@@ -1,7 +1,7 @@
 <?php
 	session_start();
 	require_once("script/_php/lib.php");
-
+	
 	$_SESSION['Pages'] = array(
 		array("id"=>0,"meta-title"=>"HTTP 404 - Page Not Found","meta-description"=>"HTTP 404 - Page Not Found","path-ui"=>"/404","path-file"=>"/page/404.php"),
 		array("id"=>1,"meta-title"=>"Index","meta-description"=>"Welcome to our home page!","path-ui"=>"/","path-file"=>"/page/index.php"),
@@ -11,13 +11,24 @@
 	);
 	$_SESSION['Title'] = "Company Name";
 	
-	if(isset($_REQUEST['pg']) && $_REQUEST['pg'] != "" && $_REQUEST['pg'] != NULL){	$found = false; foreach($_SESSION['Pages'] as $page){ if($page['path-ui'] == "/pg/".strtolower($_REQUEST['pg'])){ $found = true; $_SESSION['Page'] = $page; break; } } if(!$found){ $_SESSION['Page'] = $_SESSION['Pages'][0]; } }else{ $_SESSION['Page'] = $_SESSION['Pages'][1]; }
+	$_SESSION['Error'] = array("404"=>array("path-file"=>NULL,"path-ui"=>NULL));
+	if(isset($_REQUEST['pg']) && $_REQUEST['pg'] != "" && $_REQUEST['pg'] != NULL){	
+		$found = false; 
+		foreach($_SESSION['Pages'] as $page){ 
+			if($page['path-ui'] == "/pg/".strtolower($_REQUEST['pg'])){ 
+				$found = true; $_SESSION['Page'] = $page;
+				if(!file_exists(ltrim($page['path-file'],"/"))){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-file'] = $page['path-file']; }
+				break;
+			} 
+		}
+		if(!$found){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = "/pg/".$_REQUEST['pg']; }
+	}else{ $_SESSION['Page'] = $_SESSION['Pages'][1]; }
 ?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <meta name='viewport' content="width=device-width, initial-scale=0.65">
+        <meta name='viewport' content="width=device-width, initial-scale=1">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
         <link rel="icon" href="/img/favicon.ico">
         <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
@@ -26,7 +37,7 @@
 			echo "<title>".$_SESSION['Title']." - ".$_SESSION['Page']['meta-title']."</title><meta name=\"description\" content=\"".$_SESSION['Page']['meta-description']."\">";
 			//Concatenate CSS Files
 			$css = file_get_contents("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
-			$css .= "\n\n".file_get_contents("css/main.css");
+			$css .= file_get_contents("css/main.css");
 			echo "<style>".$css."</style>\n\n";
 			//Load JS Libs
 			$headjs ="<!--Start Head Loader-->
@@ -87,6 +98,7 @@
 						$(window).bind('popstate',function(event){
 							if(event.originalEvent.state){
 								if(event.originalEvent.state.url == "/page/index.php"){ $("#menu").hide(); }else{ $("#menu").show(); }
+								$("#content").html(event.originalEvent.state.html);
 							}
 						})
 					/* Window Scroll Event - Content Fade */
