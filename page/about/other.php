@@ -1,5 +1,6 @@
+<style>	/* Page Specific */ #pg > div:nth-child(1){ background-image:url('/img/stock_head2.svg'); } </style>
 <div id="pg" class="container-fluid">
-	<div class="row blue_bg" style="background-image:url('/img/stock_head2.svg');">
+	<div class="row blue_bg">
     	<div></div>
     </div>
 	<div class="row">

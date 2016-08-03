@@ -29,7 +29,7 @@
         <meta name='viewport' content="width=device-width, initial-scale=0.65">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
         <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
-        <script type="text/javascript">console.log("<?php echo $_REQUEST['pg']. " - ".$_SESSION['Page']['path-file']; ?>");</script>
+        <!--<script type="text/javascript">console.log("<?php //echo $_REQUEST['pg']. " - ".$_SESSION['Page']['path-file']; ?>");</script>-->
         <?php
 			//Title & Meta-Description 
 			echo "<title>".$_SESSION['Title']." - ".$_SESSION['Page']['meta-title']."</title><meta name=\"description\" content=\"".$_SESSION['Page']['meta-description']."\">";
@@ -52,7 +52,7 @@
             <div id="menu" class="row">
                 <nav class="navbar navbar">
                     <div id="head" class="col-xs-12 col-xs-offset-0 col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1">
-                        <div class="navbar-header col-sm-12 col-md-4 col-lg-4">
+                        <div class="navbar-header col-sm-4 col-md-4 col-lg-4">
                             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
@@ -60,20 +60,20 @@
                             </button>
                             <a class="navbar-brand" href="/" target="#content"><img src="/img/logo.png" alt="Company Name" /></a>
                         </div>
-                        <div id="navigation" class="collapse navbar-collapse navbar-ex1-collapse col-sm-12 col-md-8 col-lg-8"><?php $_REQUEST['dd'] = 1; include("menu.php"); ?></div>
+                        <div id="navigation" class="collapse navbar-collapse navbar-ex1-collapse col-sm-8 col-md-8 col-lg-8"><?php $_REQUEST['dd'] = 1; include("menu.php"); ?></div>
                     </div>
                 </nav>
             </div>
             <div id="contentWrapper" class="row"><div id="content"><!-- Page Content --><?php include(ltrim($_SESSION['Page']['path-file'],"/")); ?></div></div>
             <div id="footer" class="row">
             	<div class="col-xs-12 col-xs-offset-0 col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1">
-                    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4" style="padding-top:15px !important;">
+                    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                         <p>info@yourcompany.com<br>(123)456-7890</p>
                         <p><a href="https://twitter.com/" target="_blank"><img src="/img/twitter.svg" alt="Twitter" /></a><a href="https://www.facebook.com/" target="_blank"><img src="/img/facebook.svg" alt="Facebook" /></a><a href="https://www.linkedin.com/" target="_blank"><img src="/img/linkedin.svg" alt="LinkedIn" /></a></p>
                     </div>
-                    <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8" id="fmenu"><?php $_REQUEST['dd'] = 0; include("menu.php"); ?></div>
+                    <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8"><?php $_REQUEST['dd'] = 0; include("menu.php"); ?></div>
                 </div>
-            	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center" style="margin-top:50px;"><p style="font-size:9px;">&copy;<?php echo $_SESSION['Title']; ?> 2016 - All Rights Reserved</p><a href="http://www.kburkhart.com" target="_blank"><img src="/img/KBDicon.svg" alt="Katharine Burkhart Designs" /></a></div>
+            	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center"><p>&copy;<?php echo $_SESSION['Title']; ?> 2016 - All Rights Reserved</p><a href="http://www.kburkhart.com" target="_blank"><img src="/img/KBDicon.svg" alt="Katharine Burkhart Designs" /></a></div>
             </div>
         </div>
        <!--End Page-->
