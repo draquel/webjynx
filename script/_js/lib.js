@@ -56,12 +56,18 @@
 	//Initialize Tracker
 	function gaTracker(id){
 		window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-		ga('create', id, 'auto');
+		if(ga){
+			ga('create', id, 'auto');
+			return true;
+		}else{ return false; }
 	};
 	//Track page view
 	function gaTrack(path, title) {
-		ga('set', { page: path, title: title });
-		ga('send', 'pageview');
+		if(ga){
+			ga('set', { page: path, title: title });
+			ga('send', 'pageview');
+			return true;
+		}else{ return false; }
 	}
 //MISC
 	function validateEmail(email) {
