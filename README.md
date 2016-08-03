@@ -17,7 +17,7 @@
 * Google Analytics - https://www.google.com/analytics/
 
 #### PHP
-* 
+* php-xml (dom extension)
 
 ## Documentation
 
