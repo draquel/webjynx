@@ -16,11 +16,12 @@
 	if(isset($_REQUEST['pg']) && $_REQUEST['pg'] != "" && $_REQUEST['pg'] != NULL){	$found = false; foreach($_SESSION['Pages'] as $page){ if($page['path-ui'] == "/pg/".strtolower($_REQUEST['pg'])){ $found = true; $_SESSION['Page'] = $page; break; } } if(!$found){ $_SESSION['Page'] = $_SESSION['Pages'][0]; } }else{ $_SESSION['Page'] = $_SESSION['Pages'][1]; }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html class="no-js" lang="en">
     <head>
         <meta charset="utf-8">
         <meta name='viewport' content="width=device-width, initial-scale=0.65">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <link rel="icon" href="/img/favicon.ico">
         <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
         <!--<script type="text/javascript">console.log("<?php //echo $_REQUEST['pg']. " - ".$_SESSION['Page']['path-file']; ?>");</script>-->
         <?php
