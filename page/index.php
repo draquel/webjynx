@@ -12,6 +12,9 @@
 	#hmenu a:hover{ color:#0071CE; text-decoration:none;}
 	#hmenu > div > div{ margin-bottom:24px !important;}
 </style>
+<!-- Hidden Image Tags for Preloading css Images -->
+<img class="hidden" src="/img/stock_head1.svg" alt="Header img 1" />
+<img class="hidden" src="/img/stock_head2.svg" alt="Header img 2" />
 <div id="pg" class="container-fluid">
 	<div class="row">
     	<div class="col-xs-6 col-xs-offset-1 col-sm-6 col-sm-offset-1 col-md-8 col-md-offset-1 col-lg-7 col-lg-offset-1">
