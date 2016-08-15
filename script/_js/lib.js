@@ -31,7 +31,7 @@
 		window.pgTrans=false;
 	}
 	function goToPage(target,page,func){
-	 	 $("#menu li").removeClass("active").find("[href='"+page.replace(".php","").replace("/page/","/pg/")+"']").parent().addClass("active");
+	 	 $("#menu li").removeClass("active").find("[href='"+page.replace(".php","").replace("/page/","/")+"']").parent().addClass("active");
 		 if(page == "/page/index.php"){ $("#menu").hide(); }else{ $("#menu").show(); }
 		 $(target).fadeOut(250,function(){ $(this).load(page,function(responseTxt){ window.history.pushState({"html":responseTxt,"url":page},""); $(this).fadeIn(250,func); }); });
 	}	

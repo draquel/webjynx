@@ -7,10 +7,10 @@
 		array("id"=>0,"meta-title"=>"HTTP 404 - Page Not Found","meta-description"=>"HTTP 404 - Page Not Found","path-ui"=>"/404","path-file"=>"/page/404.php"),
 		array("id"=>1,"meta-title"=>"HTTP 401 - Unauthorized","meta-description"=>"HTTP 401 - Unauthorized","path-ui"=>"/401","path-file"=>"/page/401.php"),
 		array("id"=>2,"meta-title"=>"Index","meta-description"=>"Welcome to our home page!","path-ui"=>"/","path-file"=>"/page/index.php"),
-		array("id"=>3,"meta-title"=>"About","meta-description"=>"We like stuff and want to work together on your things!","path-ui"=>"/pg/about/","path-file"=>"/page/about/index.php"),
-		array("id"=>4,"meta-title"=>"Other","meta-description"=>"Some more stuff we think is neat.","path-ui"=>"/pg/about/other","path-file"=>"/page/about/other.php"),
-		array("id"=>5,"meta-title"=>"Sitemap","meta-description"=>"A sitemap, just incase you get lost.","path-ui"=>"/pg/sitemap","path-file"=>"/page/sitemap.php"),
-		array("id"=>6,"meta-title"=>"Class Testing","meta-description"=>"Class Unit Testing","path-ui"=>"/pg/class/","path-file"=>"/page/class/index.php")
+		array("id"=>3,"meta-title"=>"About","meta-description"=>"We like stuff and want to work together on your things!","path-ui"=>"/about/","path-file"=>"/page/about/index.php"),
+		array("id"=>4,"meta-title"=>"Other","meta-description"=>"Some more stuff we think is neat.","path-ui"=>"/about/other","path-file"=>"/page/about/other.php"),
+		array("id"=>5,"meta-title"=>"Sitemap","meta-description"=>"A sitemap, just incase you get lost.","path-ui"=>"/sitemap","path-file"=>"/page/sitemap.php"),
+		array("id"=>6,"meta-title"=>"Class Testing","meta-description"=>"Class Unit Testing","path-ui"=>"/class/","path-file"=>"/page/class/index.php")
 	);
 	$_SESSION['Title'] = "Company Name";
 	$_SESSION['Error'] = array("404"=>array("path-file"=>NULL,"path-ui"=>NULL),"401"=>NULL);
@@ -19,13 +19,13 @@
 	if(isset($_REQUEST['pg']) && $_REQUEST['pg'] != "" && $_REQUEST['pg'] != NULL){	
 		$found = false; 
 		foreach($_SESSION['Pages'] as $page){ 
-			if($page['path-ui'] == "/pg/".strtolower($_REQUEST['pg'])){ 
+			if($page['path-ui'] == "/".strtolower($_REQUEST['pg'])){ 
 				$found = true; $_SESSION['Page'] = $page;
 				if(!file_exists(ltrim($page['path-file'],"/"))){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-file'] = $page['path-file']; }
 				break;
 			} 
 		}
-		if(!$found){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = "/pg/".$_REQUEST['pg']; }
+		if(!$found){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = "/".$_REQUEST['pg']; }
 	}else{ $_SESSION['Page'] = $_SESSION['Pages'][2]; }
 ?>
 <!DOCTYPE html>
