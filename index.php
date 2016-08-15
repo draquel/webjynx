@@ -7,11 +7,12 @@
 		array("id"=>1,"meta-title"=>"Index","meta-description"=>"Welcome to our home page!","path-ui"=>"/","path-file"=>"/page/index.php"),
 		array("id"=>2,"meta-title"=>"About","meta-description"=>"We like stuff and want to work together on your things!","path-ui"=>"/pg/about/","path-file"=>"/page/about/index.php"),
 		array("id"=>3,"meta-title"=>"Other","meta-description"=>"Some more stuff we think is neat.","path-ui"=>"/pg/about/other","path-file"=>"/page/about/other.php"),
-		array("id"=>4,"meta-title"=>"Sitemap","meta-description"=>"A sitemap, just incase you get lost.","path-ui"=>"/pg/sitemap","path-file"=>"/page/sitemap.php")
+		array("id"=>4,"meta-title"=>"Sitemap","meta-description"=>"A sitemap, just incase you get lost.","path-ui"=>"/pg/sitemap","path-file"=>"/page/sitemap.php"),
+		array("id"=>5,"meta-title"=>"Class Testing","meta-description"=>"Class Unit Testing","path-ui"=>"/pg/class/","path-file"=>"/page/class/index.php")
 	);
 	$_SESSION['Title'] = "Company Name";
-	
 	$_SESSION['Error'] = array("404"=>array("path-file"=>NULL,"path-ui"=>NULL));
+	
 	if(isset($_REQUEST['pg']) && $_REQUEST['pg'] != "" && $_REQUEST['pg'] != NULL){	
 		$found = false; 
 		foreach($_SESSION['Pages'] as $page){ 
@@ -33,18 +34,16 @@
         <link rel="icon" href="/img/favicon.ico">
         <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
         <?php
-			//Title & Meta-Description 
+		//Title & Meta-Description 
 			echo "<title>".$_SESSION['Title']." - ".$_SESSION['Page']['meta-title']."</title><meta name=\"description\" content=\"".$_SESSION['Page']['meta-description']."\">";
-			//Concatenate CSS Files
+		//Concatenate CSS Files
 			$css = file_get_contents("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
 			$css .= file_get_contents("css/main.css");
-			echo "<style>".$css."</style>\n\n";
-			//Load JS Libs
-			$headjs ="<!--Start Head Loader-->
-        	<script type=\"text/javascript\">\n";
-			$headjs .= file_get_contents("script/_js/head.min.js")."\n";
-        	$headjs .= "</script>\n<script> head.load(\"https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js\",\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\",\"https://www.google-analytics.com/analytics.js\",\"/script/_js/lib.js\"); </script>
-       		<!--End Head Loader-->";
+			echo "<style>".$css."</style>";
+		//Load JS Libs
+			$headjs ="<!--Start Head Loader--><script type=\"text/javascript\">";
+			$headjs .= file_get_contents("script/_js/head.min.js");
+        	$headjs .= "</script><script> head.load(\"https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js\",\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\",\"https://www.google-analytics.com/analytics.js\",\"/script/_js/lib.js\"); </script><!--End Head Loader-->";
 			echo $headjs;
 		?>
     </head>
@@ -80,18 +79,17 @@
         </div>
         <!-- End Modal -->
         <img class="loader" id="loader-main" src="/img/loader-main.gif" alt="... Loading ..."/>
-        <a class="navl hidden" href="/pg/sitemap" target="#content">Sitemap</a>
         <script>
 			head.ready(function() {
 				$(document).ready(function(){
 					var to = 500; var page = "";
-				/* Initialize Page Status / Preload img/* */
+				/* Initialize Page Status / Preload Page Images */
 					$.ajax({
 						url: '/ajax.php',cache:false,method:'POST',async:true,dataType:"json",data:"ari=1",
 						complete: function(xhr){ 
-							var data = JSON.parse(xhr.responseText); page = data[0]; var imgs = data[1];
+							var data = JSON.parse(xhr.responseText); page = data[0];
 							if(page['path-file'] == "/page/index.php"){ $("#menu").hide(); }else{ $("#menu").show(); }
-							preload(imgs,function(){setTimeout(function(){$("#loader-main").fadeOut(to,function(){$("#page").fadeIn(to);$(this).remove();});},to);});
+							setTimeout(function(){$("#loader-main").fadeOut(to,function(){$("#page").fadeIn(to);$(this).remove();});},to);
 						}
 					}).done(function(){
 					/* Browser Nav Override */
@@ -118,6 +116,7 @@
 						});
 					/* Mobile Menu - Toggle Page Scroll Lock */
 						$(".navbar-toggle").click(function(){ if($("body").hasClass("noscroll")){ $("body").removeClass("noscroll"); }else{ $("body").addClass("noscroll"); } });
+					/* Label Free Form Elements */
 						$("input[type=text],textarea").inputDefault();
 					/* Google Analytics */
 						//gaTracker("GA Tracking ID");

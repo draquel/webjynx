@@ -4,7 +4,7 @@
 	if(isset($_REQUEST['ari']) || $_REQUEST['ari'] != NULL || $_REQUEST['ari'] != ""){
 		switch($_REQUEST['ari']){
 			case 1: //Site Initial Call
-				$root = __DIR__;
+/*				$root = __DIR__;
 				$dir = "/img";
 				$img = array();
 				if(isset($_REQUEST['a']) && $_REQUEST['a'] === 1){ 
@@ -16,14 +16,14 @@
 				}else{
 					$img = array_merge($img,parseImgs($root."/index.php"));
 					$img = array_merge($img,parseImgs($root.$_SESSION['Page']['path-file']));
-				}
+				}*/
 				$data = array();
 				$data[0] = $_SESSION['Page'];
-				$data[1] = $img;
+				/*$data[1] = $img;*/
 				header("Content-Type: application/json");
 				echo json_encode($data);
 			break;
-			case 2: //Page Requests
+			case 2: //Page Requests - Files
 				$page = $_REQUEST['p'];
 				$exist_i = false;
 				$exist_f = false;
