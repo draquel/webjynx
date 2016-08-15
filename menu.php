@@ -8,6 +8,7 @@
 		  <li><a href=\"/pg/about/other\" target=\"#content\">Other</a></li>
 		</ul>
 	  </li>
+	   <li><a href=\"/pg/class/\" target=\"#content\">Class Testing</a></li>
 	  <li><a href=\"/pg/sitemap\" target=\"#content\">Sitemap</a></li>
 	</ul>";
 	
