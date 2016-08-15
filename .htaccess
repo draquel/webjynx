@@ -1,7 +1,13 @@
 RewriteEngine On
 
+# DBObj Blog Rules
+RewriteRule ^blog/a/(.*) index.php?pg=blog/&a=$1 [L]
+RewriteRule ^blog/c/(.*) index.php?pg=blog/&c=$1 [L]
+RewriteRule ^blog/ index.php?pg=blog/ [L]
+
 RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} !-f
 RewriteRule ^(.+)$ index.php?pg=$1
+
 
 Options -MultiViews
 

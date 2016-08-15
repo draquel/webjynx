@@ -10,7 +10,8 @@
 		array("id"=>3,"meta-title"=>"About","meta-description"=>"We like stuff and want to work together on your things!","path-ui"=>"/about/","path-file"=>"/page/about/index.php"),
 		array("id"=>4,"meta-title"=>"Other","meta-description"=>"Some more stuff we think is neat.","path-ui"=>"/about/other","path-file"=>"/page/about/other.php"),
 		array("id"=>5,"meta-title"=>"Sitemap","meta-description"=>"A sitemap, just incase you get lost.","path-ui"=>"/sitemap","path-file"=>"/page/sitemap.php"),
-		array("id"=>6,"meta-title"=>"Class Testing","meta-description"=>"Class Unit Testing","path-ui"=>"/class/","path-file"=>"/page/class/index.php")
+		array("id"=>6,"meta-title"=>"Class Testing","meta-description"=>"Class Unit Testing","path-ui"=>"/class/","path-file"=>"/page/class/index.php"),
+		array("id"=>7,"meta-title"=>"Blog","meta-description"=>"Our Blog","path-ui"=>"/blog/","path-file"=>"/page/blog.php")
 	);
 	$_SESSION['Title'] = "Company Name";
 	$_SESSION['Error'] = array("404"=>array("path-file"=>NULL,"path-ui"=>NULL),"401"=>NULL);
