@@ -3,13 +3,13 @@
 	$menu = "<ul class=\"nav navbar-nav\">
 	  <!--HOME-->
 	  <li class=\"dropdown\" data-toggle=\"collapse\" data-target=\".navbar-ex1-collapse\">
-		<a class=\"dropdown-toggle\" data-toggle=\"dropdown\" href=\"/pg/about/\" target=\"#content\">About<span class=\"caret\"></span></a>
+		<a class=\"dropdown-toggle\" data-toggle=\"dropdown\" href=\"/about/\" target=\"#content\">About<span class=\"caret\"></span></a>
 		<ul class=\"dropdown-menu\">
-		  <li><a href=\"/pg/about/other\" target=\"#content\">Other</a></li>
+		  <li><a href=\"/about/other\" target=\"#content\">Other</a></li>
 		</ul>
 	  </li>
-	   <li><a href=\"/pg/class/\" target=\"#content\">Class Testing</a></li>
-	  <li><a href=\"/pg/sitemap\" target=\"#content\">Sitemap</a></li>
+	   <li><a href=\"/class/\" target=\"#content\">Class Testing</a></li>
+	  <li><a href=\"/sitemap\" target=\"#content\">Sitemap</a></li>
 	</ul>";
 	
 	$menu_nd = str_replace("\"dropdown-toggle\"","\"\"",$menu);

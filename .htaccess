@@ -1,7 +1,7 @@
 RewriteEngine On
 
-RewriteRule ^pg/blog(.+)$ index.php?pg=blog&a=$1
-RewriteRule ^pg/(.+)$ index.php?pg=$1
+RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} !-f
+RewriteRule ^(.+)$ index.php?pg=$1
 
 Options -MultiViews
 
