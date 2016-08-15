@@ -23,7 +23,7 @@
 				ob_start();
 				include ltrim($_SESSION['Page']['path-file'],"/");
 				$html = ob_get_clean();
-				$img = array_merge($img,parseImgs($root.$_SESSION['Page']['path-file']));
+				$img = parseImgs($root.$_SESSION['Page']['path-file']);
 				
 				$data = array($html,$img,$_SESSION['Page']);
 				header("Content-Type: application/json");
@@ -34,4 +34,4 @@
 			break;
 		}
 	}else{ echo "BAD REQUEST"; }
-?>
+?>	
