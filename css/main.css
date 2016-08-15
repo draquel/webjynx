@@ -46,7 +46,7 @@
 	#menu a{ padding:50px 20px 50px 20px; }
 	#head{ padding:0 !important; }
 	
-	#contentWrapper{ min-height:700px; }
+	#contentWrapper{ min-height:600px; }
 	#content{ width:100%;margin:0 0 50px 0; }
 	#content > .container-fluid{ padding:0 !important; }
 	
