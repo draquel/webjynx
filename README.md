@@ -16,7 +16,7 @@
 * bootstrap - http://getbootstrap.com/
 * Google Analytics - https://www.google.com/analytics/
 
-#### PHP
+#### PHP 5/7
 * php-xml (dom extension)
 
 ## Documentation

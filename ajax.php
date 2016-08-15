@@ -4,22 +4,8 @@
 	if(isset($_REQUEST['ari']) || $_REQUEST['ari'] != NULL || $_REQUEST['ari'] != ""){
 		switch($_REQUEST['ari']){
 			case 1: //Site Initial Call
-/*				$root = __DIR__;
-				$dir = "/img";
-				$img = array();
-				if(isset($_REQUEST['a']) && $_REQUEST['a'] === 1){ 
-					$files = glob($root.$dir."/*.{jpeg,jpg,gif,png,svg}", GLOB_BRACE);
-					$s = "";
-					for($i = 0;$i < count($files); $i++){
-						$img[] = str_replace($root,"",$files[$i]);
-					}
-				}else{
-					$img = array_merge($img,parseImgs($root."/index.php"));
-					$img = array_merge($img,parseImgs($root.$_SESSION['Page']['path-file']));
-				}*/
 				$data = array();
 				$data[0] = $_SESSION['Page'];
-				/*$data[1] = $img;*/
 				header("Content-Type: application/json");
 				echo json_encode($data);
 			break;
