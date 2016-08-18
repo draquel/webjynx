@@ -7,6 +7,15 @@
 	$_SESSION['db']->init("localhost","root","Ed17i0n!");
 	$_SESSION['db']->connect("DBObj");
 	
+	$_SESSION['Users'] = new DBOList();
+	$sql = "SELECT * FROM Users";
+	$res = mysqli_query($_SESSION['db']->con("DBObj"),$sql);
+	while($row = mysqli_fetch_array($res)){
+		$u = new User(NULL);
+		$u->initMysql($row);
+		$_SESSION['Users']->insertLast($u);
+	}
+	
 	//Initialize Site Data
 	$_SESSION['Pages'] = array(
 		array("id"=>0,"meta-title"=>"HTTP 404 - Page Not Found","meta-description"=>"HTTP 404 - Page Not Found","path-ui"=>"/404","path-file"=>"/page/404.php"),
@@ -94,9 +103,8 @@
 				$(document).ready(function(){
 					var to = 500; var page = "";
 				/* Initialize Page Status / Preload Page Images */
-					alert("<?php echo $_SESSION['Page']['path-file']; ?>");
 					$.ajax({
-						url: '/ajax.php',cache:false,method:'POST',async:true,dataType:"json",data:"ari=1",
+						url: '/ajax.php',cache:false,method:'POST',async:true,dataType:"json",data:"ari=1&p=<?php echo $_SESSION['Page']['id']; /* ... Hacky ... */ ?>",
 						complete: function(xhr){ 
 							var data = JSON.parse(xhr.responseText); page = data[0];
 							if(page['path-file'] == "/page/index.php"){ $("#menu").hide(); }else{ $("#menu").show(); }

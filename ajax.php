@@ -6,6 +6,8 @@
 		switch($_REQUEST['ari']){
 			case 1: //Site Initial Call
 				$data = array();
+				
+				if(isset($_REQUEST['p'])){ for($i = 0; $i < count($_SESSION['Pages']); $i++){ if($_REQUEST['p'] == $_SESSION['Pages'][$i]['id']){ $_SESSION['Page'] = $_SESSION['Pages'][$i]; break; } } }
 				$data[0] = $_SESSION['Page'];
 				header("Content-Type: application/json");
 				echo json_encode($data);
