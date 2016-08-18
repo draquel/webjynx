@@ -1,8 +1,7 @@
 <?php
-	session_start();
 	require_once("script/_php/lib.php");
-	require_once("script/_php/DBObj/dbobj.php");
-	
+	include("script/_php/DBObj/dbobj.php");
+	session_start();
 	//Initialize Database Connection
 	$_SESSION['db'] = new Sql();
 	$_SESSION['db']->init("localhost","root","Ed17i0n!");
@@ -34,6 +33,7 @@
 		}
 		if(!$found){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = "/".$_REQUEST['pg']; }
 	}else{ $_SESSION['Page'] = $_SESSION['Pages'][2]; }
+	session_write_close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -94,6 +94,7 @@
 				$(document).ready(function(){
 					var to = 500; var page = "";
 				/* Initialize Page Status / Preload Page Images */
+					alert("<?php echo $_SESSION['Page']['path-file']; ?>");
 					$.ajax({
 						url: '/ajax.php',cache:false,method:'POST',async:true,dataType:"json",data:"ari=1",
 						complete: function(xhr){ 

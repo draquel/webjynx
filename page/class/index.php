@@ -1,8 +1,11 @@
 <?php 
 	//Initialize Database Connection
-	$_SESSION['db'] = new Sql();
+	/*$_SESSION['db'] = new Sql();
 	$_SESSION['db']->init("localhost","root","Ed17i0n!");
-	$_SESSION['db']->connect("DBObj");	
+	$_SESSION['db']->connect("DBObj");	*/
+	if(!$_SESSION['db']->connect("DBObj")){
+		echo "CONNECTION FAILURE <br >";
+	}
 ?>
 <!-- Page Specific Styles -->
 	<style>	 </style>

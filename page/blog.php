@@ -1,9 +1,11 @@
 <?php 
 	//Initialize Database Connection
-	$_SESSION['db'] = new Sql();
+	/*$_SESSION['db'] = new Sql();
 	$_SESSION['db']->init("localhost","root","Ed17i0n!");
-	$_SESSION['db']->connect("DBObj");	
-	
+	$_SESSION['db']->connect("DBObj");	*/
+	if(!$_SESSION['db']->connect("DBObj")){
+		echo "CONNECTION FAILURE <br >";
+	}
 	$_SESSION['Blog'] = new Blog(1);
 	$_SESSION['Blog']->dbRead($_SESSION['db']->con("DBObj"));
 	$blog = $_SESSION['Blog']->toArray();
@@ -40,7 +42,7 @@
 						$a = $p->toArray();
 						$html = "<div class=\"blog-post\">
 							<h2 class=\"blog-post-title\">".$a['Title']."</h2>
-							<p class=\"blog-post-meta\">".$a['Created']." by <a href=\"#\">".$a['Author']."</a></p>
+							<p class=\"blog-post-meta\">".date("F j, Y, g:i a",$a['Created'])." by <a href=\"#\">".$a['Author']."</a></p>
 							".$a['HTML']."
 						</div>";
 						 echo $html;
@@ -63,18 +65,12 @@
                   <div class="sidebar-module">
                     <h4>Archives</h4>
                     <ol class="list-unstyled">
-                      <li><a href="#">March 2014</a></li>
-                      <li><a href="#">February 2014</a></li>
-                      <li><a href="#">January 2014</a></li>
-                      <li><a href="#">December 2013</a></li>
-                      <li><a href="#">November 2013</a></li>
-                      <li><a href="#">October 2013</a></li>
-                      <li><a href="#">September 2013</a></li>
-                      <li><a href="#">August 2013</a></li>
-                      <li><a href="#">July 2013</a></li>
-                      <li><a href="#">June 2013</a></li>
-                      <li><a href="#">May 2013</a></li>
-                      <li><a href="#">April 2013</a></li>
+					<?php
+                        $archive = $_SESSION['Blog']->getPosts()->getArchive();
+                        foreach($archive as $k => $v){
+                            echo "<li><a href=\"#\">".$k."</a></li>";
+                        }
+                    ?>
                     </ol>
                   </div>
                   <div class="sidebar-module">
@@ -89,10 +85,6 @@
 							$cat = $cat->getNext();
 						}
 					?>
-                      <!--<li><a href="#">Category 1</a></li>
-                      <li><a href="#">Category 2</a></li>
-                      <li><a href="#">Category 3</a></li>
-                      <li><a href="#">Category 4</a></li>-->
                     </ol>
                   </div>
                   <div class="sidebar-module">
