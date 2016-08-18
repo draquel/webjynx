@@ -1,23 +1,17 @@
 <?php 
-	//Initialize Database Connection
-	/*$_SESSION['db'] = new Sql();
-	$_SESSION['db']->init("localhost","root","Ed17i0n!");
-	$_SESSION['db']->connect("DBObj");	*/
-	if(!$_SESSION['db']->connect("DBObj")){
-		echo "CONNECTION FAILURE <br >";
-	}
+	if(!$_SESSION['db']->connect("DBObj")){	echo "CONNECTION FAILURE <br >"; } 
+
 	$_SESSION['Blog'] = new Blog(1);
 	$_SESSION['Blog']->dbRead($_SESSION['db']->con("DBObj"));
 	$blog = $_SESSION['Blog']->toArray();
 	$_SESSION['Blog']->load($_SESSION['db']->con("DBObj"));
 	
+	$blog_css = file_get_contents("css/blog.css");
+	
 	/*if(isset($_REQUEST['a'])){ echo "A - ".$_REQUEST['a']; }
 	if(isset($_REQUEST['c'])){ echo "C - ".$_REQUEST['c']; }
 	if(isset($_REQUEST['p'])){ echo "P - ".$_REQUEST['p']; }*/
-	
-	$blog_css = file_get_contents("css/blog.css");
 ?>
-
 <!-- Page Specific Styles -->
 	<style>	#pg > div:nth-child(1){ background-image:url('/img/stock_head1.svg'); } <?php echo $blog_css; ?> </style>
 <!-- Preload CSS Images -->    
@@ -42,10 +36,19 @@
 						$a = $p->toArray();
 						$html = "<div class=\"blog-post\">
 							<h2 class=\"blog-post-title\">".$a['Title']."</h2>
-							<p class=\"blog-post-meta\">".date("F j, Y, g:i a",$a['Created'])." by <a href=\"#\">".$a['Author']."</a></p>
+							<p class=\"blog-post-meta\">".date("F j, Y, g:i a",$a['Created'])." by <a href=\"#\">";
+						if($_SESSION['Users'] != NULL && $_SESSION['Users']->size() > 0){ 
+							$user = $_SESSION['Users']->getFirstNode();
+							while($user != NULL){ 
+								$u = $user->readNode()->toArray();
+								if($u['ID'] == $a['Author']){ $html .= $u['First']." ".$u['Last']; break; } 
+								$user = $user->getNext();
+							}
+						}else{ $html .= $a['Author']; }
+						$html .= "</a></p>
 							".$a['HTML']."
 						</div>";
-						 echo $html;
+						echo $html;
 						$post = $post->getNext();
 					}
 				  ?>
@@ -55,8 +58,7 @@
                       <li><a href="#">Next</a></li>
                     </ul>
                   </nav>
-                </div><!-- /.blog-main -->
-        
+                </div>
                 <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
                   <div class="sidebar-module sidebar-module-inset">
                     <h4>About</h4>
@@ -95,7 +97,7 @@
                       <li><a href="#">Facebook</a></li>
                     </ol>
                   </div>
-                </div><!-- /.blog-sidebar -->
+                </div>
             </div>
         </div>
     </div>
