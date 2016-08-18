@@ -1,6 +1,12 @@
 <?php
 	session_start();
 	require_once("script/_php/lib.php");
+	require_once("script/_php/DBObj/dbobj.php");
+	
+	//Initialize Database Connection
+	$_SESSION['db'] = new Sql();
+	$_SESSION['db']->init("localhost","root","Ed17i0n!");
+	$_SESSION['db']->connect("DBObj");
 	
 	//Initialize Site Data
 	$_SESSION['Pages'] = array(
