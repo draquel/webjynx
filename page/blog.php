@@ -1,8 +1,11 @@
 <?php
 	$blog_css = file_get_contents("css/blog.css");
 	
-	if(isset($_REQUEST['a'])){ echo "A - ".$_REQUEST['a']; }
+	$_SESSION['Blog'] = new Blog();
+	
+	/*if(isset($_REQUEST['a'])){ echo "A - ".$_REQUEST['a']; }
 	if(isset($_REQUEST['c'])){ echo "C - ".$_REQUEST['c']; }
+	if(isset($_REQUEST['p'])){ echo "P - ".$_REQUEST['p']; }*/
 ?>
 
 <!-- Page Specific Styles -->
@@ -129,15 +132,6 @@
                     </ol>
                   </div>
                 </div><!-- /.blog-sidebar -->
-        
-        
-<!--                <footer class="blog-footer">
-              <p>Blog template built for <a href="http://getbootstrap.com">Bootstrap</a> by <a href="https://twitter.com/mdo">@mdo</a>.</p>
-              <p>
-                <a href="#">Back to top</a>
-              </p>
-            </footer>-->
-
             </div>
         </div>
     </div>
