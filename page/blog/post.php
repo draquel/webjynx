@@ -8,7 +8,7 @@
 		$post = $post->getNext();
 	}
 	$html = "<div class=\"blog-post\">
-		<h2 class=\"blog-post-title\">".$a['Title']."</h2>
+		<h1 class=\"blog-post-title\">".$a['Title']."</h1>
 		<p class=\"blog-post-meta\">".date("F j, Y, g:i a",$a['Created']);
 	if($_SESSION['Users'] != NULL && $_SESSION['Users']->size() > 0){ 
 		$user = $_SESSION['Users']->getFirstNode();

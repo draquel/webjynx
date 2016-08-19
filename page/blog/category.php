@@ -1,7 +1,8 @@
 <?php
-	if(isset($_REQUEST['cp'])){ $pageNum = $_REQUEST['cp']; }else{ $pageNum = 1; }
+	if(isset($_REQUEST['bcp'])){ $pageNum = $_REQUEST['bcp']; }else{ $pageNum = 1; }
 	$posts = $_SESSION['Blog']->getCategoryPage($pageNum,$_REQUEST['c']);
 	$post = $posts->getFirstNode();
+	echo "<h2>Category: ".$_REQUEST['c']."</h2>";
 	while($post != NULL){
 		$p = $post->readNode();
 		$a = $p->toArray();

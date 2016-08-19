@@ -3,9 +3,9 @@
 	elseif(!isset($_SESSION['Blog'])){
 		$_SESSION['Blog'] = new Blog(1);
 		$_SESSION['Blog']->dbRead($_SESSION['db']->con("DBObj"));
-		$blog = $_SESSION['Blog']->toArray();
 		$_SESSION['Blog']->load($_SESSION['db']->con("DBObj"));
 	}
+	$blog = $_SESSION['Blog']->toArray();
 	$blog_css = file_get_contents("css/blog.css");
 ?>
 <!-- Page Specific Styles -->
@@ -25,8 +25,7 @@
                 </div>
                 <div class="col-sm-8 blog-main">
                   <?php 
-				  		if(isset($_REQUEST['bpg'])){ include("page.php"); }
-						elseif(isset($_REQUEST['p'])){ include("post.php"); }
+						if(isset($_REQUEST['p'])){ include("post.php"); }
 						elseif(isset($_REQUEST['c'])){ include("category.php"); }
 						elseif(isset($_REQUEST['u'])){ include("author.php"); }
 						elseif(isset($_REQUEST['a'])){ include("archive.php"); }
@@ -54,7 +53,7 @@
 						$cat = $_SESSION['Blog']->getCategories()->getFirstNode();
 						while($cat != NULL){
 							$c = $cat->readNode()->toArray();
-							echo "<li><a href=\"".$c['Code']."\">".$c['Definition']."</a></li>";
+							echo "<li><a class=\"bnavl\" href=\"/blog/c/".$c['Definition']."\" target=\"div.blog-main\">".$c['Definition']."</a></li>";
 							$cat = $cat->getNext();
 						}
 					?>
@@ -72,3 +71,9 @@
             </div>
         </div>
     </div>
+    <?php
+		unset($_REQUEST['p']);
+		unset($_REQUEST['c']);
+		unset($_REQUEST['u']);
+		unset($_REQUEST['a']);
+	?>

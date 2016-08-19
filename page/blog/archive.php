@@ -2,6 +2,7 @@
 	if(isset($_REQUEST['bap'])){ $pageNum = $_REQUEST['bap']; }else{ $pageNum = 1; }
 	$posts = $_SESSION['Blog']->getArchivePage($pageNum,$_REQUEST['a']);
 	$post = $posts->getFirstNode();
+	echo "<h2>Archive: ".date("F Y",strtotime($_REQUEST['a']))."</h2>";
 	while($post != NULL){
 		$p = $post->readNode();
 		$a = $p->toArray();
