@@ -7,13 +7,13 @@
 		switch($_REQUEST['ari']){
 			case 1: //Site Initial Call
 				$data = array();
-				if(isset($_REQUEST['p'])){ for($i = 0; $i < count($_SESSION['Pages']); $i++){ if($_REQUEST['p'] == $_SESSION['Pages'][$i]['id']){ $_SESSION['Page'] = $_SESSION['Pages'][$i]; break; } } }
+				if(isset($_REQUEST['pid'])){ for($i = 0; $i < count($_SESSION['Pages']); $i++){ if($_REQUEST['pid'] == $_SESSION['Pages'][$i]['id']){ $_SESSION['Page'] = $_SESSION['Pages'][$i]; break; } } }
 				$data[0] = $_SESSION['Page'];
 				header("Content-Type: application/json");
 				echo json_encode($data);
 			break;
 			case 2: //Page Requests - Files
-				$page = $_REQUEST['p'];
+				$page = $_REQUEST['pp'];
 				$exist_i = false;
 				$exist_f = false;
 				$root = __DIR__;
@@ -30,6 +30,29 @@
 				$img = parseImgs($root.$_SESSION['Page']['path-file']);
 				libxml_clear_errors();
 				$data = array($html,$img,$_SESSION['Page']);
+				header("Content-Type: application/json");
+				echo json_encode($data);
+			break;
+			case 3: //Blog Page Requests - Files
+				$page = ltrim($_REQUEST['pp'],"/");
+				$path = "/blog/";
+				$p = explode("/",$page);
+				
+				if(gettype($p[1]) == 'integer'){ /* Blog Page*/ $path .= "page.php"; $_REQUEST['bpg'] = $p[2];}
+				else{
+					if($p[1] == "a"){ /*Archive*/ $path .= "archive.php"; $_REQUEST['a'] = $p[2]; if(isset($p[3])){ $_REQUEST['bap'] = $p[3]; } }
+					elseif($p[1] == "c"){ /*Category*/ $path .= "category.php"; $_REQUEST['c'] = $p[2]; if(isset($p[3])){ $_REQUEST['bcp'] = $p[3]; } }
+					elseif($p[1] == "p"){ /*Post*/ $path .= "post.php"; $_REQUEST['p'] = $p[2]; }
+					elseif($p[1] == "u"){ /*Author*/ }
+				}
+				
+				ob_start();
+				include __DIR__."/page".$path;
+				$html = ob_get_clean();
+				libxml_use_internal_errors(true);
+				$img = parseImgs(__DIR__."/page".$path);
+				libxml_clear_errors();
+				$data = array($html,$img,array("id"=>-1,"meta-title"=>"","meta-description"=>"","path-ui"=>"/".$page,"path-file"=>"/page".$path));
 				header("Content-Type: application/json");
 				echo json_encode($data);
 			break;
