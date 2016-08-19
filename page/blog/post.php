@@ -1,5 +1,5 @@
 <?php
-	$aid = $_REQUEST['a'];
+	$aid = $_REQUEST['p'];
 	$post = $_SESSION['Blog']->getPosts()->getFirstNode();
 	while($post != NULL){
 		$p = $post->readNode();
