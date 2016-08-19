@@ -9,7 +9,6 @@
 	
 	$_SESSION['Blog'] = new Blog(1);
 	$_SESSION['Blog']->dbRead($_SESSION['db']->con("DBObj"));
-	$blog = $_SESSION['Blog']->toArray();
 	$_SESSION['Blog']->load($_SESSION['db']->con("DBObj"));
 		
 	$_SESSION['Users'] = new DBOList();
@@ -29,8 +28,7 @@
 		array("id"=>4,"meta-title"=>"Other","meta-description"=>"Some more stuff we think is neat.","path-ui"=>"/about/other","path-file"=>"/page/about/other.php"),
 		array("id"=>5,"meta-title"=>"Sitemap","meta-description"=>"A sitemap, just incase you get lost.","path-ui"=>"/sitemap","path-file"=>"/page/sitemap.php"),
 		array("id"=>6,"meta-title"=>"Class Testing","meta-description"=>"Class Unit Testing","path-ui"=>"/class/","path-file"=>"/page/class/index.php"),
-		array("id"=>7,"meta-title"=>"Blog","meta-description"=>"Our Blog","path-ui"=>"/blog/","path-file"=>"/page/blog/index.php"),
-		array("id"=>8,"meta-title"=>"Blog","meta-description"=>"Our Blog","path-ui"=>"/blog/a/","path-file"=>"/page/blog/post.php")
+		array("id"=>7,"meta-title"=>"Blog","meta-description"=>"Our Blog","path-ui"=>"/blog/","path-file"=>"/page/blog/index.php")
 	);
 	$_SESSION['Title'] = "Company Name";
 	$_SESSION['Error'] = array("404"=>array("path-file"=>NULL,"path-ui"=>NULL),"401"=>NULL);
@@ -109,7 +107,7 @@
 					var to = 500; var page = "";
 				/* Initialize Page Status / Preload Page Images */
 					$.ajax({
-						url: '/ajax.php',cache:false,method:'POST',async:true,dataType:"json",data:"ari=1&p=<?php echo $_SESSION['Page']['id']; /* ... Hacky ... */ ?>",
+						url: '/ajax.php',cache:false,method:'POST',async:true,dataType:"json",data:"ari=1&pid=<?php echo $_SESSION['Page']['id']; /* ... Hacky ... */ ?>",
 						complete: function(xhr){ 
 							var data = JSON.parse(xhr.responseText); page = data[0];
 							if(page['path-file'] == "/page/index.php"){ $("#menu").hide(); }else{ $("#menu").show(); }
@@ -134,9 +132,13 @@
 					/* Page Navigation */
 						$("#page").on("click","ul.nav a, .navbar-brand, .navl", function(event){
 							event.preventDefault();
-							$(this).setContent("#menu");
+							$(this).setContent(2,"#menu");
 							if($(this).siblings().not(this).length === 0){ $(".navbar-collapse").collapse('hide'); }
 							if($("body").hasClass("noscroll")){ $("body").removeClass("noscroll"); }
+						});
+						$("#page").on("click",".bnavl", function(event){
+							event.preventDefault();
+							$(this).setContent(3,"#menu");
 						});
 					/* Mobile Menu - Toggle Page Scroll Lock */
 						$(".navbar-toggle").click(function(){ if($("body").hasClass("noscroll")){ $("body").removeClass("noscroll"); }else{ $("body").addClass("noscroll"); } });
