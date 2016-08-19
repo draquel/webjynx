@@ -7,9 +7,13 @@
 	$_SESSION['db']->init("localhost","root","Ed17i0n!");
 	$_SESSION['db']->connect("DBObj");
 	
+	$_SESSION['Blog'] = new Blog(1);
+	$_SESSION['Blog']->dbRead($_SESSION['db']->con("DBObj"));
+	$blog = $_SESSION['Blog']->toArray();
+	$_SESSION['Blog']->load($_SESSION['db']->con("DBObj"));
+		
 	$_SESSION['Users'] = new DBOList();
-	$sql = "SELECT * FROM Users";
-	$res = mysqli_query($_SESSION['db']->con("DBObj"),$sql);
+	$res = mysqli_query($_SESSION['db']->con("DBObj"),"SELECT * FROM Users");
 	while($row = mysqli_fetch_array($res)){
 		$u = new User(NULL);
 		$u->initMysql($row);
@@ -25,7 +29,8 @@
 		array("id"=>4,"meta-title"=>"Other","meta-description"=>"Some more stuff we think is neat.","path-ui"=>"/about/other","path-file"=>"/page/about/other.php"),
 		array("id"=>5,"meta-title"=>"Sitemap","meta-description"=>"A sitemap, just incase you get lost.","path-ui"=>"/sitemap","path-file"=>"/page/sitemap.php"),
 		array("id"=>6,"meta-title"=>"Class Testing","meta-description"=>"Class Unit Testing","path-ui"=>"/class/","path-file"=>"/page/class/index.php"),
-		array("id"=>7,"meta-title"=>"Blog","meta-description"=>"Our Blog","path-ui"=>"/blog/","path-file"=>"/page/blog.php")
+		array("id"=>7,"meta-title"=>"Blog","meta-description"=>"Our Blog","path-ui"=>"/blog/","path-file"=>"/page/blog/index.php"),
+		array("id"=>8,"meta-title"=>"Blog","meta-description"=>"Our Blog","path-ui"=>"/blog/a/","path-file"=>"/page/blog/post.php")
 	);
 	$_SESSION['Title'] = "Company Name";
 	$_SESSION['Error'] = array("404"=>array("path-file"=>NULL,"path-ui"=>NULL),"401"=>NULL);
