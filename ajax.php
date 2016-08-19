@@ -1,12 +1,12 @@
 <?php
-	require_once("script/_php/lib.php"); include("script/_php/DBObj/dbobj.php");
+	require_once("script/_php/lib.php");
+	include("script/_php/DBObj/dbobj.php");
 	session_start();
 	
 	if(isset($_REQUEST['ari']) || $_REQUEST['ari'] != NULL || $_REQUEST['ari'] != ""){
 		switch($_REQUEST['ari']){
 			case 1: //Site Initial Call
 				$data = array();
-				
 				if(isset($_REQUEST['p'])){ for($i = 0; $i < count($_SESSION['Pages']); $i++){ if($_REQUEST['p'] == $_SESSION['Pages'][$i]['id']){ $_SESSION['Page'] = $_SESSION['Pages'][$i]; break; } } }
 				$data[0] = $_SESSION['Page'];
 				header("Content-Type: application/json");
@@ -26,16 +26,17 @@
 				ob_start();
 				include ltrim($_SESSION['Page']['path-file'],"/");
 				$html = ob_get_clean();
+				libxml_use_internal_errors(true);
 				$img = parseImgs($root.$_SESSION['Page']['path-file']);
-				
+				libxml_clear_errors();
 				$data = array($html,$img,$_SESSION['Page']);
 				header("Content-Type: application/json");
 				echo json_encode($data);
 			break;
 			default:
-				echo "BAD REQUEST";
+				echo "BAD ARI REQUEST";
 			break;
 		}
 		session_write_close();
-	}else{ echo "BAD REQUEST"; }
+	}else{ echo "BAD ARI REQUEST"; }
 ?>	
