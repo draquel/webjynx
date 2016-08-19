@@ -1,7 +1,7 @@
 RewriteEngine On
 
 # DBObj Blog Rules
-RewriteRule ^blog/a/(.*)/(.*) index.php?pg=blog/&c=$1&bap=$2 [L]
+RewriteRule ^blog/a/(.*)/(.*) index.php?pg=blog/&a=$1&bap=$2 [L]
 RewriteRule ^blog/a/(.*) index.php?pg=blog/&a=$1 [L]
 RewriteRule ^blog/c/(.*)/(.*) index.php?pg=blog/&c=$1&bcp=$2 [L]
 RewriteRule ^blog/c/(.*) index.php?pg=blog/&c=$1 [L]
