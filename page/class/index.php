@@ -8,7 +8,6 @@
         <div class="row">
             <div class="col-xs-10 col-xs-offset-1 col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1">
                 <h1>Class Testing</h1>
-
                 <h2>DBObj</h2>
                 <?php 
 					$dbobj = new DBObj(1,"Posts");
@@ -27,7 +26,6 @@
 					$post->dbRead($_SESSION['db']->con("DBObj"));
 					echo "<p>".var_dump($post->toArray())."</p>";
 				?>
-                
                 <h2>Person</h2>
                 <?php
 					$person = new Person(1,"Contacts");
@@ -58,7 +56,6 @@
 					$email->dbRead($_SESSION['db']->con("DBObj"));
 					echo "<p>".var_dump($email->toArray())."</p>";
 				?>
-                
                 <h2>Contact</h2>
                 <?php
 					$contact = new Contact(1,NULL);
