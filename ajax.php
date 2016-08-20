@@ -29,7 +29,6 @@
 				libxml_use_internal_errors(true);
 				$img = parseImgs($root.$_SESSION['Page']['path-file']);
 				libxml_clear_errors();
-				
 				$data = array($html,$img,$_SESSION['Page']);
 				header("Content-Type: application/json");
 				echo json_encode($data);
@@ -58,7 +57,7 @@
 				echo json_encode($data);
 			break;
 			default:
-				echo "BAD ARI REQUEST";
+				echo "BAD REQUEST";
 			break;
 		}
 		session_write_close();

@@ -53,16 +53,17 @@
                             $html .= "</p>
                                 ".$a['HTML']."
                             </div>";
+                            echo $html;
                             
                             $prev = $current->getPrev();
                             $next = $current->getNext();	
                             if($prev == NULL){  $first = true; }else{ $first = false; $pre = $prev->readNode()->toArray(); }
                             if($next == NULL){ $last = true; }else{ $last = false; $nex = $next->readNode()->toArray();  }
-                            $html .= "<nav><ul class=\"pager\">";
-                            if(!$first){ $html .= "<li><a class=\"bnavl\" href=\"/blog/p/".$pre['ID']."\" target=\"#content\">".$pre['Title']."</a></li>"; }else{ $html .= "<li></li>";}
-                            if(!$last){ $html .= "<li><a class=\"bnavl\" href=\"/blog/p/".$nex['ID']."\" target=\"#content\">".$nex['Title']."</a></li>"; }
-                            $html .= "</ul></nav>";
-                            echo $html;
+                            $s = "<nav><ul class=\"pager\">";
+                            if(!$first){ $s .= "<li><a class=\"bnavl\" href=\"/blog/p/".$pre['ID']."\" target=\"#content\">".$pre['Title']."</a></li>"; }else{ $s .= "<li></li>";}
+                            if(!$last){ $s .= "<li><a class=\"bnavl\" href=\"/blog/p/".$nex['ID']."\" target=\"#content\">".$nex['Title']."</a></li>"; }
+                            $s .= "</ul></nav>";
+                            echo $s;
                         break;
                         case "category": /* CATEGORY PAGE */
                             if(isset($_REQUEST['bcp']) && $_REQUEST['bcp'] != ""){ $pageNum = $_REQUEST['bcp']; }else{ $pageNum = 1; }
@@ -89,14 +90,15 @@
                                 ";
                                 $post = $post->getNext();
                             }
+                            echo $html;
                             
                             $prevPN = $pageNum - 1;if($prevPN < 1){ $first = true; }else{ $first = false; }
                             $nextPN = $pageNum + 1;if($_SESSION['Blog']->getCategoryPage($nextPN,$_REQUEST['c'])->size() > 0){ $last = false; }else{ $last = true; }
-                            $html .= "<nav><ul class=\"pager\">";
-                            if(!$first){ $html .= "<li><a class=\"bnavl\" href=\"/blog/c/".$_REQUEST['c']."/".$prevPN."\" target=\"#content\">Previous</a></li>"; }else{ $html .= "<li></li>";}
-                            if(!$last){ $html .= "<li><a class=\"bnavl\" href=\"/blog/c/".$_REQUEST['c']."/".$nextPN."\" target=\"#content\">Next</a></li>"; }
-                            $html .= "</ul></nav>";
-                            echo $html;
+                            $s = "<nav><ul class=\"pager\">";
+                            if(!$first){ $s .= "<li><a class=\"bnavl\" href=\"/blog/c/".$_REQUEST['c']."/".$prevPN."\" target=\"#content\">Previous</a></li>"; }else{ $s .= "<li></li>";}
+                            if(!$last){ $s .= "<li><a class=\"bnavl\" href=\"/blog/c/".$_REQUEST['c']."/".$nextPN."\" target=\"#content\">Next</a></li>"; }
+                            $s .= "</ul></nav>";
+                            echo $s;
                         break;
                         case "author": /* AUTHOR PAGE */
                         	if(isset($_REQUEST['bup']) && $_REQUEST['bup'] != ""){ $pageNum = $_REQUEST['bup']; }else{ $pageNum = 1; }
@@ -122,14 +124,15 @@
 								";
 								$post = $post->getNext();
 							}
+							echo $html;
 							
 							$prevPN = $pageNum - 1;if($prevPN < 1){ $first = true; }else{ $first = false; }
 							$nextPN = $pageNum + 1;if($_SESSION['Blog']->getAuthorPage($nextPN,$_REQUEST['u'])->size() > 0){ $last = false; }else{ $last = true; }
-							$html .= "<nav><ul class=\"pager\">";
-							if(!$first){ $html .= "<li><a class=\"bnavl\" href=\"/blog/u/".$_REQUEST['u']."/".$prevPN."\" target=\"#content\">Previous</a></li>"; }else{ $html .= "<li></li>";}
-							if(!$last){ $html .= "<li><a class=\"bnavl\" href=\"/blog/u/".$_REQUEST['u']."/".$nextPN."\" target=\"#content\">Next</a></li>"; }
-							$html .= "</ul></nav>";
-							echo $html;
+							$s = "<nav><ul class=\"pager\">";
+							if(!$first){ $s .= "<li><a class=\"bnavl\" href=\"/blog/u/".$_REQUEST['u']."/".$prevPN."\" target=\"#content\">Previous</a></li>"; }else{ $s .= "<li></li>";}
+							if(!$last){ $s .= "<li><a class=\"bnavl\" href=\"/blog/u/".$_REQUEST['u']."/".$nextPN."\" target=\"#content\">Next</a></li>"; }
+							$s .= "</ul></nav>";
+							echo $s;
                         break;
                         case "archive": /* ARCHIVE PAGE */
                             if(isset($_REQUEST['bap']) && $_REQUEST['bap'] != ""){ $pageNum = $_REQUEST['bap']; }else{ $pageNum = 1; }
@@ -156,6 +159,7 @@
                                 ";
                                 $post = $post->getNext();
                             }
+                            echo $html;
                             
                             $prevPN = $pageNum - 1;if($prevPN < 1){ $first = true; }else{ $first = false; }
                             $nextPN = $pageNum + 1;if($_SESSION['Blog']->getArchivePage($nextPN,$_REQUEST['a'])->size() > 0){ $last = false; }else{ $last = true; }
@@ -189,14 +193,15 @@
                                 ";
                                 $post = $post->getNext();
                             }
+                            echo $html;
                             
                             $prevPN = $pageNum - 1;if($prevPN < 1){ $first = true; }else{ $first = false; }
                             $nextPN = $pageNum + 1;if($_SESSION['Blog']->getPage($nextPN)->size() > 0){ $last = false; }else{ $last = true; }
-                            $html .= "<nav><ul class=\"pager\">";
-                            if(!$first){ $html .= "<li><a class=\"bnavl\" href=\"/blog/".$prevPN."\" target=\"#content\">Previous</a></li>"; }else{ $html .= "<li></li>";}
-                            if(!$last){ echo "<li><a class=\"bnavl\" href=\"/blog/".$nextPN."\" target=\"#content\">Next</a></li>"; }
-                            $html .= "</ul></nav>";
-                            echo $html;
+                            $s = "<nav><ul class=\"pager\">";
+                            if(!$first){ $s .= "<li><a class=\"bnavl\" href=\"/blog/".$prevPN."\" target=\"#content\">Previous</a></li>"; }else{ $s .= "<li></li>";}
+                            if(!$last){ $s .= "<li><a class=\"bnavl\" href=\"/blog/".$nextPN."\" target=\"#content\">Next</a></li>"; }
+                            $s .= "</ul></nav>";
+                            echo $s;
                         break;
                     }
               ?>
