@@ -9,6 +9,7 @@
 		</ul>
 	  </li>
 	   <li><a href=\"/class/\" target=\"#content\">Class Testing</a></li>
+	   <li><a href=\"/blog/\" target=\"#content\">Blog</a></li>
 	  <li><a href=\"/sitemap\" target=\"#content\">Sitemap</a></li>
 	</ul>";
 	

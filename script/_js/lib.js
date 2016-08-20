@@ -1,5 +1,5 @@
 //Browser Navigational Overide Functions
-	jQuery.fn.setContent=function(scrollto){
+	jQuery.fn.setContent=function(ari,scrollto){
 		var target=$(this).attr("target");
 		var pg=$(this).attr("href");
 		if(target==="#"||target===""||target===null||typeof target==="undefined"){return 0;}
@@ -10,7 +10,7 @@
 			$(this).parent().addClass("active");
 			$(target).fadeOut(250,function(){
 				if(pg=="/"){$("#menu").hide();}else{$("#menu").show();}
-				$.ajax({url:'/ajax.php',method:'POST',async:true,dataType:"json",data:"ari=2&p="+pg,
+				$.ajax({url:'/ajax.php',method:'POST',async:true,dataType:"json",data:"ari="+ari+"&pp="+pg,
 					complete: function(xhr){
 						var data = JSON.parse(xhr.responseText);
 						$(target).html(data[0]);
@@ -34,7 +34,7 @@
 	 	 $("#menu li").removeClass("active").find("[href='"+page.replace(".php","").replace("/page/","/")+"']").parent().addClass("active");
 		 if(page == "/page/index.php"){ $("#menu").hide(); }else{ $("#menu").show(); }
 		 $(target).fadeOut(250,function(){ $(this).load(page,function(responseTxt){ window.history.pushState({"html":responseTxt,"url":page},""); $(this).fadeIn(250,func); }); });
-	}	
+	}
 //Session Handling Functions
 	function setSessTimeout(){
 		window.sess_left_sec = 20*60;

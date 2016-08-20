@@ -1,13 +1,21 @@
 RewriteEngine On
 
+# DBObj Blog Rules
+RewriteRule ^blog/a/(.*)/(.*) index.php?pg=blog/&a=$1&bap=$2 [L]
+RewriteRule ^blog/a/(.*) index.php?pg=blog/&a=$1 [L]
+RewriteRule ^blog/c/(.*)/(.*) index.php?pg=blog/&c=$1&bcp=$2 [L]
+RewriteRule ^blog/c/(.*) index.php?pg=blog/&c=$1 [L]
+RewriteRule ^blog/p/(.*) index.php?pg=blog/&p=$1 [L]
+RewriteRule ^blog/u/(.*) index.php?pg=blog/&u=$1 [L]
+RewriteRule ^blog/(.*) index.php?pg=blog/&bpg=$1 [L]
+RewriteRule ^blog/ index.php?pg=blog/ [L]
+
+# Webjynx Toolkit Page Rule
 RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} !-f
 RewriteRule ^(.+)$ index.php?pg=$1
 
-Options -MultiViews
 
-<IfModule mod_headers.c>
-	Header set Access-Control-Allow-Origin "http://wordpress.impactseat.com"
-</ifmodule>
+Options -MultiViews
 
 <FilesMatch "\.(jpg|jpeg|png|gif|swf|svg|css|js|otf)$">
 	<IfModule mod_headers.c>
@@ -26,14 +34,12 @@ Options -MultiViews
 
 
 <IfModule mod_expires.c>
-
     ExpiresActive on
     ExpiresDefault                                      "access plus 1 month"
 
   # CSS
 
     ExpiresByType text/css                              "access plus 1 year"
-
 
   # Data interchange
 
@@ -48,7 +54,6 @@ Options -MultiViews
     ExpiresByType application/xml                       "access plus 0 seconds"
     ExpiresByType text/xml                              "access plus 0 seconds"
 
-
   # Favicon (cannot be renamed!) and cursor images
 
     ExpiresByType image/vnd.microsoft.icon              "access plus 1 week"
@@ -58,20 +63,17 @@ Options -MultiViews
 
     ExpiresByType text/html                             "access plus 0 seconds"
 
-
   # JavaScript
 
     ExpiresByType application/javascript                "access plus 1 year"
     ExpiresByType application/x-javascript              "access plus 1 year"
     ExpiresByType text/javascript                       "access plus 1 year"
 
-
   # Manifest files
 
     ExpiresByType application/manifest+json             "access plus 1 week"
     ExpiresByType application/x-web-app-manifest+json   "access plus 0 seconds"
     ExpiresByType text/cache-manifest                   "access plus 0 seconds"
-
 
   # Media files
 
@@ -85,7 +87,6 @@ Options -MultiViews
     ExpiresByType video/mp4                             "access plus 1 month"
     ExpiresByType video/ogg                             "access plus 1 month"
     ExpiresByType video/webm                            "access plus 1 month"
-
 
   # Web fonts
 
@@ -106,7 +107,6 @@ Options -MultiViews
 
     # Web Open Font Format (WOFF) 2.0
     ExpiresByType application/font-woff2                "access plus 1 month"
-
 
   # Other
 
