@@ -25,7 +25,7 @@
 	$prevPN = $pageNum - 1;if($prevPN < 1){ $first = true; }else{ $first = false; }
 	$nextPN = $pageNum + 1;if($_SESSION['Blog']->getPage($nextPN)->size() > 0){ $last = false; }else{ $last = true; }
 	echo "<nav><ul class=\"pager\">";
-	if(!$first){ echo "<li><a class=\"bnavl\" href=\"/blog/".$prevPN."\" target=\"#content\">Previous</a></li>"; }
+	if(!$first){ echo "<li><a class=\"bnavl\" href=\"/blog/".$prevPN."\" target=\"#content\">Previous</a></li>"; }else{ echo "<li></li>";}
 	if(!$last){ echo "<li><a class=\"bnavl\" href=\"/blog/".$nextPN."\" target=\"#content\">Next</a></li>"; }
 	echo "</ul></nav>";
 ?>

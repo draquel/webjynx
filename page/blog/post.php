@@ -28,7 +28,7 @@
 	if($prev == NULL){  $first = true; }else{ $first = false; $pre = $prev->readNode()->toArray(); }
 	if($next == NULL){ $last = true; }else{ $last = false; $nex = $next->readNode()->toArray();  }
 	echo "<nav><ul class=\"pager\">";
-	if(!$first){ echo "<li><a class=\"bnavl\" href=\"/blog/p/".$pre['ID']."\" target=\"#content\">".$pre['Title']."</a></li>"; }
+	if(!$first){ echo "<li><a class=\"bnavl\" href=\"/blog/p/".$pre['ID']."\" target=\"#content\">".$pre['Title']."</a></li>"; }else{ echo "<li></li>";}
 	if(!$last){ echo "<li><a class=\"bnavl\" href=\"/blog/p/".$nex['ID']."\" target=\"#content\">".$nex['Title']."</a></li>"; }
 	echo "</ul></nav>";
 ?>
