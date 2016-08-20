@@ -102,17 +102,9 @@
                         break;
                         case "author": /* AUTHOR PAGE */
                         	if(isset($_REQUEST['bup']) && $_REQUEST['bup'] != ""){ $pageNum = $_REQUEST['bup']; }else{ $pageNum = 1; }
-							/*if($_SESSION['Blog']->getUsers()->size() > 0){ 
-								$user = $_SESSION['Blog']->getUsers()->getFirstNode();
-								while($user != NULL){ 
-									$u = $user->readNode()->toArray();
-									if($u['ID'] == $a['Author']){ $name = $u['First']." ".$u['Last']; break; } 
-									$user = $user->getNext();
-								}
-							}	*/
 							$posts = $_SESSION['Blog']->getAuthorPage($pageNum,$_REQUEST['u']);
 							$post = $posts->getFirstNode();
-							$html = "<h2>Author: ".$name."</h2>";
+							$html = "<h2>Author: ".$_REQUEST['u']."</h2>";
 							while($post != NULL){
 								$p = $post->readNode();
 								$a = $p->toArray();
