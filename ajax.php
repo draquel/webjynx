@@ -35,15 +35,15 @@
 			break;
 			case 3: //Blog Page Requests - Files
 				$page = ltrim($_REQUEST['pp'],"/");
-				$path = "/blog/";
+				$path = "/blog/index.php";
 				$p = explode("/",$page);
 				
-				if(gettype($p[1]) == 'integer'){ /* Blog Page*/ $path .= "page.php"; $_REQUEST['bpg'] = $p[2];}
+				if(is_numeric($p[1])){ /* Blog Page*/ $_REQUEST['bpg'] = $p[1]; }
 				else{
-					if($p[1] == "a"){ /*Archive*/ $path .= "archive.php"; $_REQUEST['a'] = $p[2]; if(isset($p[3])){ $_REQUEST['bap'] = $p[3]; } }
-					elseif($p[1] == "c"){ /*Category*/ $path .= "category.php"; $_REQUEST['c'] = $p[2]; if(isset($p[3])){ $_REQUEST['bcp'] = $p[3]; } }
-					elseif($p[1] == "p"){ /*Post*/ $path .= "post.php"; $_REQUEST['p'] = $p[2]; }
-					elseif($p[1] == "u"){ /*Author*/ }
+					if($p[1] == "a"){ /*Archive*/ $_REQUEST['a'] = $p[2]; if(isset($p[3])){ $_REQUEST['bap'] = $p[3]; } }
+					elseif($p[1] == "c"){ /*Category*/ $_REQUEST['c'] = $p[2]; if(isset($p[3])){ $_REQUEST['bcp'] = $p[3]; } }
+					elseif($p[1] == "p"){ /*Post*/ $_REQUEST['p'] = $p[2]; }
+					elseif($p[1] == "u"){ /*Author*/ $_REQUEST['u'] = $p[2]; }
 				}
 				
 				ob_start();

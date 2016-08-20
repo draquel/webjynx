@@ -42,7 +42,7 @@
                     <ol class="list-unstyled">
 					<?php
                         $archive = $_SESSION['Blog']->getPosts()->getArchive();
-                        foreach($archive as $k => $v){ echo "<li><a href=\"#\">".date("M Y",strtotime($k))."</a></li>"; }
+                        foreach($archive as $k => $v){ echo "<li><a class=\"bnavl\" href=\"/blog/a/".$k."\" target=\"#content\">".date("M Y",strtotime($k))."</a></li>"; }
                     ?>
                     </ol>
                   </div>
@@ -53,7 +53,7 @@
 						$cat = $_SESSION['Blog']->getCategories()->getFirstNode();
 						while($cat != NULL){
 							$c = $cat->readNode()->toArray();
-							echo "<li><a class=\"bnavl\" href=\"/blog/c/".$c['Definition']."\" target=\"div.blog-main\">".$c['Definition']."</a></li>";
+							echo "<li><a class=\"bnavl\" href=\"/blog/c/".$c['Definition']."\" target=\"#content\">".$c['Definition']."</a></li>";
 							$cat = $cat->getNext();
 						}
 					?>
@@ -71,9 +71,3 @@
             </div>
         </div>
     </div>
-    <?php
-		unset($_REQUEST['p']);
-		unset($_REQUEST['c']);
-		unset($_REQUEST['u']);
-		unset($_REQUEST['a']);
-	?>

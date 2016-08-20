@@ -4,7 +4,7 @@
 	while($post != NULL){
 		$p = $post->readNode();
 		$a = $p->toArray();
-		if($a['ID'] == $aid){ break; }
+		if($a['ID'] == $aid){ $current = $post; break; }
 		$post = $post->getNext();
 	}
 	$html = "<div class=\"blog-post\">
@@ -22,10 +22,13 @@
 		".$a['HTML']."
 	</div>";
 	echo $html;
+	
+	$prev = $current->getPrev();
+	$next = $current->getNext();	
+	if($prev == NULL){  $first = true; }else{ $first = false; $pre = $prev->readNode()->toArray(); }
+	if($next == NULL){ $last = true; }else{ $last = false; $nex = $next->readNode()->toArray();  }
+	echo "<nav><ul class=\"pager\">";
+	if(!$first){ echo "<li><a class=\"bnavl\" href=\"/blog/p/".$pre['ID']."\" target=\"#content\">".$pre['Title']."</a></li>"; }
+	if(!$last){ echo "<li><a class=\"bnavl\" href=\"/blog/p/".$nex['ID']."\" target=\"#content\">".$nex['Title']."</a></li>"; }
+	echo "</ul></nav>";
 ?>
-<nav>
-    <ul class="pager">
-      <li><a href="#">Previous</a></li>
-      <li><a href="#">Next</a></li>
-    </ul>
-</nav>
