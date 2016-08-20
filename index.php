@@ -11,13 +11,13 @@
 	$_SESSION['Blog']->dbRead($_SESSION['db']->con("DBObj"));
 	$_SESSION['Blog']->load($_SESSION['db']->con("DBObj"));
 		
-	$_SESSION['Users'] = new DBOList();
+/*	$_SESSION['Users'] = new DBOList();
 	$res = mysqli_query($_SESSION['db']->con("DBObj"),"SELECT * FROM Users");
 	while($row = mysqli_fetch_array($res)){
 		$u = new User(NULL);
 		$u->initMysql($row);
 		$_SESSION['Users']->insertLast($u);
-	}
+	}*/
 	
 	//Initialize Site Data
 	$_SESSION['Pages'] = array(
@@ -28,7 +28,7 @@
 		array("id"=>4,"meta-title"=>"Other","meta-description"=>"Some more stuff we think is neat.","path-ui"=>"/about/other","path-file"=>"/page/about/other.php"),
 		array("id"=>5,"meta-title"=>"Sitemap","meta-description"=>"A sitemap, just incase you get lost.","path-ui"=>"/sitemap","path-file"=>"/page/sitemap.php"),
 		array("id"=>6,"meta-title"=>"Class Testing","meta-description"=>"Class Unit Testing","path-ui"=>"/class/","path-file"=>"/page/class/index.php"),
-		array("id"=>7,"meta-title"=>"Blog","meta-description"=>"Our Blog","path-ui"=>"/blog/","path-file"=>"/page/blog/index.php")
+		array("id"=>7,"meta-title"=>"Blog","meta-description"=>"Our Blog","path-ui"=>"/blog/","path-file"=>"/page/blog.php")
 	);
 	$_SESSION['Title'] = "Company Name";
 	$_SESSION['Error'] = array("404"=>array("path-file"=>NULL,"path-ui"=>NULL),"401"=>NULL);
@@ -61,6 +61,7 @@
 		//Concatenate CSS Files
 			$css = file_get_contents("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
 			$css .= file_get_contents("css/main.css");
+			$css .= file_get_contents("css/blog.css");
 			echo "<style>".$css."</style>";
 		//Load JS Libs
 			$headjs ="<!--Start Head Loader--><script type=\"text/javascript\">";
@@ -136,6 +137,7 @@
 							if($(this).siblings().not(this).length === 0){ $(".navbar-collapse").collapse('hide'); }
 							if($("body").hasClass("noscroll")){ $("body").removeClass("noscroll"); }
 						});
+					/* Blog Page Navigation */
 						$("#page").on("click",".bnavl", function(event){
 							event.preventDefault();
 							$(this).setContent(3,"#menu");
