@@ -5,15 +5,15 @@
 		$_SESSION['Blog']->dbRead($_SESSION['db']->con("DBObj"));
 		$_SESSION['Blog']->load($_SESSION['db']->con("DBObj"));
 	}
-	$blog = $_SESSION['Blog']->toArray();
-	$blog_css = file_get_contents("css/blog.css");
+	$blog = $_SESSION['Blog']->toArray();	
+	$bpage = "";
 	if(isset($_REQUEST['p'])){ $bpage = "post"; }
 	elseif(isset($_REQUEST['c'])){ $bpage = "category"; }
 	elseif(isset($_REQUEST['u'])){ $bpage = "author"; }
 	elseif(isset($_REQUEST['a'])){ $bpage = "archive"; }
 ?>
 <!-- Page Specific Styles -->
-	<style>	#pg > div:nth-child(1){ background-image:url('/img/stock_head1.svg'); } <?php echo $blog_css; ?> </style>
+	<style>	#pg > div:nth-child(1){ background-image:url('/img/stock_head1.svg'); }</style>
 <!-- Preload CSS Images -->    
     <img class="hidden" src="/img/stock_head1.svg" alt="Header img 1" />
 <!--Page Content -->
@@ -42,8 +42,8 @@
                             $html = "<div class=\"blog-post\">
                                 <h1 class=\"blog-post-title\">".$a['Title']."</h1>
                                 <p class=\"blog-post-meta\">".date("F j, Y, g:i a",$a['Created']);
-                            if($_SESSION['Users'] != NULL && $_SESSION['Users']->size() > 0){ 
-                                $user = $_SESSION['Users']->getFirstNode();
+                            if($_SESSION['Blog']->getUsers()->size() > 0){ 
+                                $user = $_SESSION['Blog']->getUsers()->getFirstNode();
                                 while($user != NULL){ 
                                     $u = $user->readNode()->toArray();
                                     if($u['ID'] == $a['Author']){ $html .= " by <a href=\"#\">".$u['First']." ".$u['Last']."</a>"; break; } 
@@ -76,8 +76,8 @@
                                 $html .= "<div class=\"blog-post\">
                                     <h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/".$a['ID']."\" target=\"#content\">".$a['Title']."</a></h2>
                                     <p class=\"blog-post-meta\">".date("F j, Y, g:i a",$a['Created']);
-                                if($_SESSION['Users'] != NULL && $_SESSION['Users']->size() > 0){ 
-                                    $user = $_SESSION['Users']->getFirstNode();
+                                if($_SESSION['Blog']->getUsers()->size() > 0){ 
+                                    $user = $_SESSION['Blog']->getUsers()->getFirstNode();
                                     while($user != NULL){ 
                                         $u = $user->readNode()->toArray();
                                         if($u['ID'] == $a['Author']){ $html .= " by <a class=\"bnavl\" href=\"/blog/u/".$a['Author']."\" target=\"#content\">".$u['First']." ".$u['Last']."</a>"; break; } 
@@ -102,8 +102,8 @@
                         break;
                         case "author": /* AUTHOR PAGE */
                         	if(isset($_REQUEST['bup']) && $_REQUEST['bup'] != ""){ $pageNum = $_REQUEST['bup']; }else{ $pageNum = 1; }
-							if($_SESSION['Users'] != NULL && $_SESSION['Users']->size() > 0){ 
-								$user = $_SESSION['Users']->getFirstNode();
+							if($_SESSION['Blog']->getUsers()->size() > 0){ 
+								$user = $_SESSION['Blog']->getUsers()->getFirstNode();
 								while($user != NULL){ 
 									$u = $user->readNode()->toArray();
 									if($u['ID'] == $a['Author']){ $name = $u['First']." ".$u['Last']; break; } 
@@ -112,7 +112,7 @@
 							}	
 							$posts = $_SESSION['Blog']->getAuthorPage($pageNum,$_REQUEST['u']);
 							$post = $posts->getFirstNode();
-							$html = "<h2>Category: ".$_REQUEST['c']."</h2>";
+							$html = "<h2>Author: ".$name."</h2>";
 							while($post != NULL){
 								$p = $post->readNode();
 								$a = $p->toArray();
@@ -145,8 +145,8 @@
                                 $html .= "<div class=\"blog-post\">
                                     <h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/".$a['ID']."\" target=\"#content\">".$a['Title']."</a></h2>
                                     <p class=\"blog-post-meta\">".date("F j, Y, g:i a",$a['Created']);
-                                if($_SESSION['Users'] != NULL && $_SESSION['Users']->size() > 0){ 
-                                    $user = $_SESSION['Users']->getFirstNode();
+                                if($_SESSION['Blog']->getUsers()->size() > 0){ 
+                                    $user = $_SESSION['Blog']->getUsers()->getFirstNode();
                                     while($user != NULL){ 
                                         $u = $user->readNode()->toArray();
                                         if($u['ID'] == $a['Author']){ $html .= " by <a class=\"bnavl\" href=\"/blog/u/".$a['Author']."\" target=\"#content\">".$u['First']." ".$u['Last']."</a>"; break; } 
@@ -179,8 +179,8 @@
                                 $html .= "<div class=\"blog-post\">
                                     <h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/".$a['ID']."\" target=\"#content\">".$a['Title']."</a></h2>
                                     <p class=\"blog-post-meta\">".date("F j, Y, g:i a",$a['Created']);
-                                if($_SESSION['Users'] != NULL && $_SESSION['Users']->size() > 0){ 
-                                    $user = $_SESSION['Users']->getFirstNode();
+                                if($_SESSION['Blog']->getUsers()->size() > 0){ 
+                                    $user = $_SESSION['Blog']->getUsers()->getFirstNode();
                                     while($user != NULL){ 
                                         $u = $user->readNode()->toArray();
                                         if($u['ID'] == $a['Author']){ $html .= " by <a class=\"bnavl\" href=\"/blog/u/".$a['Author']."\" target=\"#content\">".$u['First']." ".$u['Last']."</a>"; break; } 
