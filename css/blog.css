@@ -51,7 +51,7 @@
   font-size: 20px;
   color: #999;
 }
-
+.blog-pgnum{ font-size:75%;}
 
 /*
  * Main column and sidebar layout
@@ -87,7 +87,7 @@
 
 /* Pagination */
 .pager {
-  margin-bottom: 60px;
+  margin-bottom: 20px;
   text-align: left;
   position:relative;
 }
@@ -106,7 +106,7 @@
  * Blog posts
  */
 
-.blog-post {
+.blog-post{
   margin-bottom: 60px;
 }
 .blog-post-title {
@@ -118,7 +118,11 @@
   margin-bottom: 20px;
   color: #999;
 }
-
+.blog-post-categories{ font-size:14px; font-weight:700; }
+.blog-post-categories a{ text-decoration:none !important; }
+.blog-post-categories span{ margin-left:7px; font-size: 80%; }
+.blog-post-categories span:hover{ background-color:#555; }
+.blog-post-categories span:active{ background-color: #fff;color:#555; }
 
 /*
  * Footer

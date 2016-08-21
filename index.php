@@ -3,32 +3,26 @@
 	include("script/_php/DBObj/dbobj.php");
 	session_start();
 	//Initialize Database Connection
+	$_SESSION['dbName'] = "DBObj";
 	$_SESSION['db'] = new Sql();
 	$_SESSION['db']->init("localhost","root","Ed17i0n!");
-	$_SESSION['db']->connect("DBObj");
+	$_SESSION['db']->connect($_SESSION['dbName']);
 	
+	//Initialize Blog Data
 	$_SESSION['Blog'] = new Blog(1);
-	$_SESSION['Blog']->dbRead($_SESSION['db']->con("DBObj"));
-	$_SESSION['Blog']->load($_SESSION['db']->con("DBObj"));
-		
-/*	$_SESSION['Users'] = new DBOList();
-	$res = mysqli_query($_SESSION['db']->con("DBObj"),"SELECT * FROM Users");
-	while($row = mysqli_fetch_array($res)){
-		$u = new User(NULL);
-		$u->initMysql($row);
-		$_SESSION['Users']->insertLast($u);
-	}*/
+	$_SESSION['Blog']->dbRead($_SESSION['db']->con($_SESSION['dbName']));
+	$_SESSION['Blog']->load($_SESSION['db']->con($_SESSION['dbName']));
 	
 	//Initialize Site Data
 	$_SESSION['Pages'] = array(
-		array("id"=>0,"meta-title"=>"HTTP 404 - Page Not Found","meta-description"=>"HTTP 404 - Page Not Found","path-ui"=>"/404","path-file"=>"/page/404.php"),
-		array("id"=>1,"meta-title"=>"HTTP 401 - Unauthorized","meta-description"=>"HTTP 401 - Unauthorized","path-ui"=>"/401","path-file"=>"/page/401.php"),
-		array("id"=>2,"meta-title"=>"Index","meta-description"=>"Welcome to our home page!","path-ui"=>"/","path-file"=>"/page/index.php"),
-		array("id"=>3,"meta-title"=>"About","meta-description"=>"We like stuff and want to work together on your things!","path-ui"=>"/about/","path-file"=>"/page/about/index.php"),
-		array("id"=>4,"meta-title"=>"Other","meta-description"=>"Some more stuff we think is neat.","path-ui"=>"/about/other","path-file"=>"/page/about/other.php"),
-		array("id"=>5,"meta-title"=>"Sitemap","meta-description"=>"A sitemap, just incase you get lost.","path-ui"=>"/sitemap","path-file"=>"/page/sitemap.php"),
-		array("id"=>6,"meta-title"=>"Class Testing","meta-description"=>"Class Unit Testing","path-ui"=>"/class/","path-file"=>"/page/class/index.php"),
-		array("id"=>7,"meta-title"=>"Blog","meta-description"=>"Our Blog","path-ui"=>"/blog/","path-file"=>"/page/blog.php")
+		array("id"=>0,"meta-title"=>"HTTP 404 - Page Not Found","meta-description"=>"HTTP 404 - Page Not Found","meta-keywords"=>NULL,"path-ui"=>"/404","path-file"=>"/page/404.php"),
+		array("id"=>1,"meta-title"=>"HTTP 401 - Unauthorized","meta-description"=>"HTTP 401 - Unauthorized","meta-keywords"=>NULL,"path-ui"=>"/401","path-file"=>"/page/401.php"),
+		array("id"=>2,"meta-title"=>"Index","meta-description"=>"Welcome to our home page!","meta-keywords"=>NULL,"path-ui"=>"/","path-file"=>"/page/index.php"),
+		array("id"=>3,"meta-title"=>"About","meta-description"=>"We like stuff and want to work together on your things!","meta-keywords"=>NULL,"path-ui"=>"/about/","path-file"=>"/page/about/index.php"),
+		array("id"=>4,"meta-title"=>"Other","meta-description"=>"Some more stuff we think is neat.","meta-keywords"=>NULL,"path-ui"=>"/about/other","path-file"=>"/page/about/other.php"),
+		array("id"=>5,"meta-title"=>"Sitemap","meta-description"=>"A sitemap, just incase you get lost.","meta-keywords"=>NULL,"path-ui"=>"/sitemap","path-file"=>"/page/sitemap.php"),
+		array("id"=>6,"meta-title"=>"Class Testing","meta-description"=>"Class Unit Testing","meta-keywords"=>NULL,"path-ui"=>"/class/","path-file"=>"/page/class/index.php"),
+		array("id"=>7,"meta-title"=>"Blog","meta-description"=>"Our Blog","path-ui"=>"/blog/","meta-keywords"=>NULL,"path-file"=>"/page/blog.php")
 	);
 	$_SESSION['Title'] = "Company Name";
 	$_SESSION['Error'] = array("404"=>array("path-file"=>NULL,"path-ui"=>NULL),"401"=>NULL);
@@ -57,7 +51,7 @@
         <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
         <?php
 		//Title & Meta-Description 
-			echo "<title>".$_SESSION['Title']." - ".$_SESSION['Page']['meta-title']."</title><meta name=\"description\" content=\"".$_SESSION['Page']['meta-description']."\">";
+			echo "<title>".$_SESSION['Title']." - ".$_SESSION['Page']['meta-title']."</title><meta name=\"description\" content=\"".$_SESSION['Page']['meta-description']."\"><meta name=\"keywords\" content=\"".$_SESSION['Page']['meta-keywords']."\">";
 		//Concatenate CSS Files
 			$css = file_get_contents("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
 			$css .= file_get_contents("css/main.css");
@@ -66,11 +60,12 @@
 		//Load JS Libs
 			$headjs ="<!--Start Head Loader--><script type=\"text/javascript\">";
 			$headjs .= file_get_contents("script/_js/head.min.js");
-        	$headjs .= "</script><script> head.load(\"https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js\",\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\",\"https://www.google-analytics.com/analytics.js\",\"/script/_js/lib.js\"); </script><!--End Head Loader-->";
+        	$headjs .= "head.load(\"https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js\",\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\",\"https://www.google-analytics.com/analytics.js\",\"/script/_js/lib.js\"); </script><!--End Head Loader-->";
 			echo $headjs;
 		?>
     </head>
     <body role="document">
+    	<img class="loader" id="loader-main" src="/img/loader-main.gif" alt="... Loading ..."/>
        <!--Start Page-->
         <div id="page" class="container-fluid">
             <div id="menu" class="row">
@@ -101,8 +96,7 @@
             </div>
         </div>
         <!-- End Modal -->
-        <img class="loader" id="loader-main" src="/img/loader-main.gif" alt="... Loading ..."/>
-        <script>
+        <script type="text/javascript">
 			head.ready(function() {
 				$(document).ready(function(){
 					var to = 500; var page = "";

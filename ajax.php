@@ -46,10 +46,16 @@
 				if(!$exist_i || !$exists_f){ if(!$exist_i){ $_SESSION['Error']['404']['path-ui'] = strtolower($page); } }
 				if(!$exists_f){ $_SESSION['Error']['404']['path-file'] = $_SESSION['Page']['path-file']; }
 
-				
 				if($_SESSION['Page']['path-file'] == "/page/blog.php"){
+					if(!$_SESSION['db']->connect($_SESSION['dbName'])){	echo "CONNECTION FAILURE <br >"; } 
+					elseif(!isset($_SESSION['Blog'])){
+						$_SESSION['Blog'] = new Blog(1);
+						$_SESSION['Blog']->dbRead($_SESSION['db']->con($_SESSION['dbName']));
+						$_SESSION['Blog']->load($_SESSION['db']->con($_SESSION['dbName']));
+					}
+					
 					$p = explode("/",ltrim($page,"/"));
-					if(is_numeric($p[1])){ /* Blog Page*/ $_REQUEST['bpg'] = $p[1]; }
+					if(is_numeric($p[1])){ /* Main Page*/ $_REQUEST['bpg'] = $p[1]; }
 					else{
 						$_SESSION['Page']['path-ui'] = $page;
 						if($p[1] == "a"){
@@ -88,7 +94,7 @@
 				libxml_use_internal_errors(true);
 				$img = parseImgs($root.$_SESSION['Page']['path-file']);
 				libxml_clear_errors();
-				$data = array($html,$img,array("id"=>$_SESSION['Page']['id'],"meta-title"=>$_SESSION['Page']['meta-title'],"meta-description"=>$_SESSION['Page']['meta-description'],"path-ui"=>$_SESSION['Page']['path-ui'],"path-file"=>$_SESSION['Page']['path-file']));
+				$data = array($html,$img,array("id"=>$_SESSION['Page']['id'],"meta-title"=>$_SESSION['Page']['meta-title'],"meta-description"=>$_SESSION['Page']['meta-description'],"meta-keywords"=>$_SESSION['Page']['meta-keywords'],"path-ui"=>$_SESSION['Page']['path-ui'],"path-file"=>$_SESSION['Page']['path-file']));
 				header("Content-Type: application/json");
 				echo json_encode($data);
 			break;

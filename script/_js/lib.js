@@ -17,6 +17,7 @@
 						window.history.pushState({"html":data[0],"url":data[2]['path-file']},data[2]['meta-title'],data[2]['path-ui']);
 						document.title = (document.title.split("-"))[0] +"- "+data[2]['meta-title'];
 						$("meta[name='description']").attr("content",data[2]['meta-description']);
+						$("meta[name='keywords']").attr("content",data[2]['meta-keywords']);
 						gaTrack(data[2]['path-ui'],data[2]['meta-title']);
 						preload(data[1],SCCallback(target,scrollto));
 					}

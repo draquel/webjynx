@@ -70,6 +70,20 @@
 					$user->setContactInfo($_SESSION['db']->con("DBObj"));
 					echo "<p>".var_dump($user->toArray())."</p>";
 				?>
+                
+                <hr>
+                
+                <h2>Blog</h2>
+                <pre>
+                <?php
+					if(!isset($_SESSION['Blog'])){
+						$_SESSION['Blog'] = new Blog(1);
+						$_SESSION['Blog']->dbRead($_SESSION['db']->con("DBObj"));
+						$_SESSION['Blog']->load($_SESSION['db']->con("DBObj"));
+					}
+					echo var_dump($_SESSION['Blog']->toArray());
+				?>
+                </pre>
             </div>
         </div>
     </div>
