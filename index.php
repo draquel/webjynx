@@ -7,12 +7,7 @@
 	$_SESSION['db'] = new Sql();
 	$_SESSION['db']->init("localhost","root","Ed17i0n!");
 	$_SESSION['db']->connect($_SESSION['dbName']);
-	
-	//Initialize Blog Data
-	$_SESSION['Blog'] = new Blog(1);
-	$_SESSION['Blog']->dbRead($_SESSION['db']->con($_SESSION['dbName']));
-	$_SESSION['Blog']->load($_SESSION['db']->con($_SESSION['dbName']));
-	
+
 	//Initialize Site Data
 	$_SESSION['Pages'] = array(
 		array("id"=>0,"meta-title"=>"HTTP 404 - Page Not Found","meta-description"=>"HTTP 404 - Page Not Found","meta-keywords"=>NULL,"path-ui"=>"/404","path-file"=>"/page/404.php"),
@@ -24,33 +19,65 @@
 		array("id"=>6,"meta-title"=>"Class Testing","meta-description"=>"Class Unit Testing","meta-keywords"=>NULL,"path-ui"=>"/class/","path-file"=>"/page/class/index.php"),
 		array("id"=>7,"meta-title"=>"Blog","meta-description"=>"Our Blog","path-ui"=>"/blog/","meta-keywords"=>NULL,"path-file"=>"/page/blog.php")
 	);
+	
 	$_SESSION['Title'] = "Company Name";
+	
+	$_SESSION['Blog'] = new Blog(1);
+	$_SESSION['Blog']->dbRead($_SESSION['db']->con($_SESSION['dbName']));
+	$_SESSION['Blog']->load($_SESSION['db']->con($_SESSION['dbName']));
+	
+	$_SESSION['Users'] = new DLList();
+	$sql = "SELECT u.*, group_concat(distinct concat(r.ID,':',r.RID,':',r.KID,':',r.Key,':',r.Code,':',r.Definition) separator ';') AS `Groups`, group_concat(distinct concat(`p`.`ID`,':',`p`.`Created`,':',`p`.`Updated`,':',`p`.`Name`,':',`p`.`PID`,':',`p`.`Primary`,':',`p`.`Region`,':',`p`.`Area`,':',`p`.`Number`,':',`p`.`Ext`) separator ';') AS `Phones`, group_concat(distinct concat(`a`.`ID`,':',`a`.`Created`,':',`a`.`Updated`,':',`a`.`Name`,':',`a`.`PID`,':',`a`.`Primary`,':',`a`.`Address`,':',`a`.`Address2`,':',`a`.`City`,':',`a`.`State`,':',`a`.`Zip`) separator ';') AS `Addresses`, group_concat(distinct concat(`e`.`ID`,':',`e`.`Created`,':',`e`.`Updated`,':',`e`.`Name`,':',`e`.`PID`,':',`e`.`Primary`,':',`e`.`Address`) separator ';') AS `Emails` FROM Users u LEFT JOIN Relationships r ON u.ID = r.RID AND r.Key = 'Group' LEFT JOIN `Addresses` `a` on `a`.`PID` = `u`.`ID` LEFT JOIN `Phones` `p` on `p`.`PID` = `u`.`ID` LEFT JOIN `Emails` `e` on `e`.`PID` = `u`.`ID` GROUP BY u.ID ORDER BY u.Created DESC";
+	$res = mysqli_query($_SESSION['db']->con($_SESSION['dbName']),$sql);
+	while($row = mysqli_fetch_array($res)){
+		$u = new User(NULL);
+		$u->initMysql($row);
+		$u->setContactInfo($_SESSION['db']->con($_SESSION['dbName']));
+		$_SESSION['Users']->insertLast($u);
+	}
+	
 	$_SESSION['Error'] = array("404"=>array("path-file"=>NULL,"path-ui"=>NULL),"401"=>NULL);
 	
 	//Process Initial Page Address
 	if(isset($_REQUEST['pg']) && $_REQUEST['pg'] != "" && $_REQUEST['pg'] != NULL){	
 		$found = false; 
-		foreach($_SESSION['Pages'] as $page){ 
-			if($page['path-ui'] == "/".strtolower($_REQUEST['pg'])){ 
-				$found = true; $_SESSION['Page'] = $page;
-				if(!file_exists(ltrim($page['path-file'],"/"))){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-file'] = $page['path-file']; }
-				break;
-			} 
-		}
+		foreach($_SESSION['Pages'] as $page){ if($page['path-ui'] == "/".strtolower($_REQUEST['pg'])){ $found = true; $_SESSION['Page'] = $page; if(!file_exists(ltrim($page['path-file'],"/"))){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-file'] = $page['path-file']; } break; } }
 		if(!$found){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = "/".$_REQUEST['pg']; }
 	}else{ $_SESSION['Page'] = $_SESSION['Pages'][2]; }
 	session_write_close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
+   <!--Start Header-->
     <head>
         <meta charset="utf-8">
         <meta name='viewport' content="width=device-width, initial-scale=1">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
         <link rel="icon" href="/img/favicon.ico">
         <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+        <link rel="alternate" type="application/atom+xml" title="<?php echo $_SESSION['Title']; ?>" href="http://dev.webjynx.com/rss/">
         <?php
-		//Title & Meta-Description 
+		//Title, Meta-Description & Meta-Keywords
+			if($_SESSION['Page']['path-file'] == "/page/blog.php"){
+				$bpage = "";
+				if(isset($_REQUEST['p'])){ 
+					$post = $_SESSION['Blog']->getPosts()->getFirstNode();
+					$_SESSION['Page']['Current'] = NULL;
+					while($post != NULL){
+						$a = $post->readNode()->toArray();
+						if($a['ID'] == $_REQUEST['p']){ $_SESSION['Page']['Current'] = $post; break; }
+						$post = $post->getNext();
+					}
+					$_SESSION['Page']['meta-title'] = "Blog Post - ".$a['Title'];
+					$_SESSION['Page']['meta-description'] = $a['Description'];
+					$_SESSION['Page']['meta-keywords'] = $a['Keywords'];
+					$bpage = "post";
+				}
+				elseif(isset($_REQUEST['c'])){ $_SESSION['Page']['meta-title'] = "Blog Category - ".$_REQUEST['c'];	$_SESSION['Page']['meta-description'] = "Listing of blog entries tagged in ".$_REQUEST['c']; $bpage = "category"; }
+				elseif(isset($_REQUEST['u'])){ $_SESSION['Page']['meta-title'] = "Blog Author - ".$_REQUEST['u']; $_SESSION['Page']['meta-description'] = "Listing of blog entries written by ".$_REQUEST['u']; $bpage = "author"; }
+				elseif(isset($_REQUEST['a'])){ $_SESSION['Page']['meta-title'] = "Blog Archive - ".date("F Y",strtotime($_REQUEST['a'])); $_SESSION['Page']['meta-description'] = "Listing of blog entries posted in ".date("F, Y",strtotime($_REQUEST['a'])); $bpage = "archive"; }
+			}
+			
 			echo "<title>".$_SESSION['Title']." - ".$_SESSION['Page']['meta-title']."</title><meta name=\"description\" content=\"".$_SESSION['Page']['meta-description']."\"><meta name=\"keywords\" content=\"".$_SESSION['Page']['meta-keywords']."\">";
 		//Concatenate CSS Files
 			$css = file_get_contents("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
@@ -64,6 +91,7 @@
 			echo $headjs;
 		?>
     </head>
+   <!--End Header-->
     <body role="document">
     	<img class="loader" id="loader-main" src="/img/loader-main.gif" alt="... Loading ..."/>
        <!--Start Page-->
@@ -79,7 +107,7 @@
             <div id="contentWrapper" class="row"><div id="content"><!-- Page Content --><?php include(ltrim($_SESSION['Page']['path-file'],"/")); ?></div></div>
             <div id="footer" class="row">
             	<div class="col-xs-12 col-xs-offset-0 col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1">
-                    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4"><p>info@yourcompany.com<br>(123)456-7890</p><p><a href="https://twitter.com/" target="_blank"><img src="/img/twitter.svg" alt="Twitter" /></a><a href="https://www.facebook.com/" target="_blank"><img src="/img/facebook.svg" alt="Facebook" /></a><a href="https://www.linkedin.com/" target="_blank"><img src="/img/linkedin.svg" alt="LinkedIn" /></a></p></div>
+                    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4"><p>info@yourcompany.com<br>(123)456-7890</p><p><a href="https://twitter.com/" target="_blank"><img src="/img/twitter.svg" alt="Twitter" /></a><a href="https://www.facebook.com/" target="_blank"><img src="/img/facebook.svg" alt="Facebook" /></a><a href="https://www.linkedin.com/" target="_blank"><img src="/img/linkedin.svg" alt="LinkedIn" /></a><a href="http://dev.webjynx.com/rss/" target="_blank"><img src="/img/rss-white.png" alt="RSS Feed" /></a></p></div>
                     <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8"><?php $_REQUEST['dd'] = 0; include("menu.php"); ?></div>
                 </div>
             	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center"><p>&copy;<?php echo $_SESSION['Title']; ?> 2016 - All Rights Reserved</p><a href="http://www.kburkhart.com" target="_blank"><img src="/img/KBDicon.svg" alt="Katharine Burkhart Designs" /></a></div>
@@ -95,59 +123,54 @@
                 </div>
             </div>
         </div>
-        <!-- End Modal -->
+       <!-- End Modal -->
         <script type="text/javascript">
-			head.ready(function() {
-				$(document).ready(function(){
-					var to = 500; var page = "";
-				/* Initialize Page Status / Preload Page Images */
-					$.ajax({
-						url: '/ajax.php',cache:false,method:'POST',async:true,dataType:"json",data:"ari=1&pid=<?php echo $_SESSION['Page']['id']; /* ... Hacky ... */ ?>",
-						complete: function(xhr){ 
-							var data = JSON.parse(xhr.responseText); page = data[0];
-							if(page['path-file'] == "/page/index.php"){ $("#menu").hide(); }else{ $("#menu").show(); }
-							setTimeout(function(){$("#loader-main").fadeOut(to,function(){$("#page").fadeIn(to);$(this).remove();});},to);
+		head.ready(function() {
+			$(document).ready(function(){
+				var to = 500; var page = "";
+			/* Initialize Page Status / Preload Page Images */
+				$.ajax({
+					url: '/ajax.php',cache:false,method:'POST',async:true,dataType:"json",data:"ari=1&pid=<?php echo $_SESSION['Page']['id']; /* ... Hacky ... */ ?>",
+					complete: function(xhr){ 
+						var data = JSON.parse(xhr.responseText); page = data[0];
+						if(page['path-file'] == "/page/index.php"){ $("#menu").hide(); }else{ $("#menu").show(); }
+						setTimeout(function(){$("#loader-main").fadeOut(to,function(){$("#page").fadeIn(to);$(this).remove();});},to);
+					}
+				}).done(function(){
+				/* Browser Nav Override */
+					$(window).bind('popstate',function(event){
+						if(event.originalEvent.state){
+							if(event.originalEvent.state.url == "/page/index.php"){ $("#menu").hide(); }else{ $("#menu").show(); }
+							$("#content").html(event.originalEvent.state.html);
 						}
-					}).done(function(){
-					/* Browser Nav Override */
-						$(window).bind('popstate',function(event){
-							if(event.originalEvent.state){
-								if(event.originalEvent.state.url == "/page/index.php"){ $("#menu").hide(); }else{ $("#menu").show(); }
-								$("#content").html(event.originalEvent.state.html);
-							}
-						})
-					/* Window Scroll Event - Content Fade */
-						$(window).scroll(function(){
-							$('.hideme').each(function(i){
-								var bottom_of_object = $(this).offset().top + ($(this).outerHeight() * 0.25);
-								var bottom_of_window = $(window).scrollTop() + $(window).height();
-								if( bottom_of_window > bottom_of_object ){ $(this).animate({'opacity':'1'},750); }
-							}); 
-						});
-					/* Page Navigation */
-						$("#page").on("click","ul.nav a, .navbar-brand, .navl", function(event){
-							event.preventDefault();
-							$(this).setContent(2,"#menu");
-							if($(this).siblings().not(this).length === 0){ $(".navbar-collapse").collapse('hide'); }
-							if($("body").hasClass("noscroll")){ $("body").removeClass("noscroll"); }
-						});
-					/* Blog Page Navigation */
-						$("#page").on("click",".bnavl", function(event){
-							event.preventDefault();
-							$(this).setContent(3,"#menu");
-						});
-					/* Mobile Menu - Toggle Page Scroll Lock */
-						$(".navbar-toggle").click(function(){ if($("body").hasClass("noscroll")){ $("body").removeClass("noscroll"); }else{ $("body").addClass("noscroll"); } });
-					/* Label Free Form Elements */
-						$("input[type=text],textarea").inputDefault();
-					/* Google Analytics */
-						//gaTracker("GA Tracking ID");
-						//gaTrack(page['path-ui'],page['meta-title']);
-					/* Server Session Timer */
-						setSessTimeout();
+					})
+				/* Window Scroll Event - Content Fade In */
+					$(window).scroll(function(){
+						$('.hideme').each(function(i){
+							var bottom_of_object = $(this).offset().top + ($(this).outerHeight() * 0.25);
+							var bottom_of_window = $(window).scrollTop() + $(window).height();
+							if( bottom_of_window > bottom_of_object ){ $(this).animate({'opacity':'1'},750); }
+						}); 
 					});
+				/* Page Navigation */
+					$("#page").on("click","ul.nav a, .navbar-brand, .navl, .bnavl", function(event){
+						event.preventDefault();
+						$(this).setContent(2,"#menu");
+						if($(this).siblings().not(this).length === 0){ $(".navbar-collapse").collapse('hide'); }
+						if($("body").hasClass("noscroll")){ $("body").removeClass("noscroll"); }
+					});
+				/* Mobile Menu - Toggle Page Scroll Lock */
+					$(".navbar-toggle").click(function(){ if($("body").hasClass("noscroll")){ $("body").removeClass("noscroll"); }else{ $("body").addClass("noscroll"); } });
+				/* Label Free Form Elements */
+					$("input[type=text],textarea").inputDefault();
+				/* Google Analytics */
+					//gaTracker("GA Tracking ID");
+					//gaTrack(page['path-ui'],page['meta-title']);
+				/* Server Session Timer */
+					setSessTimeout();
 				});
 			});
+		});
 		</script>
     </body>
 </html>
