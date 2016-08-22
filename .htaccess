@@ -29,7 +29,7 @@ Options -MultiViews
 </FilesMatch>
 
 <ifmodule mod_deflate.c>
-	AddOutputFilterByType DEFLATE text/text text/html text/plain text/xml text/css text/php text/x-php application/php application/x-php application/x-httpd-php application/x-httpd-php-source application/x-javascript application/javascript image/svg+xml image/png
+	AddOutputFilterByType DEFLATE text/text text/html text/plain text/xml text/css text/php text/x-php application/php application/x-php application/x-httpd-php application/x-httpd-php-source application/x-javascript application/javascript image/svg+xml image/png image/gif
 </ifmodule>
 
 
@@ -116,3 +116,4 @@ Options -MultiViews
 
 AddType application/vnd.ms-fontobject .eot
 AddType application/octet-stream .otf .ttf
+AddType application/x-httpd-php .xml
