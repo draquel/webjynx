@@ -1,6 +1,6 @@
 <?php
-	require_once("script/_php/lib.php");
-	include("script/_php/DBObj/dbobj.php");
+	require_once("../script/_php/lib.php");
+	include("../script/_php/DBObj/dbobj.php");
 	session_start();
 	//Initialize Database Connection
 	$_SESSION['dbName'] = "DBObj";
@@ -14,7 +14,7 @@
 	
 	header("Content-Type:application/xml");
 	
-	$domain = "http://dev.webjynx.com";
+	$_SESSION['Domain']= "dev.webjynx.com";
 	
-	echo $_SESSION['Blog']->rssGenFeed($domain,$_SERVER['PHP_SELF']);
+	echo $_SESSION['Blog']->rssGenFeed("http://".$_SESSION['Domain'],$_SERVER['PHP_SELF']);
 ?>

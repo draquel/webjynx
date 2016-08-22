@@ -21,6 +21,7 @@
 	);
 	
 	$_SESSION['Title'] = "Company Name";
+	$_SESSION['Domain'] = "dev.webjynx.com";
 	
 	$_SESSION['Blog'] = new Blog(1);
 	$_SESSION['Blog']->dbRead($_SESSION['db']->con($_SESSION['dbName']));
@@ -55,7 +56,7 @@
         <meta http-equiv="x-ua-compatible" content="ie=edge">
         <link rel="icon" href="/img/favicon.ico">
         <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
-        <link rel="alternate" type="application/atom+xml" title="<?php echo $_SESSION['Title']; ?>" href="http://dev.webjynx.com/rss/">
+        <link rel="alternate" type="application/atom+xml" title="<?php echo $_SESSION['Title']; ?>" href="http://<?php echo $_SESSION['Domain']; ?>/rss/">
         <?php
 		//Title, Meta-Description & Meta-Keywords
 			if($_SESSION['Page']['path-file'] == "/page/blog.php"){
