@@ -1,10 +1,5 @@
 <?php
 	$blog = $_SESSION['Blog']->toArray();	//Create getMeta() for this - too expensive
-	$bpage = "";
-	if(isset($_REQUEST['p'])){ $bpage = "post"; }
-	elseif(isset($_REQUEST['c'])){ $bpage = "category"; }
-	elseif(isset($_REQUEST['u'])){ $bpage = "author"; }
-	elseif(isset($_REQUEST['a'])){ $bpage = "archive"; }
 ?>
 <!-- Page Specific Styles -->
 	<style>	#pg > div:nth-child(1){ background-image:url('/img/stock_head1.svg'); }</style>
@@ -25,19 +20,11 @@
 			<?php 
 				switch($bpage){
 					case "post": /* POST PAGE */
-						$aid = $_REQUEST['p'];
-						$post = $_SESSION['Blog']->getPosts()->getFirstNode();
-						while($post != NULL){
-							$p = $post->readNode();
-							$a = $p->toArray();
-							if($a['ID'] == $aid){ $current = $post; break; }
-							$post = $post->getNext();
-						}
 						$html = "<div class=\"blog-post\">
 							<h2 class=\"blog-post-title\">".$a['Title']."</h2>
 							<p class=\"blog-post-meta\">".date("F j, Y, g:i a",$a['Created']);
-						if($_SESSION['Blog']->getUsers()->size() > 0){ 
-							$user = $_SESSION['Blog']->getUsers()->getFirstNode();
+						if($_SESSION['Users']->size() > 0){ 
+							$user = $_SESSION['Users']->getFirstNode();
 							while($user != NULL){ 
 								$u = $user->readNode()->toArray();
 								if($u['ID'] == $a['Author']){ $html .= " by <a class=\"bnavl\" href=\"/blog/u/".$u['First']." ".$u['Last']."\" target=\"#content\">".$u['First']." ".$u['Last']."</a>"; break; } 
@@ -54,15 +41,17 @@
 						$html .= "</div>";
 						echo $html;
 						
-						$prev = $current->getPrev();
-						$next = $current->getNext();	
-						if($prev == NULL){  $first = true; }else{ $first = false; $pre = $prev->readNode()->toArray(); }
-						if($next == NULL){ $last = true; }else{ $last = false; $nex = $next->readNode()->toArray();  }
-						$s = "<nav><ul class=\"pager\">";
-						if(!$first){ $s .= "<li><a class=\"bnavl\" href=\"/blog/p/".$pre['ID']."\" target=\"#content\">".$pre['Title']."</a></li>"; }else{ $s .= "<li></li>";}
-						if(!$last){ $s .= "<li><a class=\"bnavl\" href=\"/blog/p/".$nex['ID']."\" target=\"#content\">".$nex['Title']."</a></li>"; }
-						$s .= "</ul></nav>";
-						echo $s;
+						if($_SESSION['Page']['Current'] != NULL){
+							$prev = $_SESSION['Page']['Current']->getPrev(); 
+							$next = $_SESSION['Page']['Current']->getNext();
+							if($prev == NULL){  $first = true; }else{ $first = false; $pre = $prev->readNode()->toArray(); }
+							if($next == NULL){ $last = true; }else{ $last = false; $nex = $next->readNode()->toArray();  }
+							$s = "<nav><ul class=\"pager\">";
+							if(!$first){ $s .= "<li><a class=\"bnavl\" href=\"/blog/p/".$pre['ID']."\" target=\"#content\">".$pre['Title']."</a></li>"; }else{ $s .= "<li></li>"; }
+							if(!$last){ $s .= "<li><a class=\"bnavl\" href=\"/blog/p/".$nex['ID']."\" target=\"#content\">".$nex['Title']."</a></li>"; }
+							$s .= "</ul></nav>";
+							echo $s;
+						}
 					break;
 					case "category": /* CATEGORY PAGE */
 						if(isset($_REQUEST['bcp']) && $_REQUEST['bcp'] != ""){ $pageNum = $_REQUEST['bcp']; }else{ $pageNum = 1; }
@@ -75,8 +64,8 @@
 							$html .= "<div class=\"blog-post\">
 								<h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/".$a['ID']."\" target=\"#content\">".$a['Title']."</a></h2>
 								<p class=\"blog-post-meta\">".date("F j, Y, g:i a",$a['Created']);
-							if($_SESSION['Blog']->getUsers()->size() > 0){ 
-								$user = $_SESSION['Blog']->getUsers()->getFirstNode();
+							if($_SESSION['Users']->size() > 0){ 
+								$user = $_SESSION['Users']->getFirstNode();
 								while($user != NULL){ 
 									$u = $user->readNode()->toArray();
 									if($u['ID'] == $a['Author']){ $html .= " by <a class=\"bnavl\" href=\"/blog/u/".$u['First']." ".$u['Last']."\" target=\"#content\">".$u['First']." ".$u['Last']."</a>"; break; } 
@@ -101,7 +90,7 @@
 					break;
 					case "author": /* AUTHOR PAGE */
 						if(isset($_REQUEST['bup']) && $_REQUEST['bup'] != ""){ $pageNum = $_REQUEST['bup']; }else{ $pageNum = 1; }
-						$posts = $_SESSION['Blog']->getAuthorPage($pageNum,$_REQUEST['u']);
+						$posts = $_SESSION['Blog']->getAuthorPage($pageNum,$_REQUEST['u'],$_SESSION['Users']);
 						$post = $posts->getFirstNode();
 						$html = "<h2>Author: ".$_REQUEST['u']."</h2>";
 						while($post != NULL){
@@ -123,7 +112,7 @@
 						echo $html;
 						
 						$prevPN = $pageNum - 1;if($prevPN < 1){ $first = true; }else{ $first = false; }
-						$nextPN = $pageNum + 1;if($_SESSION['Blog']->getAuthorPage($nextPN,$_REQUEST['u'])->size() > 0){ $last = false; }else{ $last = true; }
+						$nextPN = $pageNum + 1;if($_SESSION['Blog']->getAuthorPage($nextPN,$_REQUEST['u'],$_SESSION['Users'])->size() > 0){ $last = false; }else{ $last = true; }
 						$s = "<nav><ul class=\"pager\">";
 						if(!$first){ $s .= "<li><a class=\"bnavl\" href=\"/blog/u/".$_REQUEST['u']."/".$prevPN."\" target=\"#content\">Previous</a></li>"; }else{ $s .= "<li></li>";}
 						if(!$last){ $s .= "<li><a class=\"bnavl\" href=\"/blog/u/".$_REQUEST['u']."/".$nextPN."\" target=\"#content\">Next</a></li>"; }
@@ -141,8 +130,8 @@
 							$html .= "<div class=\"blog-post\">
 								<h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/".$a['ID']."\" target=\"#content\">".$a['Title']."</a></h2>
 								<p class=\"blog-post-meta\">".date("F j, Y, g:i a",$a['Created']);
-							if($_SESSION['Blog']->getUsers()->size() > 0){ 
-								$user = $_SESSION['Blog']->getUsers()->getFirstNode();
+							if($_SESSION['Users']->size() > 0){ 
+								$user = $_SESSION['Users']->getFirstNode();
 								while($user != NULL){ 
 									$u = $user->readNode()->toArray();
 									if($u['ID'] == $a['Author']){ $html .= " by <a class=\"bnavl\" href=\"/blog/u/".$u['First']." ".$u['Last']."\" target=\"#content\">".$u['First']." ".$u['Last']."</a>"; break; } 
@@ -180,8 +169,8 @@
 							$html .= "<div class=\"blog-post\">
 								<h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/".$a['ID']."\" target=\"#content\">".$a['Title']."</a></h2>
 								<p class=\"blog-post-meta\">".date("F j, Y, g:i a",$a['Created']);
-							if($_SESSION['Blog']->getUsers()->size() > 0){ 
-								$user = $_SESSION['Blog']->getUsers()->getFirstNode();
+							if($_SESSION['Users']->size() > 0){ 
+								$user = $_SESSION['Users']->getFirstNode();
 								while($user != NULL){ 
 									$u = $user->readNode()->toArray();
 									if($u['ID'] == $a['Author']){ $html .= " by <a class=\"bnavl\" href=\"/blog/u/".$u['First']." ".$u['Last']."\" target=\"#content\">".$u['First']." ".$u['Last']."</a>"; break; } 
