@@ -5,8 +5,9 @@ RewriteRule ^blog/a/(.*)/(.*) index.php?pg=blog/&a=$1&bap=$2 [L]
 RewriteRule ^blog/a/(.*) index.php?pg=blog/&a=$1 [L]
 RewriteRule ^blog/c/(.*)/(.*) index.php?pg=blog/&c=$1&bcp=$2 [L]
 RewriteRule ^blog/c/(.*) index.php?pg=blog/&c=$1 [L]
-RewriteRule ^blog/p/(.*) index.php?pg=blog/&p=$1 [L]
+RewriteRule ^blog/u/(.*)/(.*) index.php?pg=blog/&u=$1&bup=$2 [L]
 RewriteRule ^blog/u/(.*) index.php?pg=blog/&u=$1 [L]
+RewriteRule ^blog/p/(.*) index.php?pg=blog/&p=$1 [L]
 RewriteRule ^blog/(.*) index.php?pg=blog/&bpg=$1 [L]
 RewriteRule ^blog/ index.php?pg=blog/ [L]
 
@@ -14,7 +15,6 @@ RewriteRule ^blog/ index.php?pg=blog/ [L]
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} !-f
 RewriteRule ^(.+)$ index.php?pg=$1
-
 
 Options -MultiViews
 
