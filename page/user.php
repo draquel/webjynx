@@ -12,22 +12,26 @@
         </div>
         <div class="row">
             <div class="col-xs-10 col-xs-offset-1 col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1">
-                
-                <div id="signin" class="col-sm-4 col-sm-offset-4">
-                    <div class="alert hidden" role="alert">
-                      <span class="glyphicon" aria-hidden="true"></span>
-                      <span class="sr-only">Message: </span>
-                      <span class="alert-msg"></span>
+		<?php 
+            if($_SESSION['User'] == NULL){ 
+                echo "
+                <div id=\"signin\" class=\"col-sm-4 col-sm-offset-4\">
+                    <div class=\"alert hidden\" role=\"alert\">
+                      <span class=\"glyphicon\" aria-hidden=\"true\"></span>
+                      <span class=\"sr-only\">Message: </span>
+                      <span class=\"alert-msg\"></span>
                     </div>
-                    <div class="col-sm-8 col-sm-offset-2">
-                        <form id="loginForm">
-                            <input name="user" type="text" class="form-control" placeholder="Username">
-                            <input name="pass" type="password" class="form-control" placeholder="Password" id="pass">
-                            <button type="submit" class="btn btn-default"><span aria-hidden=\"true\">&rarr;</span></button>
+                    <div class=\"col-sm-8 col-sm-offset-2\">
+                        <form id=\"loginForm\">
+                            <input name=\"user\" type=\"text\" class=\"form-control\" placeholder=\"Username\">
+                            <input name=\"pass\" type=\"password\" class=\"form-control\" placeholder=\"Password\" id=\"pass\">
+                            <button type=\"submit\" class=\"btn btn-default\"><span aria-hidden=\"true\">&rarr;</span></button>
                         </form>
                     </div>
-                </div>
-                
+                </div>";
+            }else{ 
+            	echo var_dump($_SESSION['User']); 
+            } ?>
             </div>
         </div>
     </div>
@@ -44,10 +48,10 @@
 									$(".alert-msg").html("Success");
 									$(".alert").addClass("alert-success").removeClass("hidden");
 									$("#signin .glyphicon").addClass("glyphicon glyphicon-ok-sign");
-									//$("#page").fadeOut(to,function(){ window.location.assign("/user.php"); });
+									$("#page").fadeOut(to,function(){ window.location.assign("/user.php"); });
 							}
 							if(xhr.responseText == 2){
-									$(".alert-msg").html("Login failed");
+									$(".alert-msg").html("Login Failed");
 									$(".alert").addClass("alert-danger").removeClass("hidden");
 									$("#signin .glyphicon").addClass("glyphicon-exclamation-sign");
 							}

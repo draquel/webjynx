@@ -28,7 +28,7 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
 	$_SESSION['dbuser'] = "root";
 	$_SESSION['dbPass'] = "Ed17i0n!";
 	
-	if(!isset($_SESSION['Pages']) || true){
+	if(!isset($_SESSION['Pages'])){
 		/*echo "PAGES LOADED <BR>";*/
 		$_SESSION['Pages'] = array(
 			array("id"=>0,"meta-title"=>"HTTP 404 - Page Not Found","meta-description"=>"HTTP 404 - Page Not Found","meta-keywords"=>NULL,"path-ui"=>"/404","path-file"=>"/page/404.php"),
@@ -65,6 +65,7 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
 			$_SESSION['Users']->insertLast($u);
 		}
 	}
+	if(!isset($_SESSION['User'])){ $_SESSION['User'] == NULL; }
 	$_SESSION['Error'] = array("404"=>array("path-file"=>NULL,"path-ui"=>NULL),"401"=>NULL);
 	
 	//Process Page Address
@@ -188,7 +189,7 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
 						var bottom_of_object = $(this).offset().top + ($(this).outerHeight() * 0.25);
 						var bottom_of_window = $(window).scrollTop() + $(window).height();
 						if( bottom_of_window > bottom_of_object ){ $(this).animate({'opacity':'1'},500); }
-					}); 
+					});
 				});
 			/* Navigation */
 				$("#page").on("click","ul.nav a, .navbar-brand, .navl, .bnavl", function(event){ 
@@ -197,8 +198,6 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
 				});
 			/* Mobile Menu - Toggle Page Scroll Lock */
 				//$(".navbar-toggle").click(function(){ if($("body").hasClass("noscroll")){ $("body").removeClass("noscroll"); }else{ $("body").addClass("noscroll"); } });
-			/* Labeless Form Elements */
-				//$("input[type=text],textarea").inputDefault();
 			/* Google Analytics */
 				gaTracker("UA-83229001-1");
 				gaTrack(window.location.pathname,document.title);
@@ -209,4 +208,4 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
 		</script>
     </body>
 </html>
-<?php session_write_close(); /*$_SESSION['db']->disconnect($_SESSION['dbName']);*/ ?>
+<?php session_write_close(); $_SESSION['db']->disconnect($_SESSION['dbName']); ?>

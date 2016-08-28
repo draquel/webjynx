@@ -7,8 +7,7 @@ RewriteRule ^blog/(.*)/ index.php?pg=blog/&bpgi=$1 [L]
 RewriteRule ^blog/(.*) index.php?pg=blog/&bpgn=$1 [L]
 
 # DBObj User Rules
-RewriteRule ^auth/(.*)/ index.php?pg=auth/&upgi=$1 [L]
-#RewriteRule ^auth/ index.php?pg=auth/ [L]
+RewriteRule ^auth/(.*)/ index.php?pg=auth/&upg=$1 [L]
 
 # Webjynx Toolkit Page Rule
 RewriteCond %{REQUEST_FILENAME} !-d
