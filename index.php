@@ -28,7 +28,7 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
 	$_SESSION['dbuser'] = "root";
 	$_SESSION['dbPass'] = "Ed17i0n!";
 	
-	if(!isset($_SESSION['Pages'])){
+	if(!isset($_SESSION['Pages']) || true){
 		/*echo "PAGES LOADED <BR>";*/
 		$_SESSION['Pages'] = array(
 			array("id"=>0,"meta-title"=>"HTTP 404 - Page Not Found","meta-description"=>"HTTP 404 - Page Not Found","meta-keywords"=>NULL,"path-ui"=>"/404","path-file"=>"/page/404.php"),
@@ -37,7 +37,7 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
 			array("id"=>3,"meta-title"=>"About","meta-description"=>"We like stuff and want to work together on your things!","meta-keywords"=>NULL,"path-ui"=>"/about/","path-file"=>"/page/about/index.php"),
 			array("id"=>4,"meta-title"=>"Other","meta-description"=>"Some more stuff we think is neat.","meta-keywords"=>NULL,"path-ui"=>"/about/other","path-file"=>"/page/about/other.php"),
 			array("id"=>5,"meta-title"=>"Sitemap","meta-description"=>"A sitemap, just incase you get lost.","meta-keywords"=>NULL,"path-ui"=>"/sitemap","path-file"=>"/page/sitemap.php"),
-			array("id"=>6,"meta-title"=>"Class Testing","meta-description"=>"Class Unit Testing","meta-keywords"=>NULL,"path-ui"=>"/class/","path-file"=>"/page/class/index.php"),
+			array("id"=>6,"meta-title"=>"Class Testing","meta-description"=>"Class Unit Testing","meta-keywords"=>NULL,"path-ui"=>"/class","path-file"=>"/page/class.php"),
 			array("id"=>7,"meta-title"=>"Blog","meta-description"=>"Our Blog","path-ui"=>"/blog/","meta-keywords"=>NULL,"path-file"=>"/page/blog.php"),
 			array("id"=>8,"meta-title"=>"Authorize User","meta-description"=>"Authorized User Page","path-ui"=>"/auth/","meta-keywords"=>NULL,"path-file"=>"/page/user.php")
 		);
