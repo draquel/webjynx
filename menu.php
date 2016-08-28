@@ -1,5 +1,5 @@
 <?php
-	require_once("script/_php/lib.php");
+	require_once("_php/lib.php");
 	$menu = "<ul class=\"nav navbar-nav navbar-right\">
 	  <!--HOME-->
 	  <li class=\"dropdown\" data-toggle=\"collapse\" data-target=\".navbar-ex1-collapse\">
