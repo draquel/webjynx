@@ -9,17 +9,17 @@
 /* Font Definition */
 	@font-face {
 		font-family: Montserrat;
-		src: url('font/Montserrat-UltraLight.eot?#iefix') format('embedded-opentype'), url('/css/font/Montserrat-UltraLight.otf')  format('truetype');
+		src: url('font/Montserrat-UltraLight.eot?#iefix') format('embedded-opentype'), url('/fonts/Montserrat-UltraLight.otf')  format('truetype');
 		font-weight: 200;
 	}
 	@font-face {
 		font-family: Montserrat;
-		src: url('font/Montserrat-Regular.eot?#iefix') format('embedded-opentype'), url('/css/font/Montserrat-Regular.otf')  format('truetype');
+		src: url('font/Montserrat-Regular.eot?#iefix') format('embedded-opentype'), url('/fonts/Montserrat-Regular.otf')  format('truetype');
 		font-weight: 400;
 	}
 	@font-face {
 		font-family: Montserrat;
-		src: url('font/Montserrat-SemiBold.eot?#iefix') format('embedded-opentype'), url('/css/font/Montserrat-SemiBold.otf')  format('truetype');
+		src: url('font/Montserrat-SemiBold.eot?#iefix') format('embedded-opentype'), url('/fonts/Montserrat-SemiBold.otf')  format('truetype');
 		font-weight: 700;
 	}
 
@@ -35,7 +35,6 @@
 	h4{ font-size: 30px; }
 	h3,h4,h5,h6{ font-weight:400; }
 	
-	div{ vertical-align:text-top; }
 	p{ margin:0 0 25px 0;font-size:22px;font-weight:200; }
 	hr{ border-top: 1px solid #555759; }
 	
@@ -89,7 +88,6 @@
 	.navbar-toggle{ margin-top:35px; }
 	.navbar-default{ background-color:#E7E1E6; }
 	
-	
 	.navbar-nav > li > a{ color: #555759; }
 	.navbar-nav > li > a:hover{ color: #0071CE; }
 	@media(min-width:768px){ 
@@ -103,7 +101,6 @@
 		.navbar-nav > li > ul{ list-style:none; }
 		.navbar-nav > li > ul > li > a{color: #555759;}
 	}
-		
 	@media(max-width:767px){ .navbar-brand{margin:20px 10px;}.navbar-toggle{margin:28px 15px 0 0;} }
 	
 	.thumbnail{ background-color:transparent !important;border:0 !important; }
@@ -144,3 +141,10 @@
 			left: -6px;
 		}
 	}
+	
+/* Form elements */
+form .btn{float:right;}
+input{ margin-bottom:5px; }
+/*input{ display:block; width:100%; margin:5px 0; padding: 3px 5px; border:inset thin #555759; }
+input[type=submit]{ width:30%; float:right; }*/
+
