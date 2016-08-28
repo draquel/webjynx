@@ -17,8 +17,8 @@
 
 Author: Dan Rauqel (draquel@webjynx.com)-->
 <?php
-	require_once("script/_php/lib.php");
-	include("script/_php/DBObj/dbobj.php");
+	require_once("_php/lib.php");
+	include("_php/DBObj/dbobj.php");
 	session_start();
 
 	//Initialize Site Data
@@ -42,12 +42,12 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
 			array("id"=>8,"meta-title"=>"Authorize User","meta-description"=>"Authorized User Page","path-ui"=>"/auth/","meta-keywords"=>NULL,"path-file"=>"/page/user.php")
 		);
 	}
-	if(!isset($_SESSION['db']) || !$_SESSION['db']->con($_SESSION['dbName'])){
-		/*echo "Database Connected";*/
+	if(!isset($_SESSION['db'])){
+		/*echo "DATABASE CONNECTED <BR>";*/
 		$_SESSION['db'] = new Sql();
 		$_SESSION['db']->init("localhost",$_SESSION['dbuser'],$_SESSION['dbPass']);
 		$_SESSION['db']->connect($_SESSION['dbName']);
-	}
+	}elseif(!$_SESSION['db']->con($_SESSION['dbName'])){ $_SESSION['db']->connect($_SESSION['dbName']);	}
 	if(!isset($_SESSION['Blog'])){
 		/*echo "BLOG LOADED <BR>";*/
 		$_SESSION['Blog'] = new Blog(1);
@@ -77,22 +77,35 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
 	//Process Blog Page
 	if($_SESSION['Page']['path-file'] == "/page/blog.php"){
 		$bpage = "";
-		if(isset($_REQUEST['p'])){ 
-			$post = $_SESSION['Blog']->getPosts()->getFirstNode();
-			$_SESSION['Page']['Current'] = NULL;
-			while($post != NULL){
-				$a = $post->readNode()->toArray();
-				if($a['ID'] == $_REQUEST['p']){ $_SESSION['Page']['Current'] = $post; break; }
-				$post = $post->getNext();
+		if(isset($_REQUEST['bpg'])){
+			switch($_REQUEST['bpg']){
+				case "p":
+					$post = $_SESSION['Blog']->getPosts()->getFirstNode();
+					$_SESSION['Page']['Current'] = NULL;
+					while($post != NULL){
+						$a = $post->readNode()->toArray();
+						if($a['ID'] == $_REQUEST['bpgi']){ $_SESSION['Page']['Current'] = $post; break; }
+						$post = $post->getNext();
+					}
+					$_SESSION['Page']['meta-title'] = "Blog Post - ".$a['Title'];
+					$_SESSION['Page']['meta-description'] = $a['Description'];
+					$_SESSION['Page']['meta-keywords'] = $a['Keywords'];
+					$bpage = "post";
+				break;
+				case "c":
+					$_SESSION['Page']['meta-title'] = "Blog Category - ".$_REQUEST['bpgi'];	$_SESSION['Page']['meta-description'] = "Listing of blog entries tagged in ".$_REQUEST['bpgi']; $bpage = "category";
+				break;
+				case "u":
+					$_SESSION['Page']['meta-title'] = "Blog Author - ".$_REQUEST['bpgi']; $_SESSION['Page']['meta-description'] = "Listing of blog entries written by ".$_REQUEST['bpgi']; $bpage = "author";
+				break;
+				case "a":
+					$_SESSION['Page']['meta-title'] = "Blog Archive - ".date("F Y",strtotime($_REQUEST['bpgi'])); $_SESSION['Page']['meta-description'] = "Listing of blog entries posted in ".date("F, Y",strtotime($_REQUEST['bpgi'])); $bpage = "archive";
+				break;
+				default:
+					$_REQUEST['bpg'] = NULL;
+				break;
 			}
-			$_SESSION['Page']['meta-title'] = "Blog Post - ".$a['Title'];
-			$_SESSION['Page']['meta-description'] = $a['Description'];
-			$_SESSION['Page']['meta-keywords'] = $a['Keywords'];
-			$bpage = "post";
-		}
-		elseif(isset($_REQUEST['c'])){ $_SESSION['Page']['meta-title'] = "Blog Category - ".$_REQUEST['c'];	$_SESSION['Page']['meta-description'] = "Listing of blog entries tagged in ".$_REQUEST['c']; $bpage = "category"; }
-		elseif(isset($_REQUEST['u'])){ $_SESSION['Page']['meta-title'] = "Blog Author - ".$_REQUEST['u']; $_SESSION['Page']['meta-description'] = "Listing of blog entries written by ".$_REQUEST['u']; $bpage = "author"; }
-		elseif(isset($_REQUEST['a'])){ $_SESSION['Page']['meta-title'] = "Blog Archive - ".date("F Y",strtotime($_REQUEST['a'])); $_SESSION['Page']['meta-description'] = "Listing of blog entries posted in ".date("F, Y",strtotime($_REQUEST['a'])); $bpage = "archive"; }
+		}else{ $_REQUEST['bpg'] = NULL;	}
 	}
 	
 	//Process User Page
@@ -106,8 +119,8 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
    <!--Start Header-->
     <head>
         <meta charset="utf-8">
-        <meta name='viewport' content="width=device-width, initial-scale=1">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name='viewport' content="width=device-width, initial-scale=1">
         <link rel="icon" href="/img/favicon.ico">
         <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
         <link rel="alternate" type="application/atom+xml" title="<?php echo $_SESSION['Title']; ?>" href="http://<?php echo $_SESSION['Domain']; ?>/rss/">
@@ -121,8 +134,8 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
 			echo "<style>".$css."</style>";
 		//Load JS Libs
 			$js ="<!--Start Head Loader--><script type=\"text/javascript\">";
-			$js .= file_get_contents("script/_js/head.min.js");
-        	$js .= "head.load(\"https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js\",\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\",\"https://www.google-analytics.com/analytics.js\",\"https://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-57bf0be13e45dd09\",\"/script/_js/lib.js\"); </script><!--End Head Loader-->";
+			$js .= file_get_contents("_js/head.min.js");
+        	$js .= "head.load(\"https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js\",\"/_js/bootstrap.min.js\",\"https://www.google-analytics.com/analytics.js\",\"https://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-57bf0be13e45dd09\",\"/_js/lib.js\"); </script><!--End Head Loader-->";
 			echo $js;
 		?>
     </head>
@@ -185,14 +198,15 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
 			/* Mobile Menu - Toggle Page Scroll Lock */
 				//$(".navbar-toggle").click(function(){ if($("body").hasClass("noscroll")){ $("body").removeClass("noscroll"); }else{ $("body").addClass("noscroll"); } });
 			/* Labeless Form Elements */
-				$("input[type=text],textarea").inputDefault();
+				//$("input[type=text],textarea").inputDefault();
 			/* Google Analytics */
 				gaTracker("UA-83229001-1");
 				gaTrack(window.location.pathname,document.title);
 			/* Server Session Timer */
-				//setSessTimeout();
+				setSessTimeout();
 			});
 		});
 		</script>
     </body>
 </html>
+<?php session_write_close(); /*$_SESSION['db']->disconnect($_SESSION['dbName']);*/ ?>
