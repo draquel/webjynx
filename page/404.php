@@ -4,10 +4,10 @@
 			<h1>Error</h1>
             <h2>404 - Page Not Found</h2>
             <?php 
-				if($_SESSION['Error']['404']['path-ui'] != NULL){ echo "<p>The Page '".$_SESSION['Error']['404']['path-ui']."' was not found in the page index.</p>"; }
-				if($_SESSION['Error']['404']['path-file'] != NULL){ echo "<p>The file '".$_SESSION['Error']['404']['path-file']."' was not found.</p>"; }
-			 ?>
-            <?php echo "<hr><address>".$_SERVER['SERVER_SOFTWARE']." Server at ".$_SERVER['SERVER_NAME']." Port 80</address>"; ?>
+				if($_SESSION['Error']['404']['path-ui'] != NULL){ echo "<p>The page '".$_SESSION['Error']['404']['path-ui']."' does not exist.</p>"; }
+				if($_SESSION['Error']['404']['path-file'] != NULL){ echo "<p>The file '".$_SESSION['Error']['404']['path-file']."' does not exist.</p>"; }
+				echo "<hr><address>".$_SERVER['SERVER_SOFTWARE']." Server at ".$_SERVER['SERVER_NAME']." Port 80</address>"; 
+			?>
         </div>
     </div>
 </div>

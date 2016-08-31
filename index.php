@@ -65,55 +65,60 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
 			$_SESSION['Users']->insertLast($u);
 		}
 	}
-	if(!isset($_SESSION['User'])){ $_SESSION['User'] == NULL; }
+	if(!isset($_SESSION['User'])){ $_SESSION['User'] = NULL; }
 	$_SESSION['Error'] = array("404"=>array("path-file"=>NULL,"path-ui"=>NULL),"401"=>NULL);
-	
 	//Process Page Address
 	if(isset($_REQUEST['pg']) && $_REQUEST['pg'] != "" && $_REQUEST['pg'] != NULL){	
 		$found = false; 
 		foreach($_SESSION['Pages'] as $page){ if($page['path-ui'] == "/".strtolower($_REQUEST['pg'])){ $found = true; $_SESSION['Page'] = $page; if(!file_exists(ltrim($page['path-file'],"/"))){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-file'] = $page['path-file']; } break; } }
 		if(!$found){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = "/".$_REQUEST['pg']; }
 	}else{ $_SESSION['Page'] = $_SESSION['Pages'][2]; }
-	
 	//Process Blog Page
 	if($_SESSION['Page']['path-file'] == "/page/blog.php"){
-		$bpage = "";
 		if(isset($_REQUEST['bpg'])){
 			switch($_REQUEST['bpg']){
 				case "p":
 					$post = $_SESSION['Blog']->getPosts()->getFirstNode();
-					$_SESSION['Page']['Current'] = NULL;
+					$_SESSION['Page']['Current'] = NULL; $found = false;
 					while($post != NULL){
 						$a = $post->readNode()->toArray();
-						if($a['ID'] == $_REQUEST['bpgi']){ $_SESSION['Page']['Current'] = $post; break; }
+						if($a['ID'] == $_REQUEST['bpgi']){ $found = true; $_SESSION['Page']['Current'] = $post; break; }
 						$post = $post->getNext();
 					}
-					$_SESSION['Page']['meta-title'] = "Blog Post - ".$a['Title'];
-					$_SESSION['Page']['meta-description'] = $a['Description'];
-					$_SESSION['Page']['meta-keywords'] = $a['Keywords'];
-					$bpage = "post";
+					if(!$found){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = $_SERVER['REQUEST_URI']; }
+					$_SESSION['Page']['meta-title'] = "Blog Post - ".$a['Title']; $_SESSION['Page']['meta-description'] = $a['Description']; $_SESSION['Page']['meta-keywords'] = $a['Keywords'];
 				break;
 				case "c":
-					$_SESSION['Page']['meta-title'] = "Blog Category - ".$_REQUEST['bpgi'];	$_SESSION['Page']['meta-description'] = "Listing of blog entries tagged in ".$_REQUEST['bpgi']; $bpage = "category";
+					$_SESSION['Page']['meta-title'] = "Blog Category - ".$_REQUEST['bpgi'];	$_SESSION['Page']['meta-description'] = "Listing of blog entries tagged in ".$_REQUEST['bpgi'];
 				break;
 				case "u":
-					$_SESSION['Page']['meta-title'] = "Blog Author - ".$_REQUEST['bpgi']; $_SESSION['Page']['meta-description'] = "Listing of blog entries written by ".$_REQUEST['bpgi']; $bpage = "author";
+					$_SESSION['Page']['meta-title'] = "Blog Author - ".$_REQUEST['bpgi']; $_SESSION['Page']['meta-description'] = "Listing of blog entries written by ".$_REQUEST['bpgi'];
 				break;
 				case "a":
-					$_SESSION['Page']['meta-title'] = "Blog Archive - ".date("F Y",strtotime($_REQUEST['bpgi'])); $_SESSION['Page']['meta-description'] = "Listing of blog entries posted in ".date("F, Y",strtotime($_REQUEST['bpgi'])); $bpage = "archive";
+					$_SESSION['Page']['meta-title'] = "Blog Archive - ".date("F Y",strtotime($_REQUEST['bpgi'])); $_SESSION['Page']['meta-description'] = "Listing of blog entries posted in ".date("F, Y",strtotime($_REQUEST['bpgi']));
+				break;
+				case "admin":
+					$_SESSION['Page']['meta-title'] = "Blog Administration"; $_SESSION['Page']['meta-description'] = "Blog Admin Console";
+					if($_REQUEST['bpgi']){ $_SESSION['Page']['meta-title'] .= " - ".ucfirst($_REQUEST['bpgi']); }
 				break;
 				default:
-					$_REQUEST['bpg'] = NULL;
+					if($_REQUEST['bpg'] != NULL && $_REQUEST['bpg'] != ""){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = $_SERVER['REQUEST_URI'];  }
+					if(isset($_REQUEST['bpgi']) && $_REQUEST['bpgi'] != NULL && $_REQUEST['bpgi'] != ""){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = $_SERVER['REQUEST_URI'];  }
+					if(isset($_REQUEST['bpgn']) && !is_numeric($_REQUEST['bpgn']) && $_REQUEST['bpgn'] != NULL && $_REQUEST['bpgn'] != ""){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = $_SERVER['REQUEST_URI']; }
 				break;
 			}
-		}else{ $_REQUEST['bpg'] = NULL;	}
+		}else{
+			$_REQUEST['bpg'] = NULL;
+			if(isset($_REQUEST['bpgi']) && $_REQUEST['bpgi'] != NULL && $_REQUEST['bpgi'] != ""){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = $_SERVER['REQUEST_URI']; }
+			if(isset($_REQUEST['bpgn']) && !is_numeric($_REQUEST['bpgn']) && $_REQUEST['bpgn'] != NULL && $_REQUEST['bpgn'] != ""){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = $_SERVER['REQUEST_URI']; }
+		}
 	}
-	
 	//Process User Page
 	if($_SESSION['Page']['path-file'] == "/page/user.php"){
-		$upage = "";
-		
+		$upage = "";	
 	}
+	
+	if($_SESSION['Page']['id'] == 0){ header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404); }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -130,13 +135,14 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
 			echo "<title>".$_SESSION['Title']." - ".$_SESSION['Page']['meta-title']."</title><meta name=\"description\" content=\"".$_SESSION['Page']['meta-description']."\"><meta name=\"keywords\" content=\"".$_SESSION['Page']['meta-keywords']."\">";
 		//Concatenate CSS Files
 			$css = file_get_contents("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
+			$css .= file_get_contents("css/trumbowyg.min.css");
 			$css .= file_get_contents("css/main.css");
 			$css .= file_get_contents("css/blog.css");
 			echo "<style>".$css."</style>";
 		//Load JS Libs
 			$js ="<!--Start Head Loader--><script type=\"text/javascript\">";
 			$js .= file_get_contents("_js/head.min.js");
-        	$js .= "head.load(\"https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js\",\"/_js/bootstrap.min.js\",\"https://www.google-analytics.com/analytics.js\",\"https://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-57bf0be13e45dd09\",\"/_js/lib.js\"); </script><!--End Head Loader-->";
+        	$js .= "head.load(\"https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js\",\"/_js/bootstrap.min.js\",\"https://www.google-analytics.com/analytics.js\",\"https://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-57bf0be13e45dd09\",\"/_js/trumbowyg.min.js\",\"/_js/lib.js\"); </script><!--End Head Loader-->";
 			echo $js;
 		?>
     </head>
@@ -144,7 +150,7 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
     <body role="document">
        <!--Start Page-->
         <div id="page" class="container-fluid">
-            <nav id="menu" class="navbar navbar-default navbar-static-top<?php if($_SESSION['Page']['path-file'] == "/page/index.php"){ echo " hidden"; } ?>">
+            <nav id="menu" class="navbar navbar-default navbar-static-top<?php if($_SESSION['Page']['path-file'] == "/page/index.php" || $_REQUEST['bpg'] == "admin" || $_SESSION['Page']['path-file'] == "/page/user.php"){ echo " hidden"; } ?>">
               <div class="container-fluid">
                 <div class="navbar-header">
                   <button aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
@@ -179,7 +185,7 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
         </div>
        <!-- End Modal -->
         <script type="text/javascript">
-		head.ready(function() {
+		head.ready(function(){
 			$(document).ready(function(){
 				var to = 250;
 				$("#page").fadeIn(to);
@@ -196,8 +202,13 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
 					event.preventDefault();
 					if($(this).attr("href") != "#"){ var alink = $(this); $("#page").fadeOut(to,function(){ window.location.assign(alink.attr("href")); }); } 
 				});
+			/* Menu - Set Active link */
+				$("ul.nav a").each(function(index) { if($(this).attr("href") == window.location.pathname){ $(this).parent().addClass("active");} });
 			/* Mobile Menu - Toggle Page Scroll Lock */
 				//$(".navbar-toggle").click(function(){ if($("body").hasClass("noscroll")){ $("body").removeClass("noscroll"); }else{ $("body").addClass("noscroll"); } });
+			/* Trumbowyg Editor */
+				$.trumbowyg.svgPath = '/img/trumbowyg_icons.svg';
+				$(".trumbo").trumbowyg();
 			/* Google Analytics */
 				gaTracker("UA-83229001-1");
 				gaTrack(window.location.pathname,document.title);
@@ -208,4 +219,4 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
 		</script>
     </body>
 </html>
-<?php session_write_close(); $_SESSION['db']->disconnect($_SESSION['dbName']); ?>
+<?php $_SESSION['db']->disconnect($_SESSION['dbName']); session_write_close(); ?>
