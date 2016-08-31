@@ -15,12 +15,16 @@
 				$auth = $_SESSION['User']->login($user,$pass,$_SESSION['db']->con($_SESSION['dbName']));
 				if($auth){ echo 1; }else{ $_SESSION['User'] = NULL; echo 2; }
 			break;
+			case 2: //Logout
+				$_SESSION['User'] = NULL;
+				
+			break;
 			default:
 				echo "BAD REQUEST"; 
 			break;
 		}
 		if(isset($_SESSION['db'])){ session_write_close(); $_SESSION['db']->disconnect($_SESSION['dbName']); }
 	}else{ echo "BAD REQUEST"; }
-	session_write_close();
 	$_SESSION['db']->disconnect($_SESSION['dbName']);
+	session_write_close();
 ?>	
