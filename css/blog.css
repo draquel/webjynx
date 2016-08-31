@@ -143,3 +143,13 @@
 .blog-footer p:last-child {
   margin-bottom: 0;
 }
+
+
+/* Blog Management Console */
+.blog-console h1{ margin-bottom:30px; }
+.blog-console-menu{ margin-top:70px; }
+.blog-console .nav-pills > li > a{ color:#555759; }
+.blog-console .nav-pills > li > a::after{ content:''; height:101%; width:0%; position: absolute; top: 0; left: 0; border-bottom:thin solid #888; -webkit-transition: width 1s; transition: width 1s; }
+.blog-console .nav-pills > li > a:hover::after{ width:100%; border-bottom:thin solid #888; }
+.blog-console .nav-pills > li > a:hover{ color: #0071CE; }
+.blog-console .nav-pills > li.active > a { background-color:#e7e7e7; }
