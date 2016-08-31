@@ -3,7 +3,7 @@ RewriteEngine On
 # DBObj Blog Rules
 RewriteRule ^blog/(.*)/(.*)/(.*) index.php?pg=blog/&bpg=$1&bpgi=$2&bpgn=$3 [L]
 RewriteRule ^blog/(.*)/(.*) index.php?pg=blog/&bpg=$1&bpgi=$2&bpgn=1 [L]
-RewriteRule ^blog/(.*)/ index.php?pg=blog/&bpgi=$1 [L]
+RewriteRule ^blog/(.*)/ index.php?pg=blog/&bpg=$1 [L]
 RewriteRule ^blog/(.*) index.php?pg=blog/&bpgn=$1 [L]
 
 # DBObj User Rules
@@ -30,7 +30,6 @@ Options -MultiViews
 <ifmodule mod_deflate.c>
 	AddOutputFilterByType DEFLATE text/text text/html text/plain text/xml text/css text/php text/x-php application/php application/x-php application/x-httpd-php application/x-httpd-php-source application/x-javascript application/javascript image/svg+xml image/png image/gif
 </ifmodule>
-
 
 <IfModule mod_expires.c>
     ExpiresActive on
