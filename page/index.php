@@ -11,9 +11,6 @@
 		#hmenu a:hover{ color:#0071CE; text-decoration:none;}
 		#hmenu > div > div{ margin-bottom:24px !important;}
 	</style>
-<!-- Preload CSS Images -->
-    <img class="hidden" src="/img/stock_head1.svg" alt="Header img 1" />
-    <img class="hidden" src="/img/stock_head2.svg" alt="Header img 2" />
 <!--Page Content -->
     <div id="pg" class="container-fluid">
         <div class="row">

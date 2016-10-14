@@ -1,4 +1,4 @@
-<!-- Powered by:
+<!--Powered by:
      __      __          __       _____                            
     /\ \  __/\ \        /\ \     /\___ \                           
     \ \ \/\ \ \ \     __\ \ \____\/__/\ \  __  __    ___    __  _  
@@ -15,20 +15,23 @@
                 \ \_\ \____/\ \____//\____\\ \_\ \_\ \_\ \__\
                  \/_/\/___/  \/___/ \/____/ \/_/\/_/\/_/\/__/
 
-Author: Dan Rauqel (draquel@webjynx.com)-->
+Author: Dan Raquel (draquel@webjynx.com)-->
 <?php
+	error_reporting(E_ALL);
 	require_once("_php/lib.php");
 	include("_php/DBObj/dbobj.php");
 	session_start();
-
+	
 	//Initialize Site Data
 	$_SESSION['Title'] = "Company Name";
 	$_SESSION['Domain'] = "dev.webjynx.com";
 	$_SESSION['dbName'] = "DBObj";
 	$_SESSION['dbuser'] = "root";
 	$_SESSION['dbPass'] = "Ed17i0n!";
+	$_SESSION['Blog_GCS_ID'] = "011020224819443845085:btxae4osafm";
 	
-	if(!isset($_SESSION['Pages'])){
+	if(isset($_REQUEST['reset']) && ($_REQUEST['reset'] == 1 || $_REQUEST['reset'] == "true" || $_REQUEST['reset'] == "yes")){ $reset = true; }else{ $reset = false; }
+	if(!isset($_SESSION['Pages']) || $reset){
 		/*echo "PAGES LOADED <BR>";*/
 		$_SESSION['Pages'] = array(
 			array("id"=>0,"meta-title"=>"HTTP 404 - Page Not Found","meta-description"=>"HTTP 404 - Page Not Found","meta-keywords"=>NULL,"path-ui"=>"/404","path-file"=>"/page/404.php"),
@@ -42,19 +45,19 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
 			array("id"=>8,"meta-title"=>"Authorize User","meta-description"=>"Authorized User Page","path-ui"=>"/auth/","meta-keywords"=>NULL,"path-file"=>"/page/user.php")
 		);
 	}
-	if(!isset($_SESSION['db'])){
+	if(!isset($_SESSION['db']) || $reset){
 		/*echo "DATABASE CONNECTED <BR>";*/
 		$_SESSION['db'] = new Sql();
 		$_SESSION['db']->init("localhost",$_SESSION['dbuser'],$_SESSION['dbPass']);
 		$_SESSION['db']->connect($_SESSION['dbName']);
 	}elseif(!$_SESSION['db']->con($_SESSION['dbName'])){ $_SESSION['db']->connect($_SESSION['dbName']);	}
-	if(!isset($_SESSION['Blog'])){
+	if(!isset($_SESSION['Blog']) || $reset){
 		/*echo "BLOG LOADED <BR>";*/
 		$_SESSION['Blog'] = new Blog(1);
 		$_SESSION['Blog']->dbRead($_SESSION['db']->con($_SESSION['dbName']));
 		$_SESSION['Blog']->load($_SESSION['db']->con($_SESSION['dbName']));
 	}
-	if(!isset($_SESSION['Users'])){
+	if(!isset($_SESSION['Users']) || $reset){
 		/*echo "USERS LOADED <BR>";*/
 		$_SESSION['Users'] = new DLList();
 		$sql = "SELECT u.*, group_concat(distinct concat(r.ID,':',r.RID,':',r.KID,':',r.Key,':',r.Code,':',r.Definition) separator ';') AS `Groups`, group_concat(distinct concat(`p`.`ID`,':',`p`.`Created`,':',`p`.`Updated`,':',`p`.`Name`,':',`p`.`PID`,':',`p`.`Primary`,':',`p`.`Region`,':',`p`.`Area`,':',`p`.`Number`,':',`p`.`Ext`) separator ';') AS `Phones`, group_concat(distinct concat(`a`.`ID`,':',`a`.`Created`,':',`a`.`Updated`,':',`a`.`Name`,':',`a`.`PID`,':',`a`.`Primary`,':',`a`.`Address`,':',`a`.`Address2`,':',`a`.`City`,':',`a`.`State`,':',`a`.`Zip`) separator ';') AS `Addresses`, group_concat(distinct concat(`e`.`ID`,':',`e`.`Created`,':',`e`.`Updated`,':',`e`.`Name`,':',`e`.`PID`,':',`e`.`Primary`,':',`e`.`Address`) separator ';') AS `Emails` FROM Users u LEFT JOIN Relationships r ON u.ID = r.RID AND r.Key = 'Group' LEFT JOIN `Addresses` `a` on `a`.`PID` = `u`.`ID` LEFT JOIN `Phones` `p` on `p`.`PID` = `u`.`ID` LEFT JOIN `Emails` `e` on `e`.`PID` = `u`.`ID` GROUP BY u.ID ORDER BY u.Created DESC";
@@ -65,7 +68,7 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
 			$_SESSION['Users']->insertLast($u);
 		}
 	}
-	if(!isset($_SESSION['User'])){ $_SESSION['User'] = NULL; }
+	if(!isset($_SESSION['User']) || $reset){ $_SESSION['User'] = NULL; }
 	$_SESSION['Error'] = array("404"=>array("path-file"=>NULL,"path-ui"=>NULL),"401"=>NULL);
 	//Process Page Address
 	if(isset($_REQUEST['pg']) && $_REQUEST['pg'] != "" && $_REQUEST['pg'] != NULL){	
@@ -77,6 +80,11 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
 	if($_SESSION['Page']['path-file'] == "/page/blog.php"){
 		if(isset($_REQUEST['bpg'])){
 			switch($_REQUEST['bpg']){
+				default:
+					if($_REQUEST['bpg'] != NULL && $_REQUEST['bpg'] != ""){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = $_SERVER['REQUEST_URI'];  }
+					if(isset($_REQUEST['bpgi']) && $_REQUEST['bpgi'] != NULL && $_REQUEST['bpgi'] != ""){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = $_SERVER['REQUEST_URI'];  }
+					if(isset($_REQUEST['bpgn']) && !is_numeric($_REQUEST['bpgn']) && $_REQUEST['bpgn'] != NULL && $_REQUEST['bpgn'] != ""){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = $_SERVER['REQUEST_URI']; }
+				break;
 				case "p":
 					$post = $_SESSION['Blog']->getPosts()->getFirstNode();
 					$_SESSION['Page']['Current'] = NULL; $found = false;
@@ -101,11 +109,6 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
 					$_SESSION['Page']['meta-title'] = "Blog Administration"; $_SESSION['Page']['meta-description'] = "Blog Admin Console";
 					if($_REQUEST['bpgi']){ $_SESSION['Page']['meta-title'] .= " - ".ucfirst($_REQUEST['bpgi']); }
 				break;
-				default:
-					if($_REQUEST['bpg'] != NULL && $_REQUEST['bpg'] != ""){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = $_SERVER['REQUEST_URI'];  }
-					if(isset($_REQUEST['bpgi']) && $_REQUEST['bpgi'] != NULL && $_REQUEST['bpgi'] != ""){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = $_SERVER['REQUEST_URI'];  }
-					if(isset($_REQUEST['bpgn']) && !is_numeric($_REQUEST['bpgn']) && $_REQUEST['bpgn'] != NULL && $_REQUEST['bpgn'] != ""){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = $_SERVER['REQUEST_URI']; }
-				break;
 			}
 		}else{
 			$_REQUEST['bpg'] = NULL;
@@ -115,9 +118,9 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
 	}
 	//Process User Page
 	if($_SESSION['Page']['path-file'] == "/page/user.php"){
-		$upage = "";	
+		$upage = "";
 	}
-	
+	//HTTP 404
 	if($_SESSION['Page']['id'] == 0){ header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404); }
 ?>
 <!DOCTYPE html>
@@ -150,7 +153,7 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
     <body role="document">
        <!--Start Page-->
         <div id="page" class="container-fluid">
-            <nav id="menu" class="navbar navbar-default navbar-static-top<?php if($_SESSION['Page']['path-file'] == "/page/index.php" || $_REQUEST['bpg'] == "admin" || $_SESSION['Page']['path-file'] == "/page/user.php"){ echo " hidden"; } ?>">
+            <nav id="menu" class="navbar navbar-default navbar-static-top<?php if($_SESSION['Page']['path-file'] == "/page/index.php" || (isset($_REQUEST['bpg']) && $_REQUEST['bpg'] == "admin") || $_SESSION['Page']['path-file'] == "/page/user.php"){ echo " hidden"; } ?>">
               <div class="container-fluid">
                 <div class="navbar-header">
                   <button aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
@@ -179,7 +182,7 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="myModalLabel">Lorem ipsum dolor</h4></div>
-                    <div class="modal-body"><!-- Modal Content --><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer aliquam, quam vitae semper fringilla, nunc lectus pulvinar ante, a malesuada ante mi sed neque. Morbi sagittis metus quam, sed semper mi venenatis at. Praesent in diam eu justo consectetur dignissim. Donec pharetra, tortor et maximus hendrerit, ex risus semper erat, ac auctor odio nisi eget est. Fusce eget pulvinar nunc, vitae ultricies sapien. Aliquam at facilisis erat, accumsan scelerisque elit. Aenean viverra quis lacus vel dapibus. Fusce vestibulum ligula sed magna fringilla, non fringilla lectus faucibus. Sed dignissim dui a arcu ultricies facilisis. Donec pretium egestas lectus, vitae luctus lorem malesuada in.</p></div>
+                    <div class="modal-body"><!-- Modal Content --></div>
                 </div>
             </div>
         </div>
@@ -189,34 +192,32 @@ Author: Dan Rauqel (draquel@webjynx.com)-->
 			$(document).ready(function(){
 				var to = 250;
 				$("#page").fadeIn(to);
+			/* Navigation */
+				$("#page").on("click","ul.nav a, .navbar-brand, .navl, .bnavl", function(event){ event.preventDefault(); if($(this).attr("href") != "#"){ var alink = $(this); $("#page").fadeOut(to,function(){ window.location.assign(alink.attr("href")); }); } });
+			/* Menu - Set Active link */
+				$("ul.nav a").each(function(index) { if($(this).attr("href") === window.location.pathname ){ $(this).parent().addClass("active");} });
+			/* Mobile Menu - Toggle Page Scroll Lock */
+				//$(".navbar-toggle").click(function(){ if($("body").hasClass("noscroll")){ $("body").removeClass("noscroll"); }else{ $("body").addClass("noscroll"); } });
 			/* Window Scroll Event - Content Fade In */
 				$(window).scroll(function(){
 					$('.hideme').each(function(i){
 						var bottom_of_object = $(this).offset().top + ($(this).outerHeight() * 0.25);
 						var bottom_of_window = $(window).scrollTop() + $(window).height();
-						if( bottom_of_window > bottom_of_object ){ $(this).animate({'opacity':'1'},500); }
+						if( bottom_of_window > bottom_of_object ){ $(this).animate({'opacity':'1'},350); }
 					});
 				});
-			/* Navigation */
-				$("#page").on("click","ul.nav a, .navbar-brand, .navl, .bnavl", function(event){ 
-					event.preventDefault();
-					if($(this).attr("href") != "#"){ var alink = $(this); $("#page").fadeOut(to,function(){ window.location.assign(alink.attr("href")); }); } 
-				});
-			/* Menu - Set Active link */
-				$("ul.nav a").each(function(index) { if($(this).attr("href") == window.location.pathname){ $(this).parent().addClass("active");} });
-			/* Mobile Menu - Toggle Page Scroll Lock */
-				//$(".navbar-toggle").click(function(){ if($("body").hasClass("noscroll")){ $("body").removeClass("noscroll"); }else{ $("body").addClass("noscroll"); } });
 			/* Trumbowyg Editor */
 				$.trumbowyg.svgPath = '/img/trumbowyg_icons.svg';
-				$(".trumbo").trumbowyg();
+				$(".trumbowyg").trumbowyg({
+					btns: [	['viewHTML'],['formatting'],'btnGrp-semantic',['superscript', 'subscript'],['link'],['insertImage'],'btnGrp-justify','btnGrp-lists',['horizontalRule'],['removeformat'],['fullscreen'] ],
+					autogrow: true
+				});
 			/* Google Analytics */
 				gaTracker("UA-83229001-1");
 				gaTrack(window.location.pathname,document.title);
-			/* Server Session Timer */
-				setSessTimeout();
 			});
 		});
 		</script>
     </body>
 </html>
-<?php $_SESSION['db']->disconnect($_SESSION['dbName']); session_write_close(); ?>
+<?php /*$_SESSION['db']->disconnect($_SESSION['dbName']);*/ session_write_close(); ?>
