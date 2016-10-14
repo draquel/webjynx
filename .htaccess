@@ -1,18 +1,26 @@
 RewriteEngine On
 
+# Supress rewrite recusion
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+
+# Fix Relative Bootstrap paths
+RewriteRule ^.*/bootstrap.min.css.map$ /css/bootstrap.min.css.map [L]
+RewriteRule ^.*/fonts/glyphicons-halflings-regular.(.*)$ /fonts/glyphicons-halflings-regular.$1 [L]
+
 # DBObj Blog Rules
-RewriteRule ^blog/(.*)/(.*)/(.*) index.php?pg=blog/&bpg=$1&bpgi=$2&bpgn=$3 [L]
-RewriteRule ^blog/(.*)/(.*) index.php?pg=blog/&bpg=$1&bpgi=$2&bpgn=1 [L]
-RewriteRule ^blog/(.*)/ index.php?pg=blog/&bpg=$1 [L]
-RewriteRule ^blog/(.*) index.php?pg=blog/&bpgn=$1 [L]
+RewriteRule ^blog/(.*)/(.*)/(.*)/(.*)$ /index.php?pg=blog/&bpg=$1&bpgi=$2&bpgn=$3&bpgs=$4 [L]
+RewriteRule ^blog/(.*)/(.*)/(.*)$ /index.php?pg=blog/&bpg=$1&bpgi=$2&bpgn=$3 [L]
+RewriteRule ^blog/(.*)/(.*)$ /index.php?pg=blog/&bpg=$1&bpgi=$2&bpgn=1 [L]
+RewriteRule ^blog/(.*)/$ /index.php?pg=blog/&bpg=$1 [L]
+RewriteRule ^blog/(.*)$ /index.php?pg=blog/&bpgn=$1 [L]
 
 # DBObj User Rules
-RewriteRule ^auth/(.*)/ index.php?pg=auth/&upg=$1 [L]
+RewriteRule ^auth/(.*)/$ /index.php?pg=auth/&upg=$1 [L]
 
 # Webjynx Toolkit Page Rule
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} !-f
-RewriteRule ^(.+)$ index.php?pg=$1
+RewriteRule ^(.+)$ /index.php?pg=$1
 
 Options -MultiViews
 

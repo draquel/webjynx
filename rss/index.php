@@ -1,6 +1,6 @@
 <?php
-	require_once("../script/_php/lib.php");
-	include("../script/_php/DBObj/dbobj.php");
+	require_once("../_php/lib.php");
+	include("../_php/DBObj/dbobj.php");
 	session_start();
 
 	$_SESSION['dbName'] = "DBObj";

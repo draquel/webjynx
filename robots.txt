@@ -1,4 +1,5 @@
 User-agent: *
+Disallow: /_js/
+Disallow: /_php/
+Disallow: /_sql/
 Disallow: /page/
-Disallow: /file/
-Disallow: /img/
