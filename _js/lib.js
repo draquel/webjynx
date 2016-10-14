@@ -1,62 +1,26 @@
-//Browser Navigational Overide Functions
-	jQuery.fn.setContent=function(ari,scrollto){
-		var target=$(this).attr("target");
-		var pg=$(this).attr("href");
-		if(target==="#"||target===""||target===null||typeof target==="undefined"){return 0;}
-		else{
-			window.pgTrans=true;
-			$("#loader-page").fadeIn(50);
-			$("#menu li").removeClass("active");
-			$(this).parent().addClass("active");
-			$(target).fadeOut(250,function(){
-				if(pg=="/"){$("#menu").hide();}else{$("#menu").show();}
-				$.ajax({url:'/ajax.php',method:'POST',async:true,dataType:"json",data:"ari="+ari+"&pp="+pg,
-					complete: function(xhr){
-						var data = JSON.parse(xhr.responseText);
-						$(target).html(data[0]);
-						window.history.pushState({"html":data[0],"url":data[2]['path-file']},data[2]['meta-title'],data[2]['path-ui']);
-						document.title = (document.title.split("-"))[0] +"- "+data[2]['meta-title'];
-						$("meta[name='description']").attr("content",data[2]['meta-description']);
-						$("meta[name='keywords']").attr("content",data[2]['meta-keywords']);
-						gaTrack(data[2]['path-ui'],data[2]['meta-title']);
-						preload(data[1],SCCallback(target,scrollto));
-					}
+//Blog Form Handling
+	function setForm(){
+		var datastr = "bri="+arguments[0];
+		if(arguments.length > 1){ datastr += "&i="+arguments[1]; } 
+		$.ajax({url:'/ajax.php',method:'POST',async:true,dataType:"json",data:datastr,
+			complete: function(xhr){
+				var data = JSON.parse(xhr.responseText);
+				$(".modal-title").html(data[0]);
+				$(".modal-body").html(data[1]);
+				$(".modal-dialog").addClass("modal-lg");
+				$(".trumbowyg").trumbowyg({
+					btns: [	['viewHTML'],['formatting'],'btnGrp-semantic',['superscript','subscript'],['link'],['insertImage'],'btnGrp-justify','btnGrp-lists',['horizontalRule'],['removeformat'] ],
+					autogrow: true
 				});
-			});
-		}
-	};
-	function SCCallback(target,scrollto){
-		setTimeout(function(){$(target).fadeIn(250,null);},100);
-		$("#loader-page").fadeOut(50);resetSessTimeout();
-		if(typeof scrollto!=='undefined'&&scrollto!==null){$('html, body').animate({scrollTop:($(scrollto).offset().top-5)},750);}
-		window.pgTrans=false;
-	}
-	function goToPage(target,page,func){
-	 	 $("#menu li").removeClass("active").find("[href='"+page.replace(".php","").replace("/page/","/")+"']").parent().addClass("active");
-		 if(page == "/page/index.php"){ $("#menu").hide(); }else{ $("#menu").show(); }
-		 $(target).fadeOut(250,function(){ $(this).load(page,function(responseTxt){ window.history.pushState({"html":responseTxt,"url":page},""); $(this).fadeIn(250,func); }); });
-	}
-//Session Handling Functions
-	function setSessTimeout(){
-		window.sess_left_sec = 20*60;
-		sessTime_left();
-	}
-	function resetSessTimeout(){ window.sess_left_sec = 20*60; }
-	function sessTime_left(){
-		window.sess_left_sec--;
-		var sec = 0; var left_min = Math.floor(window.sess_left_sec / 60);
-		if(left_min === 0){ sec = window.sess_left_sec; }
-		else{ sec = window.sess_left_sec - (left_min * 60); }
-		if(sec < 10){ sec = "0"+sec; }
-		var page_output = left_min + ":" +sec;
-		//document.getElementById("sessTimeout").innerHTML = page_output;
-		if(window.sess_left_sec > 0){ setTimeout(function(){ sessTime_left(); }, 1000);}
-		else{ location.reload(); }
+				$('#Modal').modal('show');
+			}
+		});
 	}
 //Google Analytics
 	//Initialize Tracker
 	function gaTracker(id){
-		window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+		window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};
+		ga.l=+new Date;
 		if(ga){
 			ga('create', id, 'auto');
 			return true;
@@ -70,9 +34,15 @@
 			return true;
 		}else{ return false; }
 	}
+	function gaEvent(category,action,label,val){
+		if(ga){
+			ga('send','event',category,action,label,val);
+			return true;
+		}else{ return false; }
+	}
 //MISC
 	function validateEmail(email) {
-		var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+		var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/;
 		return re.test(email);
 	}
 	function validatePhone(phone){
