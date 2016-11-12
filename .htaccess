@@ -3,6 +3,10 @@ RewriteEngine On
 # Supress rewrite recusion
 RewriteCond %{ENV:REDIRECT_STATUS} ^$
 
+#AWS ELB Force SSL
+#RewriteCond %{HTTP:X-Forwarded-Proto} !https 
+#RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
 # Fix Relative Bootstrap paths
 RewriteRule ^.*/bootstrap.min.css.map$ /css/bootstrap.min.css.map [L]
 RewriteRule ^.*/fonts/glyphicons-halflings-regular.(.*)$ /fonts/glyphicons-halflings-regular.$1 [L]

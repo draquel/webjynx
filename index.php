@@ -19,12 +19,13 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 <?php
 	error_reporting(E_ALL);
 	require_once("_php/lib.php");
-	include("_php/DBObj/dbobj.php");
+	require_once("_php/DBObj/dbobj.php");
 	session_start();
 	
 	//Initialize Site Data
-	$_SESSION['Title'] = "Company Name";
+	$_SESSION['Title'] = "WebJynx Toolkit - Testing";
 	$_SESSION['Domain'] = "dev.webjynx.com";
+	if($_SERVER['SERVER_NAME'] == "dev2.webjynx.com"){ $_SESSION['dbHost'] = "localhost"; }else{ $_SESSION['dbHost'] = "webjynxrds.cjzpxtjfv2ad.us-east-1.rds.amazonaws.com"; }
 	$_SESSION['dbName'] = "DBObj";
 	$_SESSION['dbuser'] = "root";
 	$_SESSION['dbPass'] = "Ed17i0n!";
@@ -48,7 +49,7 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 	if(!isset($_SESSION['db']) || $reset){
 		/*echo "DATABASE CONNECTED <BR>";*/
 		$_SESSION['db'] = new Sql();
-		$_SESSION['db']->init("localhost",$_SESSION['dbuser'],$_SESSION['dbPass']);
+		$_SESSION['db']->init($_SESSION['dbHost'],$_SESSION['dbuser'],$_SESSION['dbPass']);
 		$_SESSION['db']->connect($_SESSION['dbName']);
 	}elseif(!$_SESSION['db']->con($_SESSION['dbName'])){ $_SESSION['db']->connect($_SESSION['dbName']);	}
 	if(!isset($_SESSION['Blog']) || $reset){
@@ -181,7 +182,7 @@ Author: Dan Raquel (draquel@webjynx.com)-->
         <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
-                    <div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="myModalLabel">Lorem ipsum dolor</h4></div>
+                    <div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="myModalLabel"><!--Modal Title--></h4></div>
                     <div class="modal-body"><!-- Modal Content --></div>
                 </div>
             </div>
@@ -194,10 +195,7 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 				$("#page").fadeIn(to);
 			/* Navigation */
 				$("#page").on("click","ul.nav a, .navbar-brand, .navl, .bnavl", function(event){ event.preventDefault(); if($(this).attr("href") != "#"){ var alink = $(this); $("#page").fadeOut(to,function(){ window.location.assign(alink.attr("href")); }); } });
-			/* Menu - Set Active link */
-				$("ul.nav a").each(function(index) { if($(this).attr("href") === window.location.pathname ){ $(this).parent().addClass("active");} });
-			/* Mobile Menu - Toggle Page Scroll Lock */
-				//$(".navbar-toggle").click(function(){ if($("body").hasClass("noscroll")){ $("body").removeClass("noscroll"); }else{ $("body").addClass("noscroll"); } });
+				$("ul.nav a").each(function(index){ if($(this).attr("href") === window.location.pathname ){ $(this).parent().addClass("active");} });
 			/* Window Scroll Event - Content Fade In */
 				$(window).scroll(function(){
 					$('.hideme').each(function(i){
@@ -208,13 +206,12 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 				});
 			/* Trumbowyg Editor */
 				$.trumbowyg.svgPath = '/img/trumbowyg_icons.svg';
-				$(".trumbowyg").trumbowyg({
-					btns: [	['viewHTML'],['formatting'],'btnGrp-semantic',['superscript', 'subscript'],['link'],['insertImage'],'btnGrp-justify','btnGrp-lists',['horizontalRule'],['removeformat'],['fullscreen'] ],
-					autogrow: true
-				});
+				$(".trumbowyg").trumbowyg({ btns: [	['viewHTML'],['formatting'],'btnGrp-semantic',['superscript', 'subscript'],['link'],['insertImage'],'btnGrp-justify','btnGrp-lists',['horizontalRule'],['removeformat'],['fullscreen'] ],autogrow: true	});
 			/* Google Analytics */
 				gaTracker("UA-83229001-1");
 				gaTrack(window.location.pathname,document.title);
+			/* Mobile Menu - Toggle Page Scroll Lock */
+				//$(".navbar-toggle").click(function(){ if($("body").hasClass("noscroll")){ $("body").removeClass("noscroll"); }else{ $("body").addClass("noscroll"); } });
 			});
 		});
 		</script>

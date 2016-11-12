@@ -16,6 +16,27 @@
 			}
 		});
 	}
+	jQuery.fn.submitForm = function(){
+		$(this).submit(function(e){
+			e.preventDefault();
+			var dataStr = "";
+			$(this).find("input, textarea, checkbox").each(function(index, element){
+				if($(this).val() == null || $(this).val() == "" || typeof $(this).val() == 'undefined'){ dataStr += "&"+$(this).attr('id')+"=NULL"; }
+				else{ dataStr += "&"+$(this).attr('id')+"="+$(this).val(); }
+			});
+			$.ajax({url:'/ajax.php',method:'POST',async:true,dataType:"json",data:"bri=3"+dataStr,
+				complete: function(xhr){
+					var data = JSON.parse(xhr.responseText);
+					if(data[0]){
+						$(".modal-body > .alert").addClass("alert-success").removeClass("hidden").html("<strong>Congratulations!</strong> ".data[1]);
+						setTimeout(function(){ $('#Modal').modal('hide'); },1500);
+					}else{
+						$(".modal-body > .alert").addClass("alert-danger").removeClass("hidden").html("<strong>Opps!</strong> ".data[1]);
+					}
+				}
+			});
+		});
+	}
 //Google Analytics
 	//Initialize Tracker
 	function gaTracker(id){
