@@ -1,20 +1,39 @@
 RewriteEngine On
+RewriteBase /
+
+#AWS ELB Force SSL
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteCond %{HTTP_HOST} !dev2.webjynx.com
+RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+# Fix Relative Bootstrap paths
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^.*/bootstrap.min.css.map$ /css/bootstrap.min.css.map [L]
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^.*/fonts/glyphicons-halflings-regular.(.*)$ /fonts/glyphicons-halflings-regular.$1 [L]
 
 # DBObj Blog Rules
-RewriteRule ^blog/a/(.*)/(.*) index.php?pg=blog/&a=$1&bap=$2 [L]
-RewriteRule ^blog/a/(.*) index.php?pg=blog/&a=$1 [L]
-RewriteRule ^blog/c/(.*)/(.*) index.php?pg=blog/&c=$1&bcp=$2 [L]
-RewriteRule ^blog/c/(.*) index.php?pg=blog/&c=$1 [L]
-RewriteRule ^blog/p/(.*) index.php?pg=blog/&p=$1 [L]
-RewriteRule ^blog/u/(.*) index.php?pg=blog/&u=$1 [L]
-RewriteRule ^blog/(.*) index.php?pg=blog/&bpg=$1 [L]
-RewriteRule ^blog/ index.php?pg=blog/ [L]
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^blog/(.+)/(.+)/(.+)/(.+)$ /index.php?pg=blog/&bpg=$1&bpgi=$2&bpgn=$3&bpgs=$4 [L]
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^blog/(.+)/(.+)/(.+)$ /index.php?pg=blog/&bpg=$1&bpgi=$2&bpgn=$3 [L]
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^blog/(.+)/(.+)$ /index.php?pg=blog/&bpg=$1&bpgi=$2&bpgn=1 [L]
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^blog/(.+)/$ /index.php?pg=blog/&bpg=$1 [L]
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^blog/(.+)$ /index.php?pg=blog/&bpgn=$1 [L]
+
+# DBObj User Rules
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^auth/(.+)/$ /index.php?pg=auth/&upg=$1 [L]
 
 # Webjynx Toolkit Page Rule
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} !-f
-RewriteRule ^(.+)$ index.php?pg=$1
-
+RewriteRule ^(.+)$ /index.php?pg=$1
 
 Options -MultiViews
 
@@ -32,7 +51,6 @@ Options -MultiViews
 <ifmodule mod_deflate.c>
 	AddOutputFilterByType DEFLATE text/text text/html text/plain text/xml text/css text/php text/x-php application/php application/x-php application/x-httpd-php application/x-httpd-php-source application/x-javascript application/javascript image/svg+xml image/png image/gif
 </ifmodule>
-
 
 <IfModule mod_expires.c>
     ExpiresActive on

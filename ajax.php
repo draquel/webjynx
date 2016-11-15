@@ -1,95 +1,179 @@
 <?php
-	require_once("script/_php/lib.php");
-	include("script/_php/DBObj/dbobj.php");
+	require_once("_php/lib.php");
+	require_once("_php/DBObj/dbobj.php");
 	session_start();
 	
-	if(isset($_REQUEST['ari']) || $_REQUEST['ari'] != NULL || $_REQUEST['ari'] != ""){
-		switch($_REQUEST['ari']){
-			case 1: //Site Initial Call
-				$data = array();
-				if(isset($_REQUEST['pid'])){ for($i = 0; $i < count($_SESSION['Pages']); $i++){ if($_REQUEST['pid'] == $_SESSION['Pages'][$i]['id']){ $_SESSION['Page'] = $_SESSION['Pages'][$i]; break; } } }
-				$data[0] = $_SESSION['Page'];
-				header("Content-Type: application/json");
-				echo json_encode($data);
-			break;
-			case 2: //Page Requests - Files
-				$page = $_REQUEST['pp'];
-				$exist_i = false;
-				$exist_f = false;
-				$root = __DIR__;
-				
-				/* Get Page From Index */
-				$_SESSION['Error'] = array("404"=>array("path-file"=>NULL,"path-ui"=>NULL));
-				for($i = 0; $i < count($_SESSION['Pages']); $i++){ if($_SESSION['Pages'][$i]['path-ui'] == strtolower($page) || ($_SESSION['Pages'][$i]['path-ui'] == "/blog/" && substr($page, 0, strlen($_SESSION['Pages'][$i]['path-ui'])) == $_SESSION['Pages'][$i]['path-ui'])){ $exist_i = true; $_SESSION['Page'] = $_SESSION['Pages'][$i]; break;} }
-				$exists_f = file_exists(ltrim($_SESSION['Page']['path-file'],"/"));
-				if(!$exist_i || !$exists_f){ if(!$exist_i){ $_SESSION['Error']['404']['path-ui'] = strtolower($page); } }
-				if(!$exists_f){ $_SESSION['Error']['404']['path-file'] = $_SESSION['Page']['path-file']; }
-				
-				/* Blog Page Handling */
-				if($_SESSION['Page']['path-file'] == "/page/blog.php"){
-					if(!$_SESSION['db']->connect($_SESSION['dbName'])){	echo "CONNECTION FAILURE <br >"; } 
-					elseif(!isset($_SESSION['Blog'])){
-						$_SESSION['Blog'] = new Blog(1);
-						$_SESSION['Blog']->dbRead($_SESSION['db']->con($_SESSION['dbName']));
-						$_SESSION['Blog']->load($_SESSION['db']->con($_SESSION['dbName']));
-					}
-					$bpage = "";
-					$p = explode("/",ltrim($page,"/"));
-					if(is_numeric($p[1])){ /* Main Page */ $_REQUEST['bpg'] = $p[1]; }
-					else{
-						$_SESSION['Page']['path-ui'] = $page;
-						if($p[1] == "a"){
-							$_REQUEST['a'] = $p[2];	if(isset($p[3])){ $_REQUEST['bap'] = $p[3]; } 
-							$_SESSION['Page']['meta-title'] = "Blog Archive - ".date("F Y",strtotime($_REQUEST['a']));
-							$_SESSION['Page']['meta-description'] = "Listing of blog entries posted in ".date("F, Y",strtotime($_REQUEST['a']));
-							$bpage = "archive";
-						}
-						elseif($p[1] == "c"){
-							$_REQUEST['c'] = $p[2];	if(isset($p[3])){ $_REQUEST['bcp'] = $p[3]; }
-							$_SESSION['Page']['meta-title'] = "Blog Category - ".$_REQUEST['c'];
-							$_SESSION['Page']['meta-description'] = "Listing of blog entries tagged in ".$_REQUEST['c'];
-							$bpage = "category";
-						}
-						elseif($p[1] == "u"){ 
-							$_REQUEST['u'] = $p[2];	if(isset($p[3])){ $_REQUEST['bup'] = $p[3]; }
-							$_SESSION['Page']['meta-title'] = "Blog Author - ".$_REQUEST['u'];
-							$_SESSION['Page']['meta-description'] = "Listing of blog entries written by ".$_REQUEST['u'];
-							$bpage = "author";
-						}
-						elseif($p[1] == "p"){
-							$_REQUEST['p'] = $p[2];
-							$post = $_SESSION['Blog']->getPosts()->getFirstNode();
-							$_SESSION['Page']['Current'] = NULL;
-							while($post != NULL){
-								$a = $post->readNode()->toArray();
-								if($a['ID'] == $_REQUEST['p']){ $_SESSION['Page']['Current'] = $post; break; }
-								$post = $post->getNext();
-							}
-							$_SESSION['Page']['meta-title'] = "Blog Post - ".$a['Title'];
-							$_SESSION['Page']['meta-description'] = $a['Description'];
-							$_SESSION['Page']['meta-keywords'] = $a['Keywords'];
-							$bpage = "post";
-						}
-					}
-				}
-				
-				/* Load Page HTML */
-				ob_start();
-				include ltrim($_SESSION['Page']['path-file'],"/");
-				$html = ob_get_clean();
-				libxml_use_internal_errors(true);
-				$img = parseImgs($root.$_SESSION['Page']['path-file']);
-				libxml_clear_errors();
-				
-				/* Return JSON */
-				$data = array($html,$img,array("id"=>$_SESSION['Page']['id'],"meta-title"=>$_SESSION['Page']['meta-title'],"meta-description"=>$_SESSION['Page']['meta-description'],"meta-keywords"=>$_SESSION['Page']['meta-keywords'],"path-ui"=>$_SESSION['Page']['path-ui'],"path-file"=>$_SESSION['Page']['path-file']));
-				header("Content-Type: application/json");
-				echo json_encode($data);
-			break;
-			default:
-				echo "BAD REQUEST"; 
-			break;
+	$_SESSION['db'] = new Sql();
+	$_SESSION['db']->init($_SESSION['dbHost'],$_SESSION['dbuser'],$_SESSION['dbPass']);
+	$_SESSION['db']->connect($_SESSION['dbName']);
+	
+	if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])){
+	/*Site Ajax Requests*/
+		if(isset($_REQUEST['ari']) && $_REQUEST['ari'] != NULL && $_REQUEST['ari'] != ""){
+			switch($_REQUEST['ari']){
+				case 1: 
+					
+				break;
+				default:
+					echo "BAD ARI"; 
+				break;
+			}
+			if(isset($_SESSION['db'])){ $_SESSION['db']->disconnect($_SESSION['dbName']); }
 		}
-		session_write_close();
+	/*User Requests*/
+		if(isset($_REQUEST['uri']) && $_REQUEST['uri'] != NULL && $_REQUEST['uri'] != ""){
+			switch($_REQUEST['uri']){
+				case 1: //Login
+					$user = $_REQUEST['user']; $pass = $_REQUEST['pass']; $auth = false;
+					$_SESSION['User'] = new User(NULL);
+					$auth = $_SESSION['User']->login($user,$pass,$_SESSION['db']->con($_SESSION['dbName']));
+					if($auth){ echo 1; }else{ $_SESSION['User'] = NULL; echo 2; }
+				break;
+				case 2: //Logout
+					$_SESSION['User'] = NULL;
+				break;
+				default:
+					echo "BAD URI"; 
+				break;
+			}
+			if(isset($_SESSION['db'])){ $_SESSION['db']->disconnect($_SESSION['dbName']); }
+		}
+	/*Blog Requests*/
+		if(isset($_REQUEST['bri']) && $_REQUEST['bri'] != NULL && $_REQUEST['bri'] != ""){
+			switch($_REQUEST['bri']){
+				case 1: //Create Form
+					$blog = $_SESSION['Blog']->toArray();
+					$cats = $blog['Categories'];
+					$html = "
+					  <div class=\"alert hidden\"></div>
+					  <form>
+						  <div class=\"form-group\">
+							<label for=\"postTitle\">Post Title</label>
+							<input type=\"text\" class=\"form-control\" id=\"Title\" placeholder=\"Title\">
+						  </div>
+						  <div class=\"form-group\">
+							<label for=\"metaDescription\">Meta Description</label>
+							<input type=\"text\" class=\"form-control\" id=\"Description\" placeholder=\"Description\">
+						  </div>
+						  <div class=\"form-group\">
+							<label for=\"metaKeywords\">Meta Keywords</label>
+							<input type=\"text\" class=\"form-control\" id=\"Keywords\" placeholder=\"Keywords\">
+						  </div>
+						  <div class=\"form-group\">
+							<label>Categories</label>
+							<select multiple class=\"form-control\" id=\"Categories\">";
+						foreach($cats as $val){ $html .= "<option value=\"".$val['KID']."\">".$val['Definition']."</option>"; }
+						$html .= "
+							</select>
+						  </div>
+						  <div class=\"form-group\"><textarea id=\"HTML\" class=\"form-control trumbowyg\"></textarea></div>
+						  <div class=\"form-group\">
+						  <div class=\"checkbox\">
+							<label>
+							  <input id=\"Active\" type=\"checkbox\" > Active
+							</label>
+						  </div>
+						  </div>
+						  <div class=\"form-group\"><button type=\"submit\" class=\"btn btn-default\">Create</button></div>
+					  </form>
+					";
+					$data = array("Create New Post",$html);
+					echo json_encode($data);
+				break;
+				case 2: //Edit Form
+					$id = $_REQUEST['i'];
+					$post = new Post($id);
+					$post->dbRead($_SESSION['db']->con($_SESSION['dbName']));
+					$a = $post->toArray();
+					$bcat = $_SESSION['Blog']->getCategories()->getFirstNode();
+					$html = "
+					  <div class=\"alert hidden\"></div>
+					  <form>
+					  	  <input id=\"postID\" type=\"hidden\" value=\"".$a['ID']."\">
+						  <div class=\"form-group\">
+							<label for=\"postTitle\">Post Title</label>
+							<input type=\"text\" class=\"form-control\" id=\"Title\" placeholder=\"Title\" value=\"".$a['Title']."\">
+						  </div>
+						  <div class=\"form-group\">
+							<label for=\"metaDescription\">Meta Description</label>
+							<input type=\"text\" class=\"form-control\" id=\"Description\" placeholder=\"Description\" value=\"".$a['Description']."\">
+						  </div>
+						  <div class=\"form-group\">
+							<label for=\"metaKeywords\">Meta Keywords</label>
+							<input type=\"text\" class=\"form-control\" id=\"Keywords\" placeholder=\"Keywords\" value=\"". implode(",",$a['Keywords']) ."\">
+						  </div>
+						  <div class=\"form-group\">
+							<label>Categories</label>
+							<select multiple class=\"form-control\" id=\"Categories\">";
+						while($bcat != NULL){
+							$sel = false;
+							$bca = $bcat->readNode()->toArray();
+							if(count($a['Rels']['Category'])){ for($i = 0; $i < count($a['Rels']['Category']); $i++){ if($bca['KID'] == $a['Rels']['Category'][$i]['KID']){ $sel = true; break; } } }
+							$html .= "<option value=\"".$bca['KID']."\"";
+							if($sel){ $html .= " selected"; }
+							$html .= ">".$bca['Definition']."</option>";
+							$bcat = $bcat->getNext();
+						}
+						$html .= "
+							</select>
+						  </div>
+						  <div class=\"form-group\"><textarea id=\"HTML\" class=\"form-control trumbowyg\">".$a['HTML']."</textarea></div>
+						  <div class=\"form-group\">
+							  <div class=\"checkbox\">
+								<label><input id=\"Active\" type=\"checkbox\"";
+								if($a['Active'] == 1){ $html .= " checked"; }
+								$html .= "> Active</label>
+							  </div>
+						  </div>
+						  <div class=\"form-group\"><button type=\"submit\" class=\"btn btn-default\">Update</button></div>
+					  </form>
+					";
+					$data = array("Edit Post",$html);
+					echo json_encode($data);
+				break;
+				case 3:
+					$u = $_SESSION['User']->toArray();
+					$b = $_SESSION['Blog']->toArray();
+					if($_REQUEST['Active'] == "on"){$act = 1;}else{ $act = 0; }
+					$post = new Post(0);
+					$input = array("Created"=>time(),"Title"=>$_REQUEST['Title'],"Author"=>$u['ID'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$act,"HTML"=>$_REQUEST['HTML']);
+					$post->initMysql($input);
+					
+					//Generate Parent Relationship
+					$r = new Relation();
+					$r->initMysql(array("ID"=>0,"Created"=>0,"Updated"=>0,"RID"=>$b['ID'],"KID"=>7));
+					$post->setParentRel($r);
+					//Generate Relations for Selected Categories
+					$icats = explode(",",$_REQUEST['Categories']);
+					
+					for($i = 0; $i < count($icats); $i++){
+						$bcat = $_SESSION['Blog']->getCategories()->getFirstNode();
+						while($bcat != NULL){
+							$ba = $bcat->readNode()->toArray();
+							if($icats[$i] == $ba['KID']){ 
+								$r = new Relation();
+								$r->initMysql(array("ID"=>0,"Created"=>0,"Updated"=>0,"RID"=>0,"KID"=>$ba['KID'],"Code"=>$ba['Code'],"Definition"=>$ba['Definition']));
+								$post->getCategories()->insertLast($r);
+								break;
+							}
+							$bcat = $bcat->getNext();
+						}
+					}
+					
+					$data = array();
+					if($post->dbWrite($_SESSION['db']->con($_SESSION['dbName']))){ $data[] = 1; $data[] = "Post Created!"; }
+					else{ $data[] = 0; $data[] = "Error!"; }
+					$_SESSION['Blog']->getPosts()->insertFirst($post);
+					echo json_encode($data);
+				break;
+				default:
+					echo "BAD BRI"; 
+				break;
+			}
+			if(isset($_SESSION['db'])){ $_SESSION['db']->disconnect($_SESSION['dbName']); }
+		}
 	}else{ echo "BAD REQUEST"; }
+	
+	/*$_SESSION['db']->disconnect($_SESSION['dbName']);*/
+	session_write_close();
 ?>	

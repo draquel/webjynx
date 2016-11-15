@@ -1,7 +1,5 @@
 <!-- Page Specific Styles -->
 	<style>	#pg > div:nth-child(1){ background-image:url('/img/stock_head2.svg'); } </style>
-<!-- Preload CSS Images -->    
-	<img class="hidden" src="/img/stock_head2.svg" alt="Header img 2" />
 <!--Page Content -->   
     <div id="pg" class="container-fluid">
         <div class="row blue_bg">

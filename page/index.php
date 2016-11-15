@@ -11,9 +11,6 @@
 		#hmenu a:hover{ color:#0071CE; text-decoration:none;}
 		#hmenu > div > div{ margin-bottom:24px !important;}
 	</style>
-<!-- Preload CSS Images -->
-    <img class="hidden" src="/img/stock_head1.svg" alt="Header img 1" />
-    <img class="hidden" src="/img/stock_head2.svg" alt="Header img 2" />
 <!--Page Content -->
     <div id="pg" class="container-fluid">
         <div class="row">
@@ -58,7 +55,7 @@
             <div class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1 text-center hideme">
                 <h2>Lorem ipsum dolor</h2>
                 <br>
-                <a class="navl button" target="#" type="button" data-toggle="modal" data-target="#Modal">Modal Window</a><a class='navl button' href="/about/" target="#content">Page 1</a><a class='navl button' href="/about/other" target="#content">Page 2</a><a class='navl button' href="/sitemap" target="#content">Page 3</a>
+                <a class="button" target="#" type="button" data-toggle="modal" data-target="#Modal">Modal Window</a><a class='navl button' href="/about/" target="#content">Page 1</a><a class='navl button' href="/about/other" target="#content">Page 2</a><a class='navl button' href="/sitemap" target="#content">Page 3</a>
             </div>
         </div>
     </div>
