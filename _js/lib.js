@@ -12,6 +12,7 @@
 					btns: [	['viewHTML'],['formatting'],'btnGrp-semantic',['superscript','subscript'],['link'],['insertImage'],'btnGrp-justify','btnGrp-lists',['horizontalRule'],['removeformat'] ],
 					autogrow: true
 				});
+				$(".modal-body").find("form").submitForm();
 				$('#Modal').modal('show');
 			}
 		});
@@ -20,18 +21,20 @@
 		$(this).submit(function(e){
 			e.preventDefault();
 			var dataStr = "";
-			$(this).find("input, textarea, checkbox").each(function(index, element){
+			$(this).find("input, textarea, checkbox, select").each(function(index, element){
 				if($(this).val() == null || $(this).val() == "" || typeof $(this).val() == 'undefined'){ dataStr += "&"+$(this).attr('id')+"=NULL"; }
+				else if(Array.isArray($(this).val())){ dataStr += "&"+$(this).attr('id')+"="+$(this).val().toString(); }
 				else{ dataStr += "&"+$(this).attr('id')+"="+$(this).val(); }
 			});
 			$.ajax({url:'/ajax.php',method:'POST',async:true,dataType:"json",data:"bri=3"+dataStr,
 				complete: function(xhr){
 					var data = JSON.parse(xhr.responseText);
 					if(data[0]){
-						$(".modal-body > .alert").addClass("alert-success").removeClass("hidden").html("<strong>Congratulations!</strong> ".data[1]);
-						setTimeout(function(){ $('#Modal').modal('hide'); },1500);
+						$(".modal-body > .alert").html("<strong>Congratulations!</strong> "+data[1]).addClass("alert-success").removeClass("hidden");
+						$(".modal-body button [type=submit]").addClass("hidden");
+						setTimeout(function(){ $('#Modal').modal('hide'); },2000);
 					}else{
-						$(".modal-body > .alert").addClass("alert-danger").removeClass("hidden").html("<strong>Opps!</strong> ".data[1]);
+						$(".modal-body > .alert").addClass("alert-danger").removeClass("hidden").html("<strong>Opps!</strong> "+data[1]);
 					}
 				}
 			});

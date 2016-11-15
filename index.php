@@ -97,19 +97,10 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 					if(!$found){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = $_SERVER['REQUEST_URI']; }
 					$_SESSION['Page']['meta-title'] = "Blog Post - ".$a['Title']; $_SESSION['Page']['meta-description'] = $a['Description']; $_SESSION['Page']['meta-keywords'] = $a['Keywords'];
 				break;
-				case "c":
-					$_SESSION['Page']['meta-title'] = "Blog Category - ".$_REQUEST['bpgi'];	$_SESSION['Page']['meta-description'] = "Listing of blog entries tagged in ".$_REQUEST['bpgi'];
-				break;
-				case "u":
-					$_SESSION['Page']['meta-title'] = "Blog Author - ".$_REQUEST['bpgi']; $_SESSION['Page']['meta-description'] = "Listing of blog entries written by ".$_REQUEST['bpgi'];
-				break;
-				case "a":
-					$_SESSION['Page']['meta-title'] = "Blog Archive - ".date("F Y",strtotime($_REQUEST['bpgi'])); $_SESSION['Page']['meta-description'] = "Listing of blog entries posted in ".date("F, Y",strtotime($_REQUEST['bpgi']));
-				break;
-				case "admin":
-					$_SESSION['Page']['meta-title'] = "Blog Administration"; $_SESSION['Page']['meta-description'] = "Blog Admin Console";
-					if($_REQUEST['bpgi']){ $_SESSION['Page']['meta-title'] .= " - ".ucfirst($_REQUEST['bpgi']); }
-				break;
+				case "c": $_SESSION['Page']['meta-title'] = "Blog Category - ".$_REQUEST['bpgi'];	$_SESSION['Page']['meta-description'] = "Listing of blog entries tagged in ".$_REQUEST['bpgi'];	break;
+				case "u": $_SESSION['Page']['meta-title'] = "Blog Author - ".$_REQUEST['bpgi']; $_SESSION['Page']['meta-description'] = "Listing of blog entries written by ".$_REQUEST['bpgi']; break;
+				case "a": $_SESSION['Page']['meta-title'] = "Blog Archive - ".date("F Y",strtotime($_REQUEST['bpgi'])); $_SESSION['Page']['meta-description'] = "Listing of blog entries posted in ".date("F, Y",strtotime($_REQUEST['bpgi']));	break;
+				case "admin": $_SESSION['Page']['meta-title'] = "Blog Administration"; $_SESSION['Page']['meta-description'] = "Blog Admin Console"; if($_REQUEST['bpgi']){ $_SESSION['Page']['meta-title'] .= " - ".ucfirst($_REQUEST['bpgi']); } break;
 			}
 		}else{
 			$_REQUEST['bpg'] = NULL;

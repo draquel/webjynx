@@ -61,8 +61,8 @@
 						  </div>
 						  <div class=\"form-group\">
 							<label>Categories</label>
-							<select multiple class=\"form-control\"><option>Filler</option>";
-						foreach($cats as $val){ $html .= "<option value=\"".$val['ID']."\">".$val['Definition']."</option>"; }
+							<select multiple class=\"form-control\" id=\"Categories\">";
+						foreach($cats as $val){ $html .= "<option value=\"".$val['KID']."\">".$val['Definition']."</option>"; }
 						$html .= "
 							</select>
 						  </div>
@@ -70,7 +70,7 @@
 						  <div class=\"form-group\">
 						  <div class=\"checkbox\">
 							<label>
-							  <input id=\"Active\" type=\"checkbox\"> Active
+							  <input id=\"Active\" type=\"checkbox\" > Active
 							</label>
 						  </div>
 						  </div>
@@ -85,8 +85,7 @@
 					$post = new Post($id);
 					$post->dbRead($_SESSION['db']->con($_SESSION['dbName']));
 					$a = $post->toArray();
-					$blog = $_SESSION['Blog']->toArray();
-					$cats = $blog['Categories'];
+					$bcat = $_SESSION['Blog']->getCategories()->getFirstNode();
 					$html = "
 					  <div class=\"alert hidden\"></div>
 					  <form>
@@ -105,14 +104,16 @@
 						  </div>
 						  <div class=\"form-group\">
 							<label>Categories</label>
-							<select multiple class=\"form-control\">";
-						/*foreach($cats as $val){ 
+							<select multiple class=\"form-control\" id=\"Categories\">";
+						while($bcat != NULL){
 							$sel = false;
-							if($post->getCategories()->size()){ foreach($post->getCategories() as $v){ if($val['ID'] == $v['ID']){ $sel = true; }	} }
-							$html .= "<option value=\"".$val['ID']."\"";
+							$bca = $bcat->readNode()->toArray();
+							if(count($a['Rels']['Category'])){ for($i = 0; $i < count($a['Rels']['Category']); $i++){ if($bca['KID'] == $a['Rels']['Category'][$i]['KID']){ $sel = true; break; } } }
+							$html .= "<option value=\"".$bca['KID']."\"";
 							if($sel){ $html .= " selected"; }
-							$html .= ">".$val['Definition']."</option>";
-						}*/
+							$html .= ">".$bca['Definition']."</option>";
+							$bcat = $bcat->getNext();
+						}
 						$html .= "
 							</select>
 						  </div>
@@ -131,13 +132,39 @@
 					echo json_encode($data);
 				break;
 				case 3:
+					$u = $_SESSION['User']->toArray();
+					$b = $_SESSION['Blog']->toArray();
+					if($_REQUEST['Active'] == "on"){$act = 1;}else{ $act = 0; }
 					$post = new Post(0);
-					$input = array("Created"=>time(),"Updated"=>time(),['Rels']=>array("Category"=>array()),"Title"=>$_REQUEST['Title'],"Description"=>$_REQUEST['Description'],"Keywords"=>explode(",",$_REQUEST['Keywords']),"Active"=>$_REQUEST['Active'],"Author"=>$_REQUEST['Author'],"HTML"=>$_REQUEST['HTML']);
-					$post->init_mysql($input);
-					$post->dbWrite($_SESSION['db']->con($_SESSION['dbName']));
-				break;
-				case 4:
-				
+					$input = array("Created"=>time(),"Title"=>$_REQUEST['Title'],"Author"=>$u['ID'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$act,"HTML"=>$_REQUEST['HTML']);
+					$post->initMysql($input);
+					
+					//Generate Parent Relationship
+					$r = new Relation();
+					$r->initMysql(array("ID"=>0,"Created"=>0,"Updated"=>0,"RID"=>$b['ID'],"KID"=>7));
+					$post->setParentRel($r);
+					//Generate Relations for Selected Categories
+					$icats = explode(",",$_REQUEST['Categories']);
+					
+					for($i = 0; $i < count($icats); $i++){
+						$bcat = $_SESSION['Blog']->getCategories()->getFirstNode();
+						while($bcat != NULL){
+							$ba = $bcat->readNode()->toArray();
+							if($icats[$i] == $ba['KID']){ 
+								$r = new Relation();
+								$r->initMysql(array("ID"=>0,"Created"=>0,"Updated"=>0,"RID"=>0,"KID"=>$ba['KID'],"Code"=>$ba['Code'],"Definition"=>$ba['Definition']));
+								$post->getCategories()->insertLast($r);
+								break;
+							}
+							$bcat = $bcat->getNext();
+						}
+					}
+					
+					$data = array();
+					if($post->dbWrite($_SESSION['db']->con($_SESSION['dbName']))){ $data[] = 1; $data[] = "Post Created!"; }
+					else{ $data[] = 0; $data[] = "Error!"; }
+					$_SESSION['Blog']->getPosts()->insertFirst($post);
+					echo json_encode($data);
 				break;
 				default:
 					echo "BAD BRI"; 

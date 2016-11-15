@@ -1,27 +1,36 @@
 RewriteEngine On
-
-# Supress rewrite recusion
-RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteBase /
 
 #AWS ELB Force SSL
-#RewriteCond %{HTTP:X-Forwarded-Proto} !https 
-#RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteCond %{HTTP_HOST} !dev2.webjynx.com
+RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
 # Fix Relative Bootstrap paths
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
 RewriteRule ^.*/bootstrap.min.css.map$ /css/bootstrap.min.css.map [L]
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
 RewriteRule ^.*/fonts/glyphicons-halflings-regular.(.*)$ /fonts/glyphicons-halflings-regular.$1 [L]
 
 # DBObj Blog Rules
-RewriteRule ^blog/(.*)/(.*)/(.*)/(.*)$ /index.php?pg=blog/&bpg=$1&bpgi=$2&bpgn=$3&bpgs=$4 [L]
-RewriteRule ^blog/(.*)/(.*)/(.*)$ /index.php?pg=blog/&bpg=$1&bpgi=$2&bpgn=$3 [L]
-RewriteRule ^blog/(.*)/(.*)$ /index.php?pg=blog/&bpg=$1&bpgi=$2&bpgn=1 [L]
-RewriteRule ^blog/(.*)/$ /index.php?pg=blog/&bpg=$1 [L]
-RewriteRule ^blog/(.*)$ /index.php?pg=blog/&bpgn=$1 [L]
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^blog/(.+)/(.+)/(.+)/(.+)$ /index.php?pg=blog/&bpg=$1&bpgi=$2&bpgn=$3&bpgs=$4 [L]
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^blog/(.+)/(.+)/(.+)$ /index.php?pg=blog/&bpg=$1&bpgi=$2&bpgn=$3 [L]
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^blog/(.+)/(.+)$ /index.php?pg=blog/&bpg=$1&bpgi=$2&bpgn=1 [L]
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^blog/(.+)/$ /index.php?pg=blog/&bpg=$1 [L]
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^blog/(.+)$ /index.php?pg=blog/&bpgn=$1 [L]
 
 # DBObj User Rules
-RewriteRule ^auth/(.*)/$ /index.php?pg=auth/&upg=$1 [L]
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^auth/(.+)/$ /index.php?pg=auth/&upg=$1 [L]
 
 # Webjynx Toolkit Page Rule
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} !-f
 RewriteRule ^(.+)$ /index.php?pg=$1
