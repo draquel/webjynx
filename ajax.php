@@ -47,6 +47,7 @@
 					$html = "
 					  <div class=\"alert hidden\"></div>
 					  <form>
+					  	  <input id=\"bri\" type=\"hidden\" value=\"3\">
 						  <div class=\"form-group\">
 							<label for=\"postTitle\">Post Title</label>
 							<input type=\"text\" class=\"form-control\" id=\"Title\" placeholder=\"Title\">
@@ -89,7 +90,8 @@
 					$html = "
 					  <div class=\"alert hidden\"></div>
 					  <form>
-					  	  <input id=\"postID\" type=\"hidden\" value=\"".$a['ID']."\">
+					  	  <input id=\"bri\" type=\"hidden\" value=\"3\">
+					  	  <input id=\"ID\" type=\"hidden\" value=\"".$a['ID']."\">
 						  <div class=\"form-group\">
 							<label for=\"postTitle\">Post Title</label>
 							<input type=\"text\" class=\"form-control\" id=\"Title\" placeholder=\"Title\" value=\"".$a['Title']."\">
@@ -131,39 +133,72 @@
 					$data = array("Edit Post",$html);
 					echo json_encode($data);
 				break;
-				case 3:
+				case 3: //Create and Update Post Records (Forms BRI: 1 & 2)
+					if(isset($_REQUEST['ID']) && $_REQUEST['ID'] != 0 && $_REQUEST['ID'] != NULL){ //Update
+						$id = $_REQUEST['ID'];
+						$post = new Post($id);
+						$post->dbRead($_SESSION['db']->con($_SESSION['dbName']));
+						$post->initMysql(array("Updated"=>time(),"Title"=>$_REQUEST['Title'],"Author"=>$u['ID'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$act,"HTML"=>$_REQUEST['HTML']));
+					}else{ //Create
+						$id = 0;
+						$post = new Post(0); 
+						$post->initMysql(array("Created"=>time(),"Title"=>$_REQUEST['Title'],"Author"=>$u['ID'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$act,"HTML"=>$_REQUEST['HTML']));
+					}
+					if($_REQUEST['Active'] == "on"){$act = 1;}else{ $act = 0; }
 					$u = $_SESSION['User']->toArray();
 					$b = $_SESSION['Blog']->toArray();
-					if($_REQUEST['Active'] == "on"){$act = 1;}else{ $act = 0; }
-					$post = new Post(0);
-					$input = array("Created"=>time(),"Title"=>$_REQUEST['Title'],"Author"=>$u['ID'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$act,"HTML"=>$_REQUEST['HTML']);
-					$post->initMysql($input);
 					
-					//Generate Parent Relationship
-					$r = new Relation();
-					$r->initMysql(array("ID"=>0,"Created"=>0,"Updated"=>0,"RID"=>$b['ID'],"KID"=>7));
-					$post->setParentRel($r);
+					if($id == 0){
+						//Generate Parent Relationship
+						$r = new Relation();
+						$r->initMysql(array("ID"=>0,"Created"=>0,"Updated"=>0,"RID"=>$b['ID'],"KID"=>7));
+						$post->setParentRel($r);
+					}
+					
 					//Generate Relations for Selected Categories
 					$icats = explode(",",$_REQUEST['Categories']);
-					
 					for($i = 0; $i < count($icats); $i++){
 						$bcat = $_SESSION['Blog']->getCategories()->getFirstNode();
 						while($bcat != NULL){
 							$ba = $bcat->readNode()->toArray();
 							if($icats[$i] == $ba['KID']){ 
-								$r = new Relation();
-								$r->initMysql(array("ID"=>0,"Created"=>0,"Updated"=>0,"RID"=>0,"KID"=>$ba['KID'],"Code"=>$ba['Code'],"Definition"=>$ba['Definition']));
-								$post->getCategories()->insertLast($r);
+								//Check For Duplicate Relations
+								if($id != 0 && $post->getCategories()->size() > 0){
+									$dup = false;
+									$pcat = $post->getCategories()->getFirstNode();
+									while($pcat!= NULL){
+										$pca = $pcat->readNode()->toArray();
+										if($icats[$i] == $pca['KID']){ $dup = true; break; }
+										$pcat = $pcat->getNext();
+									}
+								}
+								//Add New Relationships
+								if($id == 0 || !$dup){
+									$r = new Relation();
+									$r->initMysql(array("ID"=>0,"Created"=>0,"Updated"=>0,"RID"=>0,"KID"=>$ba['KID'],"Code"=>$ba['Code'],"Definition"=>$ba['Definition']));
+									$post->getCategories()->insertLast($r);
+								}
 								break;
 							}
 							$bcat = $bcat->getNext();
 						}
 					}
 					
+					if($id != 0){
+						//Delete obsolete relations
+						$pcat = $post->getCategories()->getFirstNode();
+						while($pcat != NULL){
+							$pca = $pcat->readNode()->toArray();
+							$obs = true;
+							foreach($icats as $c){ if($c == $pca['KID']){ $obs = false; } }
+							if($obs){ $pcat->readNode()->dbDelete($_SESSION['db']->con($_SESSION['dbName']));}
+							$pcat = $pcat->getNext();
+						}
+					}
+					
 					$data = array();
-					if($post->dbWrite($_SESSION['db']->con($_SESSION['dbName']))){ $data[] = 1; $data[] = "Post Created!"; }
+					if($post->dbWrite($_SESSION['db']->con($_SESSION['dbName']))){ $data[] = 1; if($id == 0){ $data[] = "Post Created!"; $_SESSION['Blog']->getPosts()->insertFirst($post); }else{ $data[] = "Post Updated!"; } }
 					else{ $data[] = 0; $data[] = "Error!"; }
-					$_SESSION['Blog']->getPosts()->insertFirst($post);
 					echo json_encode($data);
 				break;
 				default:

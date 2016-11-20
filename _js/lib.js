@@ -26,7 +26,7 @@
 				else if(Array.isArray($(this).val())){ dataStr += "&"+$(this).attr('id')+"="+$(this).val().toString(); }
 				else{ dataStr += "&"+$(this).attr('id')+"="+$(this).val(); }
 			});
-			$.ajax({url:'/ajax.php',method:'POST',async:true,dataType:"json",data:"bri=3"+dataStr,
+			$.ajax({url:'/ajax.php',method:'POST',async:true,dataType:"json",data:dataStr,
 				complete: function(xhr){
 					var data = JSON.parse(xhr.responseText);
 					if(data[0]){
