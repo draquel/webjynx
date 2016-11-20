@@ -134,19 +134,19 @@
 					echo json_encode($data);
 				break;
 				case 3: //Create and Update Post Records (Forms BRI: 1 & 2)
+					$u = $_SESSION['User']->toArray();
+					$b = $_SESSION['Blog']->toArray();
 					if(isset($_REQUEST['ID']) && $_REQUEST['ID'] != 0 && $_REQUEST['ID'] != NULL){ //Update
 						$id = $_REQUEST['ID'];
 						$post = new Post($id);
 						$post->dbRead($_SESSION['db']->con($_SESSION['dbName']));
-						$post->initMysql(array("Updated"=>time(),"Title"=>$_REQUEST['Title'],"Author"=>$u['ID'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$act,"HTML"=>$_REQUEST['HTML']));
+						$post->initMysql(array("Updated"=>time(),"Title"=>$_REQUEST['Title'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$act,"HTML"=>$_REQUEST['HTML']));
 					}else{ //Create
 						$id = 0;
 						$post = new Post(0); 
 						$post->initMysql(array("Created"=>time(),"Title"=>$_REQUEST['Title'],"Author"=>$u['ID'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$act,"HTML"=>$_REQUEST['HTML']));
 					}
 					if($_REQUEST['Active'] == "on"){$act = 1;}else{ $act = 0; }
-					$u = $_SESSION['User']->toArray();
-					$b = $_SESSION['Blog']->toArray();
 					
 					if($id == 0){
 						//Generate Parent Relationship
