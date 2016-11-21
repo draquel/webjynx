@@ -208,4 +208,4 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 		</script>
     </body>
 </html>
-<?php /*$_SESSION['db']->disconnect($_SESSION['dbName']);*/ session_write_close(); ?>
+<?php /* $_SESSION['db']->disconnect($_SESSION['dbName']); session_write_close(); */ ?>
