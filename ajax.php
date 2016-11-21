@@ -140,15 +140,14 @@
 						$id = $_REQUEST['ID'];
 						$post = new Post($id);
 						$post->dbRead($_SESSION['db']->con($_SESSION['dbName']));
-						$post->initMysql(array("Updated"=>time(),"Title"=>$_REQUEST['Title'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$_REQUEST['Active'],"HTML"=>$_REQUEST['HTML']));
+						$post->initMysql(array("Title"=>$_REQUEST['Title'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$_REQUEST['Active'],"HTML"=>$_REQUEST['HTML']));
 					}else{ //Create
 						$id = 0;
 						$post = new Post(0); 
-						$post->initMysql(array("Created"=>time(),"Title"=>$_REQUEST['Title'],"Author"=>$u['ID'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$_REQUEST['Active'],"HTML"=>$_REQUEST['HTML']));
+						$post->initMysql(array("Title"=>$_REQUEST['Title'],"Author"=>$u['ID'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$_REQUEST['Active'],"HTML"=>$_REQUEST['HTML']));
 					}
 					
-					if($id == 0){
-						//Generate Parent Relationship
+					if($id == 0){ //Generate Parent Relationship
 						$r = new Relation();
 						$r->initMysql(array("ID"=>0,"Created"=>0,"Updated"=>0,"RID"=>$b['ID'],"KID"=>7));
 						$post->setParentRel($r);
@@ -161,8 +160,7 @@
 						while($bcat != NULL){
 							$ba = $bcat->readNode()->toArray();
 							if($icats[$i] == $ba['KID']){ 
-								//Check For Duplicate Relations
-								if($id != 0 && $post->getCategories()->size() > 0){
+								if($id != 0 && $post->getCategories()->size() > 0){ //Check For Duplicate Relations
 									$dup = false;
 									$pcat = $post->getCategories()->getFirstNode();
 									while($pcat!= NULL){
@@ -171,8 +169,7 @@
 										$pcat = $pcat->getNext();
 									}
 								}
-								//Add New Relationships
-								if($id == 0 || !$dup){
+								if($id == 0 || !$dup){ //Add New Relationships
 									$r = new Relation();
 									$r->initMysql(array("ID"=>0,"Created"=>0,"Updated"=>0,"RID"=>0,"KID"=>$ba['KID'],"Code"=>$ba['Code'],"Definition"=>$ba['Definition']));
 									$post->getCategories()->insertLast($r);
@@ -182,9 +179,7 @@
 							$bcat = $bcat->getNext();
 						}
 					}
-					
-					if($id != 0){
-						//Delete obsolete relations
+					if($id != 0){ //Delete obsolete relations
 						$pcat = $post->getCategories()->getFirstNode();
 						while($pcat != NULL){
 							$pca = $pcat->readNode()->toArray();
@@ -195,6 +190,7 @@
 						}
 					}
 					
+					// Write to Database and Update Session
 					$data = array();
 					if($post->dbWrite($_SESSION['db']->con($_SESSION['dbName']))){ 
 						$data[] = 1;
