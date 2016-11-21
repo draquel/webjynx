@@ -91,7 +91,7 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 					$_SESSION['Page']['Current'] = NULL; $found = false;
 					while($post != NULL){
 						$a = $post->readNode()->toArray();
-						if($a['ID'] == $_REQUEST['bpgi']){ $found = true; $_SESSION['Page']['Current'] = $post; break; }
+						if($a['ID'] == $_REQUEST['bpgi'] && $a['Active'] == 1){ $found = true; $_SESSION['Page']['Current'] = $post; break; }
 						$post = $post->getNext();
 					}
 					if(!$found){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = $_SERVER['REQUEST_URI']; }

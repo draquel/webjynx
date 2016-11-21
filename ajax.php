@@ -140,13 +140,12 @@
 						$id = $_REQUEST['ID'];
 						$post = new Post($id);
 						$post->dbRead($_SESSION['db']->con($_SESSION['dbName']));
-						$post->initMysql(array("Updated"=>time(),"Title"=>$_REQUEST['Title'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$act,"HTML"=>$_REQUEST['HTML']));
+						$post->initMysql(array("Updated"=>time(),"Title"=>$_REQUEST['Title'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$_REQUEST['Active'],"HTML"=>$_REQUEST['HTML']));
 					}else{ //Create
 						$id = 0;
 						$post = new Post(0); 
-						$post->initMysql(array("Created"=>time(),"Title"=>$_REQUEST['Title'],"Author"=>$u['ID'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$act,"HTML"=>$_REQUEST['HTML']));
+						$post->initMysql(array("Created"=>time(),"Title"=>$_REQUEST['Title'],"Author"=>$u['ID'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$_REQUEST['Active'],"HTML"=>$_REQUEST['HTML']));
 					}
-					if($_REQUEST['Active'] == "on"){$act = 1;}else{ $act = 0; }
 					
 					if($id == 0){
 						//Generate Parent Relationship
@@ -190,14 +189,30 @@
 						while($pcat != NULL){
 							$pca = $pcat->readNode()->toArray();
 							$obs = true;
-							foreach($icats as $c){ if($c == $pca['KID']){ $obs = false; } }
+							foreach($icats as $c){ if($c == $pca['KID']){ $obs = false; break; } }
 							if($obs){ $pcat->readNode()->dbDelete($_SESSION['db']->con($_SESSION['dbName']));}
 							$pcat = $pcat->getNext();
 						}
 					}
 					
 					$data = array();
-					if($post->dbWrite($_SESSION['db']->con($_SESSION['dbName']))){ $data[] = 1; if($id == 0){ $data[] = "Post Created!"; $_SESSION['Blog']->getPosts()->insertFirst($post); }else{ $data[] = "Post Updated!"; } }
+					if($post->dbWrite($_SESSION['db']->con($_SESSION['dbName']))){ 
+						$data[] = 1;
+						if($id == 0){ 
+							$data[] = "Post Created!"; 
+							$_SESSION['Blog']->getPosts()->insertFirst($post); 
+						}else{ 
+							$data[] = "Post Updated!";
+							$bp = $_SESSION['Blog']->getPosts()->getFirstNode();
+							$i = 0;
+							while($bp != NULL){
+								$bpa = $bp->readNode()->toArray();
+								if($bpa['ID' ]== $id){ $_SESSION['Blog']->getPosts()->getNodeAt($i)->data = $post; break; }
+								$i++;
+								$bp = $bp->getNext();
+							}
+						}
+					}
 					else{ $data[] = 0; $data[] = "Error!"; }
 					echo json_encode($data);
 				break;

@@ -192,13 +192,13 @@
 		$sidebar .= "<div class=\"sidebar-module sidebar-module-inset\"><h4>About</h4><p>".$blog['Description']."</p></div><div class=\"sidebar-module\"><h4>Archives</h4><ol class=\"list-unstyled\">";
 		if($_SESSION['Blog']->getPosts()->size() > 0){
 			$archive = $_SESSION['Blog']->getPosts()->getArchive();
-			foreach($archive as $k => $v){ $sidebar .= "<li><a class=\"bnavl\" href=\"/blog/a/".$k."/\">".date("M Y",strtotime($k."01"))."</a></li>"; }
+			foreach($archive as $k => $v){ $sidebar .= "<li><a class=\"bnavl\" href=\"/blog/a/".$k."\">".date("M Y",strtotime($k."01"))."</a></li>"; }
 		}
 	    $sidebar .= "</ol></div><div class=\"sidebar-module\"><h4>Categories</h4><ol class=\"list-unstyled\">";
 		$cat = $_SESSION['Blog']->getCategories()->getFirstNode();
 		while($cat != NULL){
 			$c = $cat->readNode()->toArray();
-			$sidebar .= "<li><a class=\"bnavl\" href=\"/blog/c/".$c['Definition']."/\">".$c['Definition']."</a></li>";
+			$sidebar .= "<li><a class=\"bnavl\" href=\"/blog/c/".$c['Definition']."\">".$c['Definition']."</a></li>";
 			$cat = $cat->getNext();
 		}
 	    $sidebar .= "</ol></div></div></div>";
@@ -233,7 +233,7 @@
 						<button type=\"button\" class=\"btn btn-default\" onClick=\"setForm(1)\">Create New Post</button>
 						  <table class=\"table\">
 							<tr><th>ID</th><th>Title</th><th>Author</th><th class=\"hidden-xs\">Categories</th><th class=\"hidden-xs hidden-sm\">Created</th><th>Actions</th></tr>";
-					$posts = $_SESSION['Blog']->getPage($pageNum,$pageSize);
+					$posts = $_SESSION['Blog']->getPage($pageNum,$pageSize,true);
 					$post = $posts->getFirstNode();
 					while($post != NULL){ 
 						$p = $post->readNode();

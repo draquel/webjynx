@@ -21,25 +21,26 @@
 		$(this).submit(function(e){
 			e.preventDefault();
 			var dataStr = "";
-			$(this).find("input, textarea, checkbox, select").each(function(index, element){
-				if($(this).val() == null || $(this).val() == "" || typeof $(this).val() == 'undefined'){ dataStr += "&"+$(this).attr('id')+"=NULL"; }
-				else if(Array.isArray($(this).val())){ dataStr += "&"+$(this).attr('id')+"="+$(this).val().toString(); }
-				else{ dataStr += "&"+$(this).attr('id')+"="+$(this).val(); }
+			$(this).find("input, textarea, select").each(function(index, element){
+				dataStr += "&"+$(this).attr('id')+"=";
+				if($(this).is('input[type=checkbox]')){ if($(this).is(':checked')){ dataStr += 1; }else{ dataStr += 0; } }
+				else if($(this).val() == null || $(this).val() == "" || typeof $(this).val() == 'undefined'){ dataStr += "NULL"; }
+				else if(Array.isArray($(this).val())){ dataStr += $(this).val().toString(); }
+				else{ dataStr += $(this).val(); }
 			});
+			console.log(dataStr);
 			$.ajax({url:'/ajax.php',method:'POST',async:true,dataType:"json",data:dataStr,
 				complete: function(xhr){
 					var data = JSON.parse(xhr.responseText);
 					if(data[0]){
 						$(".modal-body > .alert").html("<strong>Congratulations!</strong> "+data[1]).addClass("alert-success").removeClass("hidden");
-						$(".modal-body button [type=submit]").addClass("hidden");
+						$(".modal-body button[type=submit]").addClass("hidden");
 						setTimeout(function(){ $('#Modal').modal('hide'); },2000);
-					}else{
-						$(".modal-body > .alert").addClass("alert-danger").removeClass("hidden").html("<strong>Opps!</strong> "+data[1]);
-					}
+					}else{ $(".modal-body > .alert").addClass("alert-danger").removeClass("hidden").html("<strong>Opps!</strong> "+data[1]); }
 				}
 			});
 		});
-	}
+	};
 //Google Analytics
 	//Initialize Tracker
 	function gaTracker(id){
