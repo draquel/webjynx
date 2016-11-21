@@ -32,7 +32,7 @@
   
 ### Basic Usage
 ```php
-	$obj = new DBObj(23,"Posts");
+	$obj = new DBObj($id,"Posts");
 	$obj->readNode($mysqli_db_connection);
 	$a = $obj->toArray();
 	
