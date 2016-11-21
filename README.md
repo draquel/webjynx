@@ -15,9 +15,11 @@
 * jQuery - http://jquery.com/
 * bootstrap - http://getbootstrap.com/
 * Google Analytics - https://www.google.com/analytics/
+* Trumbowyg - https://github.com/Alex-D/Trumbowyg
 
-#### PHP 5/7
+#### PHP 7
 * php-xml (dom extension)
+* php-gd (dom extension)
 
 ## Documentation
 
@@ -26,14 +28,13 @@
   To create a foundation for building custom web solutions.
   
 #### Aproach
-  Single Page Javascript appliction driven on a LAMP backend
+  Lightweight PHP Driven LAMP Application
   
 ### Basic Usage
-
-## Integratable Third Party Apps
-* Wordpress
-* Box
-* Contact Mailers
-** Constant Contact
-
-##
+```php
+	$obj = new DBObj(23,"Posts");
+	$obj->readNode($mysqli_db_connection);
+	$a = $obj->toArray();
+	
+	echo $a['Title'], date("Y-m-d h:i:s",$a['Created']);
+```
