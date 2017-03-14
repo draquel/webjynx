@@ -18,12 +18,12 @@
 Author: Dan Raquel (draquel@webjynx.com)-->
 <?php
 	error_reporting(E_ALL);
-	require_once("_php/lib.php");
+	/*require_once("_php/lib.php");*/
 	require_once("_php/DBObj/dbobj.php");
 	session_start();
 	
 	//Initialize Site Data
-	$_SESSION['Title'] = "WebJynx Toolkit - Testing";
+	$_SESSION['Title'] = "WebJynx Toolkit";
 	$_SESSION['Domain'] = "dev.webjynx.com";
 	if($_SERVER['SERVER_NAME'] == "dev2.webjynx.com"){ $_SESSION['dbHost'] = "localhost"; }else{ $_SESSION['dbHost'] = "webjynxrds.cjzpxtjfv2ad.us-east-1.rds.amazonaws.com"; }
 	$_SESSION['dbName'] = "DBObj";
@@ -37,13 +37,13 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 		$_SESSION['Pages'] = array(
 			array("id"=>0,"meta-title"=>"HTTP 404 - Page Not Found","meta-description"=>"HTTP 404 - Page Not Found","meta-keywords"=>NULL,"path-ui"=>"/404","path-file"=>"/page/404.php"),
 			array("id"=>1,"meta-title"=>"HTTP 401 - Unauthorized","meta-description"=>"HTTP 401 - Unauthorized","meta-keywords"=>NULL,"path-ui"=>"/401","path-file"=>"/page/401.php"),
-			array("id"=>2,"meta-title"=>"Index","meta-description"=>"Welcome to our home page!","meta-keywords"=>NULL,"path-ui"=>"/","path-file"=>"/page/index.php"),
-			array("id"=>3,"meta-title"=>"About","meta-description"=>"We like stuff and want to work together on your things!","meta-keywords"=>NULL,"path-ui"=>"/about/","path-file"=>"/page/about/index.php"),
-			array("id"=>4,"meta-title"=>"Other","meta-description"=>"Some more stuff we think is neat.","meta-keywords"=>NULL,"path-ui"=>"/about/other","path-file"=>"/page/about/other.php"),
-			array("id"=>5,"meta-title"=>"Sitemap","meta-description"=>"A sitemap, just incase you get lost.","meta-keywords"=>NULL,"path-ui"=>"/sitemap","path-file"=>"/page/sitemap.php"),
-			array("id"=>6,"meta-title"=>"Class Testing","meta-description"=>"Class Unit Testing","meta-keywords"=>NULL,"path-ui"=>"/class","path-file"=>"/page/class.php"),
-			array("id"=>7,"meta-title"=>"Blog","meta-description"=>"Our Blog","path-ui"=>"/blog/","meta-keywords"=>NULL,"path-file"=>"/page/blog.php"),
-			array("id"=>8,"meta-title"=>"Authorize User","meta-description"=>"Authorized User Page","path-ui"=>"/auth/","meta-keywords"=>NULL,"path-file"=>"/page/user.php")
+			array("id"=>2,"meta-title"=>"Blog","meta-description"=>"Our Blog","path-ui"=>"/blog/","meta-keywords"=>NULL,"path-file"=>"/page/blog.php"),
+			array("id"=>3,"meta-title"=>"Authorize User","meta-description"=>"Authorized User Page","path-ui"=>"/auth/","meta-keywords"=>NULL,"path-file"=>"/page/user.php"),
+			array("id"=>4,"meta-title"=>"Index","meta-description"=>"Welcome to our home page!","meta-keywords"=>NULL,"path-ui"=>"/","path-file"=>"/page/index.php"),
+			array("id"=>5,"meta-title"=>"About","meta-description"=>"We like stuff and want to work together on your things!","meta-keywords"=>NULL,"path-ui"=>"/about/","path-file"=>"/page/about/index.php"),
+			array("id"=>6,"meta-title"=>"Other","meta-description"=>"Some more stuff we think is neat.","meta-keywords"=>NULL,"path-ui"=>"/about/other","path-file"=>"/page/about/other.php"),
+			array("id"=>7,"meta-title"=>"Sitemap","meta-description"=>"A sitemap, just incase you get lost.","meta-keywords"=>NULL,"path-ui"=>"/sitemap","path-file"=>"/page/sitemap.php"),
+			array("id"=>8,"meta-title"=>"Class Testing","meta-description"=>"Class Unit Testing","meta-keywords"=>NULL,"path-ui"=>"/class","path-file"=>"/page/class.php")
 		);
 	}
 	if(!isset($_SESSION['db']) || $reset){
@@ -56,7 +56,7 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 		/*echo "BLOG LOADED <BR>";*/
 		$_SESSION['Blog'] = new Blog(1);
 		$_SESSION['Blog']->dbRead($_SESSION['db']->con($_SESSION['dbName']));
-		$_SESSION['Blog']->load($_SESSION['db']->con($_SESSION['dbName']));
+		$_SESSION['Blog']->load($_SESSION['db']->con($_SESSION['dbName']),false,true);
 	}
 	if(!isset($_SESSION['Users']) || $reset){
 		/*echo "USERS LOADED <BR>";*/
@@ -76,7 +76,7 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 		$found = false; 
 		foreach($_SESSION['Pages'] as $page){ if($page['path-ui'] == "/".strtolower($_REQUEST['pg'])){ $found = true; $_SESSION['Page'] = $page; if(!file_exists(ltrim($page['path-file'],"/"))){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-file'] = $page['path-file']; } break; } }
 		if(!$found){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = "/".$_REQUEST['pg']; }
-	}else{ $_SESSION['Page'] = $_SESSION['Pages'][2]; }
+	}else{ $_SESSION['Page'] = $_SESSION['Pages'][4]; }
 	//Process Blog Page
 	if($_SESSION['Page']['path-file'] == "/page/blog.php"){
 		if(isset($_REQUEST['bpg'])){
@@ -87,17 +87,13 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 					if(isset($_REQUEST['bpgn']) && !is_numeric($_REQUEST['bpgn']) && $_REQUEST['bpgn'] != NULL && $_REQUEST['bpgn'] != ""){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = $_SERVER['REQUEST_URI']; }
 				break;
 				case "p":
-					$post = $_SESSION['Blog']->getPosts()->getFirstNode();
-					$_SESSION['Page']['Current'] = NULL; $found = false;
-					while($post != NULL){
-						$a = $post->readNode()->toArray();
-						if($a['ID'] == $_REQUEST['bpgi'] && $a['Active'] == 1){ $found = true; $_SESSION['Page']['Current'] = $post; break; }
-						$post = $post->getNext();
-					}
+					$_SESSION['db']->connect($_SESSION['dbName']); $_SESSION['Page']['Current'] = NULL; $found = false;					
+					$page = $_SESSION['Blog']->getPostPageLive($_SESSION['db']->con($_SESSION['dbName']),$_REQUEST['bpgi']);
+					$post = $page->getFirstNode(); while($post != NULL){ $a = $post->readNode()->toArray(); if($a['ID'] == $_REQUEST['bpgi']){ $found = true; $_SESSION['Page']['Current'] = $post; break; } $post = $post->getNext();	}
 					if(!$found){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = $_SERVER['REQUEST_URI']; }
-					$_SESSION['Page']['meta-title'] = "Blog Post - ".$a['Title']; $_SESSION['Page']['meta-description'] = $a['Description']; $_SESSION['Page']['meta-keywords'] = $a['Keywords'];
+					else{ $_SESSION['Page']['meta-title'] = "Blog Post - ".$a['Title']; $_SESSION['Page']['meta-description'] = $a['Description']; $_SESSION['Page']['meta-keywords'] = implode(",",$a['Keywords']); if($a['CoverImage'] != NULL && $a['CoverImage'] != ""){ $_SESSION['Page']['meta-og-image'] = $a['CoverImage']; list($_SESSION['Page']['meta-og-image-width'], $_SESSION['Page']['meta-og-image-height'], $_SESSION['Page']['meta-og-image-type']) = getimagesize("https://".$_SESSION['Domain'].$a['CoverImage']); $_SESSION['Page']['meta-og-type'] = "article"; } }
 				break;
-				case "c": $_SESSION['Page']['meta-title'] = "Blog Category - ".$_REQUEST['bpgi'];	$_SESSION['Page']['meta-description'] = "Listing of blog entries tagged in ".$_REQUEST['bpgi'];	break;
+				case "c": $_SESSION['Page']['meta-title'] = "Blog Category - ".$_REQUEST['bpgi']; $_SESSION['Page']['meta-description'] = "Listing of blog entries tagged in ".$_REQUEST['bpgi']; break;
 				case "u": $_SESSION['Page']['meta-title'] = "Blog Author - ".$_REQUEST['bpgi']; $_SESSION['Page']['meta-description'] = "Listing of blog entries written by ".$_REQUEST['bpgi']; break;
 				case "a": $_SESSION['Page']['meta-title'] = "Blog Archive - ".date("F Y",strtotime($_REQUEST['bpgi'])); $_SESSION['Page']['meta-description'] = "Listing of blog entries posted in ".date("F, Y",strtotime($_REQUEST['bpgi']));	break;
 				case "admin": $_SESSION['Page']['meta-title'] = "Blog Administration"; $_SESSION['Page']['meta-description'] = "Blog Admin Console"; if($_REQUEST['bpgi']){ $_SESSION['Page']['meta-title'] .= " - ".ucfirst($_REQUEST['bpgi']); } break;
@@ -116,7 +112,7 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 	if($_SESSION['Page']['id'] == 0){ header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404); }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns#" lang="en">
    <!--Start Header-->
     <head>
         <meta charset="utf-8">
@@ -126,8 +122,29 @@ Author: Dan Raquel (draquel@webjynx.com)-->
         <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
         <link rel="alternate" type="application/atom+xml" title="<?php echo $_SESSION['Title']; ?>" href="http://<?php echo $_SESSION['Domain']; ?>/rss/">
         <?php
-		//Title, Meta-Description & Meta-Keywords			
-			echo "<title>".$_SESSION['Title']." - ".$_SESSION['Page']['meta-title']."</title><meta name=\"description\" content=\"".$_SESSION['Page']['meta-description']."\"><meta name=\"keywords\" content=\"".$_SESSION['Page']['meta-keywords']."\">";
+		//Title, Meta-Description, Meta-Keywords & Open Graph Meta		
+			echo "<title>".$_SESSION['Title']." - ".$_SESSION['Page']['meta-title']."</title>
+			<meta property=\"og:title\" content=\"".$_SESSION['Title']." - ".$_SESSION['Page']['meta-title']."\" />
+			<meta property=\"og:url\" content=\"https://".$_SESSION['Domain'].$_SERVER['REQUEST_URI']."\" />
+			<meta name=\"description\" content=\"".$_SESSION['Page']['meta-description']."\">
+			<meta property=\"og:description\" content=\"".$_SESSION['Page']['meta-description']."\" />
+			<meta name=\"keywords\" content=\"".$_SESSION['Page']['meta-keywords']."\">";
+			if(isset($_SESSION['Page']['meta-og-type'])){ echo "<meta property=\"og:type\" content=\"".$_SESSION['Page']['meta-og-type']."\" />";}
+			else{ echo "<meta property=\"og:type\" content=\"website\" />"; }
+			if(isset($_SESSION['Page']['meta-og-image'])){
+				echo "<meta property=\"og:image\" content=\"http://".$_SESSION['Domain'].$_SESSION['Page']['meta-og-image']."\" />
+				<meta property=\"og:image:secure_url\" content=\"https://".$_SESSION['Domain'].$_SESSION['Page']['meta-og-image']."\" />
+				<meta property=\"og:image:type\" content=\"image/".pathinfo($_SESSION['Page']['meta-og-image'],PATHINFO_EXTENSION)."\">
+				<meta property=\"og:image:height\" content=\"".$_SESSION['Page']['meta-og-image-height']."\" />
+				<meta property=\"og:image:width\" content=\"".$_SESSION['Page']['meta-og-image-width']."\" />";
+			}else{
+				list($_SESSION['Page']['meta-og-image-width'], $_SESSION['Page']['meta-og-image-height'], $_SESSION['Page']['meta-og-image-type']) = getimagesize("https://".$_SESSION['Domain']."/img/logo.png");
+				echo "<meta property=\"og:image\" content=\"http://".$_SESSION['Domain']."/img/logo.png\" />
+				<meta property=\"og:image:secure_url\" content=\"https://".$_SESSION['Domain']."/img/logo.png\" />
+				<meta property=\"og:image:type\" content=\"image/".pathinfo("/img/logo.png",PATHINFO_EXTENSION)."\">
+				<meta property=\"og:image:height\" content=\"".$_SESSION['Page']['meta-og-image-height']."\" />
+				<meta property=\"og:image:width\" content=\"".$_SESSION['Page']['meta-og-image-width']."\" />"; 
+			}
 		//Concatenate CSS Files
 			$css = file_get_contents("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
 			$css .= file_get_contents("css/trumbowyg.min.css");
@@ -145,7 +162,7 @@ Author: Dan Raquel (draquel@webjynx.com)-->
     <body role="document">
        <!--Start Page-->
         <div id="page" class="container-fluid">
-            <nav id="menu" class="navbar navbar-default navbar-static-top<?php if($_SESSION['Page']['path-file'] == "/page/index.php" || (isset($_REQUEST['bpg']) && $_REQUEST['bpg'] == "admin") || $_SESSION['Page']['path-file'] == "/page/user.php"){ echo " hidden"; } ?>">
+            <nav id="menu" class="navbar navbar-default navbar-static-top<?php if($_SESSION['Page']['path-file'] == "/page/index.php" /*|| (isset($_REQUEST['bpg']) && $_REQUEST['bpg'] == "admin") || $_SESSION['Page']['path-file'] == "/page/user.php"*/){ echo " hidden"; } ?>">
               <div class="container-fluid">
                 <div class="navbar-header">
                   <button aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
@@ -165,7 +182,7 @@ Author: Dan Raquel (draquel@webjynx.com)-->
                     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4"><p>info@yourcompany.com<br>(123) 456-7890</p><p><div class="addthis_inline_follow_toolbox"></div></p></div>
                     <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8"><?php $_REQUEST['dd'] = 0; include("menu.php"); ?></div>
                 </div>
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center"><p>&copy;<?php echo $_SESSION['Title']; ?> 2016 - All Rights Reserved</p><a href="http://www.kburkhart.com" target="_blank"><img src="/img/KBDicon.svg" alt="Katharine Burkhart Designs" /></a></div>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center"><p>&copy;<?php echo $_SESSION['Title']. " ". date("Y",time()); ?> - All Rights Reserved</p><a href="http://www.kburkhart.com" target="_blank"><img src="/img/KBDicon.svg" alt="Katharine Burkhart Designs" /></a></div>
             </div>
         </div>
        <!--End Page-->
@@ -195,6 +212,8 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 						if( bottom_of_window > bottom_of_object ){ $(this).animate({'opacity':'1'},350); }
 					});
 				});
+			/* Hide Images with NULL src - needs improvement*/
+				$("img").each(function(){ if($(this).attr("src") == ""){ $(this).addClass("hidden"); } });
 			/* Trumbowyg Editor */
 				$.trumbowyg.svgPath = '/img/trumbowyg_icons.svg';
 				//$(".trumbowyg").trumbowyg({ btns: [	['viewHTML'],['formatting'],'btnGrp-semantic',['superscript', 'subscript'],['link'],['insertImage'],'btnGrp-justify','btnGrp-lists',['horizontalRule'],['removeformat'],['fullscreen'] ],autogrow: true	});
@@ -208,4 +227,4 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 		</script>
     </body>
 </html>
-<?php /* $_SESSION['db']->disconnect($_SESSION['dbName']); session_write_close(); */ ?>
+<?php $_SESSION['db']->disconnect($_SESSION['dbName']); session_write_close(); ?>

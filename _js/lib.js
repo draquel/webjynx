@@ -1,5 +1,6 @@
 // Form Handling
 	function setForm(){
+		"use strict";
 		if(arguments.length > 0){
 			var datastr = arguments[0];
 			if(arguments.length > 1){ datastr += "&i="+arguments[1]; } 
@@ -20,25 +21,28 @@
 			return true;
 		}else{ return false; }
 	}
+	//Implement FormData() for submission to support file uploads 
 	jQuery.fn.submitForm = function(){
+		"use strict";
 		$(this).submit(function(e){
 			e.preventDefault();
-			var dataStr = "";
-			$(this).find("input, textarea, select").each(function(index, element){
-				dataStr += "&"+$(this).attr('id')+"=";
-				if($(this).is('input[type=checkbox]')){ if($(this).is(':checked')){ dataStr += 1; }else{ dataStr += 0; } }
-				else if($(this).val() == null || $(this).val() == "" || typeof $(this).val() == 'undefined'){ dataStr += "NULL"; }
-				else if(Array.isArray($(this).val())){ dataStr += $(this).val().toString(); }
-				else{ dataStr += $(this).val(); }
+			var formData = new FormData();
+			$(this).find("input, textarea, select").each(function(){
+				if($(this).is('input[type=checkbox]')){ if($(this).is(':checked')){ formData.append($(this).attr('id'),1); }else{ formData.append($(this).attr('id'),0); }	}
+				else if($(this).is('input[type=file]')){ formData.append($(this).attr('id'),$(this)[0].files[0]); }
+				else if($(this).val() === null || $(this).val() === "" || typeof $(this).val() === 'undefined'){ formData.append($(this).attr('id'),"NULL"); }
+				else if(Array.isArray($(this).val())){ formData.append($(this).attr('id'),$(this).val().toString()); }
+				else{ formData.append($(this).attr('id'),$(this).val()); }
 			});
-			//console.log(dataStr);
-			$.ajax({url:'/ajax.php',method:'POST',async:true,dataType:"json",data:dataStr,
+			$.ajax({url:'/ajax.php',method:'POST',async:true,data:formData,
+				processData: false,
+      			contentType: false,
 				complete: function(xhr){
 					var data = JSON.parse(xhr.responseText);
 					if(data[0]){
 						$(".modal-body > .alert").html("<strong>Congratulations!</strong> "+data[1]).addClass("alert-success").removeClass("hidden");
 						$(".modal-body button[type=submit]").addClass("hidden");
-						setTimeout(function(){ $('#Modal').modal('hide'); },2000);
+						setTimeout(function(){ $('#Modal').modal('hide'); location.reload(); },2000);
 					}else{ $(".modal-body > .alert").addClass("alert-danger").removeClass("hidden").html("<strong>Opps!</strong> "+data[1]); }
 				}
 			});
@@ -70,22 +74,25 @@
 	}
 //MISC
 	function validateEmail(email) {
+		"use strict";
 		var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/;
 		return re.test(email);
 	}
 	function validatePhone(phone){
+		"use strict";
 		var rp = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
 		return rp.test(phone);
 	}
 	function preload(images,Callback) {
-		if(images && images != null){
+		"use strict";
+		if(images && images !== null){
 			var imagesLength = images.length;
 			var loadedCounter = 0;
 			for (var i = 0; i < imagesLength; i++) {
 				var cacheImage = new Image();
 				cacheImage.onload = function(){
 					loadedCounter++;
-					if (loadedCounter == imagesLength-1) {
+					if (loadedCounter === imagesLength-1) {
 						if ($.isFunction(Callback)){ Callback(); }
 					}
 				};
@@ -93,4 +100,3 @@
 			}
 		}else{ if($.isFunction(Callback)){ Callback(); } }
 	}
-	jQuery.fn.inputDefault = function(){ $(this).focus(function(){ if($(this).val() == $(this).attr('title')){ $(this).val(""); } }).blur(function(){ if($(this).val() == ""){ $(this).val($(this).attr('title')); } }); };

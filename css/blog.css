@@ -110,9 +110,11 @@
   margin-bottom: 20px;
   color: #999;
 }
+.blog-post-body img {margin-bottom: 25px; }
+.label{ padding: 0.3em 0.6em 0.2em !important; }
 .blog-post-categories{ font-size:14px; font-weight:700; }
-.blog-post-categories a{ text-decoration:none !important; }
-.blog-post-categories span{ margin-left:7px; font-size: 80%; }
+.blog-post-categories a{ text-decoration:none !important; display: inline-block;}
+.blog-post-categories span{ margin-left:7px; font-size: 80%; display: block; }
 .blog-post-categories span:hover{ background-color:#555; }
 .blog-post-categories span:active{ background-color: #fff;color:#555; }
 
@@ -156,6 +158,8 @@
 /*Trumbowyg Editor*/
 .trumbowyg-box .trumbowyg-editor{ background-color: #FFF; border-radius: 0 0 4px 4px; }
 .trumbowyg-button-pane{ border-radius: 4px 4px 0 0; }
+
+.modal-content form .btn { margin: 0 20px 0 0; }
 
 /* Google Custom Search */
 .gsc-control-cse .gsc-table-result{ font-family: inherit; }

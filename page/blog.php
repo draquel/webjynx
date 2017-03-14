@@ -8,7 +8,9 @@
 	<style>.blue_bg{ background-image:url('/img/stock_head1.svg'); } </style>
 <!--Page Content -->
     <div id="pg" class="container-fluid">
-    <div class="row blue_bg"><div></div></div>
+    <?php //No Headline Image on Post Page
+		if($_REQUEST['bpg'] != "p" && (!isset($inc) || !$inc)){ echo "<div class=\"row blue_bg\"><div></div></div>"; }
+	?>
         
 <?php
 	/*DEBUG OUTPUT::*/
@@ -18,30 +20,13 @@
 	echo "bpgs: ".$_REQUEST['bpgs']."<br>";*/
 		
 	if($_REQUEST['bpg'] != "admin"){
-		$bpage = "<div class=\"row\"><div class=\"blog-header col-xs-12 col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1\">
-			<h1 class=\"blog-title\">".$blog['Title']."</h1>
-			<p class=\"lead blog-description\">".$blog['Description']."</p>
-		</div>
+		$bpage = "<div class=\"row\">
+			<div class=\"blog-header col-xs-12 col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1\"><h1 class=\"blog-title\">".$blog['Title']."</h1><p class=\"lead blog-description\">".$blog['Description']."</p></div>
 		<div class=\"blog-main col-xs-12 col-sm-7 col-sm-offset-1 col-md-7 col-md-offset-1 col-lg-7 col-lg-offset-1\">";
 		if(isset($_REQUEST['bpgn']) && $_REQUEST['bpgn'] != NULL){ $pageNum = $_REQUEST['bpgn']; }else{ $pageNum = 1; }
 		switch($_REQUEST['bpg']){
 			case "p": /* POST PAGE */
-				$html = "<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\">".$a['Title']."</h2><p class=\"blog-post-meta\">".date("F j, Y, g:i a",$a['Created']);
-				if($_SESSION['Users']->size() > 0){ 
-					$user = $_SESSION['Users']->getFirstNode();
-					while($user != NULL){ 
-						$u = $user->readNode()->toArray();
-						if($u['ID'] == $a['Author']){ $html .= " by <a class=\"bnavl\" href=\"/blog/u/".$u['First']." ".$u['Last']."\">".$u['First']." ".$u['Last']."</a>"; break; } 
-						$user = $user->getNext();
-					}
-				}
-				$html .= "</p></div><div class=\"blog-post-body col-md-12\">".$a['HTML']."<hr></div>";
-				if(count($a['Rels']['Category']) > 0){
-					$html .= "<div class=\"col-sm-6\"><h6 class=\"blog-post-categories\">";
-					for($i = 0; $i < count($a['Rels']['Category']); $i++){ $c = $a['Rels']['Category'][$i]; $html .= "<a class=\"bnavl\" href=\"/blog/c/".$c['Definition']."\"><span class=\"label label-default\">".$c['Definition']."</span></a>"; }
-					$html .= "</h6></div>";
-				}
-				$html .= "<div class=\"col-sm-6 text-right\"><div class=\"addthis_inline_share_toolbox\"></div></div></div>";
+				$html = $_SESSION['Page']['Current']->readNode()->view(array("<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\">{Title}</h2><p class=\"blog-post-meta\">{Created} by <a class=\"bnavl\" href=\"/blog/u/{_Signature}\">{_Signature}</a></p></div><div class=\"blog-post-body col-md-12\"><img class=\"img-responsive img-thumbnail center-block\" src=\"{CoverImage}\" alt=\"{Title}\" >{HTML}<hr></div><div class=\"col-md-6\"><h6 class=\"blog-post-categories\">{Category}</h6></div><div class=\"col-sm-6 text-right\"><div class=\"addthis_inline_share_toolbox\"></div></div></div>","<a class=\"bnavl\" href=\"/blog/c/{Definition}\"><span class=\"label label-default\">{Definition}</span></a>"));
 				$bpage .= $html;
 				if($_SESSION['Page']['Current'] != NULL){
 					$prev = $_SESSION['Page']['Current']->getPrev(); 
@@ -53,6 +38,7 @@
 					if(!$last){ $s .= "<li class=\"next\"><a class=\"bnavl\" href=\"/blog/p/".$nex['ID']."\">".$nex['Title']." <span aria-hidden=\"true\">&rarr;</span></a></li>"; }else{ $s .= "<li class=\"next disabled\"><a class=\"bnavl\" href=\"#\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>"; }
 					$s .= "</ul></nav></div>";
 					$bpage .= $s;
+					$display_sidebar = true;
 				}
 			break;
 			case "c": /* CATEGORY PAGE */
@@ -61,52 +47,37 @@
 				$html = "<h2>Category: ".$_REQUEST['bpgi']."</h2>";
 				while($post != NULL){
 					$p = $post->readNode();
-					$a = $p->toArray();
-					$html .= "<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/".$a['ID']."\">".$a['Title']."</a></h2><p class=\"blog-post-meta\">".date("F j, Y, g:i a",$a['Created']);
-					if($_SESSION['Users']->size() > 0){ 
-						$user = $_SESSION['Users']->getFirstNode();
-						while($user != NULL){ 
-							$u = $user->readNode()->toArray();
-							if($u['ID'] == $a['Author']){ $html .= " by <a class=\"bnavl\" href=\"/blog/u/".$u['First']." ".$u['Last']."\">".$u['First']." ".$u['Last']."</a>"; break; } 
-							$user = $user->getNext();
-						}
-					}
-					$html .= "</p></div><div class=\"blog-post-body col-md-12\">".$a['HTML']."</div></div>";
+					$html .= $p->view(array("<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/{ID}\">{Title}</a></h2><p class=\"blog-post-meta\">{Created} by <a class=\"bnavl\" href=\"/blog/u/{_Signature}\">{_Signature}</a></p></div><div class=\"blog-post-body col-md-12\">{HTML}<hr></div></div>"));
 					$post = $post->getNext();
 				}
 				$bpage .= $html;
 				$prevPN = $pageNum - 1;if($prevPN < 1){ $first = true; }else{ $first = false; }
-				$nextPN = $pageNum + 1;if($_SESSION['Blog']->getCategoryPage($nextPN,$_REQUEST['bpgi'])->size() > 0){ $last = false; }else{ $last = true; }
+				$nextPN = $pageNum + 1;if($_SESSION['Blog']->getCategoryPageLive($_SESSION['db']->con($_SESSION['dbName']),$nextPN,$_REQUEST['bpgi'])->size() > 0){ $last = false; }else{ $last = true; }
 				$s = "<div class=\"col-md-12\"><nav><ul class=\"pager\">";
 				if(!$first){ $s .= "<li class=\"previous\"><a class=\"bnavl\" href=\"/blog/c/".$_REQUEST['bpgi']."/".$prevPN."\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>"; }else{ $s .= "<li class=\"previous disabled\"><a class=\"bnavl\" href=\"#\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>"; }
 				if(!$last){ $s .= "<li class=\"next\"><a class=\"bnavl\" href=\"/blog/c/".$_REQUEST['bpgi']."/".$nextPN."\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>"; }else{ $s .= "<li class=\"next disabled\"><a class=\"bnavl\" href=\"#\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>"; }
 				$s .= "</ul></nav></div>";
 				$bpage .= $s;
+				$display_sidebar = true;
 			break;
 			case "u": /* AUTHOR PAGE */
-				$posts = $_SESSION['Blog']->getAuthorPageLive($_SESSION['db']->con($_SESSION['dbName']),$pageNum,$_REQUEST['bpgi'],$_SESSION['Users']);
+				$posts = $_SESSION['Blog']->getAuthorPageLive($_SESSION['db']->con($_SESSION['dbName']),$pageNum,$_REQUEST['bpgi']);
 				$post = $posts->getFirstNode();
 				$html = "<h2>Author: ".$_REQUEST['bpgi']."</h2>";
 				while($post != NULL){
 					$p = $post->readNode();
-					$a = $p->toArray();
-					$html .= "<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/".$a['ID']."\">".$a['Title']."</a></h2><p class=\"blog-post-meta\">".date("F j, Y, g:i a",$a['Created'])." by ".$_REQUEST['bpgi']."</p></div><div class=\"blog-post-body col-md-12\">".$a['HTML']."<hr></div>";
-					if(count($a['Rels']['Category']) > 0){
-						$html .= "<div class=\"col-md-12\"><h6 class=\"blog-post-categories\">";
-						for($i = 0; $i < count($a['Rels']['Category']); $i++){ $c = $a['Rels']['Category'][$i]; $html .= "<a class=\"bnavl\" href=\"/blog/c/".$c['Definition']."\"><span class=\"label label-default\">".$c['Definition']."</span></a>"; }
-						$html .= "</h6></div>";
-					}
-					$html .= "</div>";
+					$html .= $p->view(array("<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/{ID}\">{Title}</a></h2><p class=\"blog-post-meta\">{Created} by {_Signature}</p></div><div class=\"blog-post-body col-md-12\">{HTML}<hr></div><div class=\"col-md-12\"><h6 class=\"blog-post-categories\">{Category}</h6></div></div>","<a class=\"bnavl\" href=\"/blog/c/{Definition}\"><span class=\"label label-default\">{Definition}</span></a>"));
 					$post = $post->getNext();
 				}
 				$bpage .= $html;
 				$prevPN = $pageNum - 1;if($prevPN < 1){ $first = true; }else{ $first = false; }
-				$nextPN = $pageNum + 1;if($_SESSION['Blog']->getAuthorPage($nextPN,$_REQUEST['bpgi'],$_SESSION['Users'])->size() > 0){ $last = false; }else{ $last = true; }
+				$nextPN = $pageNum + 1;if($_SESSION['Blog']->getAuthorPageLive($_SESSION['db']->con($_SESSION['dbName']),$nextPN,$_REQUEST['bpgi'])->size() > 0){ $last = false; }else{ $last = true; }
 				$s = "<div class=\"col-md-12\"><nav><ul class=\"pager\">";
 				if(!$first){ $s .= "<li class=\"previous\"><a class=\"bnavl\" href=\"/blog/u/".$_REQUEST['bpgi']."/".$prevPN."\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>"; }else{ $s .= "<li class=\"previous disabled\"><a class=\"bnavl\" href=\"#\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>"; }
 				if(!$last){ $s .= "<li class=\"next\"><a class=\"bnavl\" href=\"/blog/u/".$_REQUEST['bpgi']."/".$nextPN."\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>"; }else{ $s .= "<li class=\"next disabled\"><a class=\"bnavl\" href=\"#\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>"; }
 				$s .= "</ul></nav></div>";
 				$bpage .= $s;
+				$display_sidebar = true;
 			break;
 			case "a": /* ARCHIVE PAGE */
 				$posts = $_SESSION['Blog']->getArchivePageLive($_SESSION['db']->con($_SESSION['dbName']),$pageNum,$_REQUEST['bpgi']);
@@ -114,33 +85,18 @@
 				$html = "<h2>Archive: ".date("F Y",strtotime($_REQUEST['bpgi']."01"))."</h2>";
 				while($post != NULL){
 					$p = $post->readNode();
-					$a = $p->toArray();
-					$html .= "<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/".$a['ID']."\">".$a['Title']."</a></h2><p class=\"blog-post-meta\">".date("F j, Y, g:i a",$a['Created']);
-					if($_SESSION['Users']->size() > 0){
-						$user = $_SESSION['Users']->getFirstNode();
-						while($user != NULL){ 
-							$u = $user->readNode()->toArray();
-							if($u['ID'] == $a['Author']){ $html .= " by <a class=\"bnavl\" href=\"/blog/u/".$u['First']." ".$u['Last']."\">".$u['First']." ".$u['Last']."</a>"; break; } 
-							$user = $user->getNext();
-						}
-					}
-					$html .= "</p></div><div class=\"blog-post-body col-md-12\">".$a['HTML']."<hr></div>";
-					if(count($a['Rels']['Category']) > 0){
-						$html .= "<div class=\"col-md-12\"><h6 class=\"blog-post-categories\">";
-						for($i = 0; $i < count($a['Rels']['Category']); $i++){ $c = $a['Rels']['Category'][$i]; $html .= "<a class=\"bnavl\" href=\"/blog/c/".$c['Definition']."\"><span class=\"label label-default\">".$c['Definition']."</span></a>"; }
-						$html .= "</h6></div>";
-					}
-					$html .= "</div>";
+					$html .= $p->view(array("<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/{ID}\">{Title}</a></h2><p class=\"blog-post-meta\">{Created} by <a class=\"bnavl\" href=\"/blog/u/{_Signature}\">{_Signature}</a></p></div><div class=\"blog-post-body col-md-12\">{HTML}<hr></div><div class=\"col-md-12\"><h6 class=\"blog-post-categories\">{Category}</h6></div></div>","<a class=\"bnavl\" href=\"/blog/c/{Definition}\"><span class=\"label label-default\">{Definition}</span></a>"));
 					$post = $post->getNext();
 				}
 				$bpage .= $html;
 				$prevPN = $pageNum - 1;if($prevPN < 1){ $first = true; }else{ $first = false; }
-				$nextPN = $pageNum + 1;if($_SESSION['Blog']->getArchivePage($nextPN,$_REQUEST['bpgi'])->size() > 0){ $last = false; }else{ $last = true; }
+				$nextPN = $pageNum + 1;if($_SESSION['Blog']->getArchivePageLive($_SESSION['db']->con($_SESSION['dbName']),$nextPN,$_REQUEST['bpgi'])->size() > 0){ $last = false; }else{ $last = true; }
 				$s = "<div class=\"col-md-12\"><nav><ul class=\"pager\">";
 				if(!$first){ $s .= "<li class=\"previous\"><a class=\"bnavl\" href=\"/blog/a/".$_REQUEST['bpgi']."/".$prevPN."\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>"; }else{ $s .= "<li class=\"previous disabled\"><a class=\"bnavl\" href=\"#\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>";}
 				if(!$last){ $s .= "<li class=\"next\"><a class=\"bnavl\" href=\"/blog/a/".$_REQUEST['bpgi']."/".$nextPN."\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>"; }else{ $s .= "<li class=\"next disabled\"><a class=\"bnavl\" href=\"#\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>"; }
 				$s .= "</ul></nav></div>";
 				$bpage .= $s;
+				$display_sidebar = true;
 			break;
 			default: /* MAIN PAGE */
 				$posts = $_SESSION['Blog']->getPageLive($_SESSION['db']->con($_SESSION['dbName']),$pageNum);
@@ -148,71 +104,61 @@
 				$html = "";
 				while($post != NULL){
 					$p = $post->readNode();
-					$a = $p->toArray();
-					$html .= "<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/".$a['ID']."\">".$a['Title']."</a></h2><p class=\"blog-post-meta\">".date("F j, Y, g:i a",$a['Created']);
-					if($_SESSION['Users']->size() > 0){ 
-						$user = $_SESSION['Users']->getFirstNode();
-						while($user != NULL){ 
-							$u = $user->readNode()->toArray();
-							if($u['ID'] == $a['Author']){ $html .= " by <a class=\"bnavl\" href=\"/blog/u/".$u['First']." ".$u['Last']."\">".$u['First']." ".$u['Last']."</a>"; break; } 
-							$user = $user->getNext();
-						}
-					}
-					$html .= "</p></div><div class=\"blog-post-body col-md-12\">".$a['HTML']."<hr></div>";
-					if(count($a['Rels']['Category']) > 0){
-						$html .= "<div class=\"col-md-12\"><h6 class=\"blog-post-categories\">";
-						for($i = 0; $i < count($a['Rels']['Category']); $i++){ $c = $a['Rels']['Category'][$i]; $html .= "<a class=\"bnavl\" href=\"/blog/c/".$c['Definition']."\"><span class=\"label label-default\">".$c['Definition']."</span></a>"; }
-						$html .= "</h6></div>";
-					}
-					$html .= "</div>";
+					$html .= $p->view(array("<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/{ID}\">{Title}</a></h2><p class=\"blog-post-meta\">{Created} by <a class=\"bnavl\" href=\"/blog/u/{_Signature}\">{_Signature}</a></p></div><div class=\"blog-post-body col-md-12\">{HTML}<hr></div><div class=\"col-md-12\"><h6 class=\"blog-post-categories\">{Category}</h6></div></div>","<a class=\"bnavl\" href=\"/blog/c/{Definition}\"><span class=\"label label-default\">{Definition}</span></a>"));
 					$post = $post->getNext();
 				}
 				$bpage .= $html;
 				$prevPN = $pageNum - 1;if($prevPN < 1){ $first = true; }else{ $first = false; }
-				$nextPN = $pageNum + 1;if($_SESSION['Blog']->getPage($nextPN)->size() > 0){ $last = false; }else{ $last = true; }
+				$nextPN = $pageNum + 1;if($_SESSION['Blog']->getPageLive($_SESSION['db']->con($_SESSION['dbName']),$nextPN)->size() > 0){ $last = false; }else{ $last = true; }
 				$s = "<div class=\"col-md-12\"><nav><ul class=\"pager\">";
 				if(!$first){ $s .= "<li class=\"previous\"><a class=\"bnavl\" href=\"/blog/".$prevPN."\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>"; }else{ $s .= "<li class=\"previous disabled\"><a class=\"bnavl\" href=\"#\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>"; }
 				if(!$last){ $s .= "<li class=\"next\"><a class=\"bnavl\" href=\"/blog/".$nextPN."\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>"; }else{ $s .= "<li class=\"next disabled\"><a class=\"bnavl\" href=\"#\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>"; }
 				$s .= "</ul></nav></div>";
 				$bpage .= $s;
+				$display_sidebar = true;
 			break;
 		}
 		if(isset($pageNum) && $_REQUEST['bpg'] != "p"){ $bpage .= "<div class=\"col-md-12\"><p class=\"blog-pgnum text-center\">page ".$pageNum."</p></div>"; }
 		$bpage .= "</div>";
-		$sidebar = "<div class=\"blog-sidebar col-xs-12 col-sm-3\">";
-		if(isset($_SESSION['Blog_GCS_ID']) && $_SESSION['Blog_GCS_ID'] != ""){
-			$sidebar .= "<script>
-			  (function() {
-				var cx = '".$_SESSION['Blog_GCS_ID']."';
-				var gcse = document.createElement('script');
-				gcse.type = 'text/javascript';
-				gcse.async = true;
-				gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
-				var s = document.getElementsByTagName('script')[0];
-				s.parentNode.insertBefore(gcse, s);
-			  })();
-			</script>
-			<gcse:search></gcse:search>";
+		if($display_sidebar){
+			$sidebar = "<div class=\"blog-sidebar col-xs-12 col-sm-3\">";
+			if(isset($_SESSION['Blog_GCS_ID']) && $_SESSION['Blog_GCS_ID'] != ""){
+				$sidebar .= "<script>
+				  (function() {
+					var cx = '".$_SESSION['Blog_GCS_ID']."';
+					var gcse = document.createElement('script');
+					gcse.type = 'text/javascript';
+					gcse.async = true;
+					gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+					var s = document.getElementsByTagName('script')[0];
+					s.parentNode.insertBefore(gcse, s);
+				  })();
+				</script>
+				<gcse:search></gcse:search>";
+			}
+			$sidebar .= "<div class=\"sidebar-module sidebar-module-inset\"><h4>About</h4><p>".$blog['Description']."</p></div><div class=\"sidebar-module\"><h4>Archives</h4><ol class=\"list-unstyled\">";
+			if($_SESSION['Blog']->getPosts()->size() > 0){
+				$archive = $_SESSION['Blog']->getPosts()->getArchive();
+				foreach($archive as $k => $v){ $sidebar .= "<li><a class=\"bnavl\" href=\"/blog/a/".$k."\">".date("M Y",strtotime($k."01"))."</a></li>"; }
+			}
+			$sidebar .= "</ol></div><div class=\"sidebar-module\"><h4>Categories</h4><ol class=\"list-unstyled\">";
+			$cat = $_SESSION['Blog']->getCategories()->getFirstNode();
+			while($cat != NULL){
+				$c = $cat->readNode()->toArray();
+				$sidebar .= "<li><a class=\"bnavl\" href=\"/blog/c/".$c['Definition']."\">".$c['Definition']."</a></li>";
+				$cat = $cat->getNext();
+			}
+			$sidebar .= "</ol></div></div></div>";
+			$bpage .= $sidebar;
 		}
-		$sidebar .= "<div class=\"sidebar-module sidebar-module-inset\"><h4>About</h4><p>".$blog['Description']."</p></div><div class=\"sidebar-module\"><h4>Archives</h4><ol class=\"list-unstyled\">";
-		if($_SESSION['Blog']->getPosts()->size() > 0){
-			$archive = $_SESSION['Blog']->getPosts()->getArchive();
-			foreach($archive as $k => $v){ $sidebar .= "<li><a class=\"bnavl\" href=\"/blog/a/".$k."\">".date("M Y",strtotime($k."01"))."</a></li>"; }
-		}
-	    $sidebar .= "</ol></div><div class=\"sidebar-module\"><h4>Categories</h4><ol class=\"list-unstyled\">";
-		$cat = $_SESSION['Blog']->getCategories()->getFirstNode();
-		while($cat != NULL){
-			$c = $cat->readNode()->toArray();
-			$sidebar .= "<li><a class=\"bnavl\" href=\"/blog/c/".$c['Definition']."\">".$c['Definition']."</a></li>";
-			$cat = $cat->getNext();
-		}
-	    $sidebar .= "</ol></div></div></div>";
-		$bpage .= $sidebar;
 		echo $bpage;
 	}else{
+		//LOGIN AND GROUP CHECKS SHOULD BE MOVED INTO PAGE PROCESSING IN \INDEX.PHP
 		if(!isset($_SESSION['User']) || $_SESSION['User'] == NULL){
 			/* Login Page */
 			$inc = 1; include("page/user.php");
+		}elseif(!$_SESSION['User']->getRelation("Group")->hasRel(11)){ 
+			include("page/401.php");
 		}else{
 			/* Blog Admin Console */
 			echo "<div class=\"row\">
@@ -220,25 +166,20 @@
 					<h1>Blog Console</h1>
 					<div class=\" blog-console-menu col-sm-3 col-md-2\">
 						<ul class=\"nav nav-pills nav-stacked\">
-						  <li role=\"presentation\"><a href=\"/blog/admin/\">Status</a></li>
-						  <li role=\"presentation\"><a href=\"/blog/admin/posts\">Posts</a></li>
+						  <li role=\"presentation\"><a href=\"/blog/admin/\">Posts</a></li>
 						  <li role=\"presentation\"><a href=\"/blog/admin/categories\">Categories</a></li>
 						</ul>
 					</div>
 					<div class=\"blog-console-content col-sm-9 col-md-10\">";
 			switch($_REQUEST['bpgi']){
 				default:
-					echo "<div><h2>Status</h2></div>";
-				break;
-				case "posts":
 					if(isset($_REQUEST['bpgn']) && $_REQUEST['bpgn'] != NULL){ $pageNum = $_REQUEST['bpgn']; }else{ $pageNum = 1; }
 					if(isset($_REQUEST['bpgs']) && $_REQUEST['bpgs'] != NULL){ $pageSize = $_REQUEST['bpgs']; }else{ $pageSize = 10; }
 					$html = "
-						<h2>Posts</h2>
 						<button type=\"button\" class=\"btn btn-default\" onClick=\"setForm('bri=1')\">Create New Post</button>
 						  <table class=\"table\">
 							<tr><th>ID</th><th>Title</th><th>Author</th><th class=\"hidden-xs\">Categories</th><th class=\"hidden-xs hidden-sm\">Created</th><th>Actions</th></tr>";
-					$posts = $_SESSION['Blog']->getPage($pageNum,$pageSize,true);
+					$posts = $_SESSION['Blog']->getPageLive($_SESSION['db']->con($_SESSION['dbName']),$pageNum,$pageSize,true);
 					$post = $posts->getFirstNode();
 					while($post != NULL){ 
 						$p = $post->readNode();
@@ -264,9 +205,9 @@
 							 <span class=\"glyphicon glyphicon-cog\" aria-hidden=\"true\"></span> <span class=\"caret\"></span>
 						  </button>
 						  <ul class=\"dropdown-menu dropdown-menu-right\">
-							<li><a href=\"#\" onClick=\"setForm('bri=2',".$a['ID'].")\"><span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span> Edit</a></li>
-							<li><a href=\"#\"><span class=\"glyphicon glyphicon-list\" aria-hidden=\"true\"></span>Categories</a></li>
-							<li><a href=\"#\"><span class=\"glyphicon glyphicon-ban-circle\" aria-hidden=\"true\"></span>Delete</a></li>
+							<li><a onClick=\"setForm('bri=2',".$a['ID'].")\"><span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span> Edit</a></li>
+							<!--<li><a><span class=\"glyphicon glyphicon-list\" aria-hidden=\"true\"></span>Categories</a></li>-->
+							<li><a onClick=\"setForm('bri=4',".$a['ID'].")\"><span class=\"glyphicon glyphicon-ban-circle\" aria-hidden=\"true\"></span>Delete</a></li>
 						  </ul>
 						</div>
 						</td></tr>";
@@ -285,7 +226,7 @@
 					  </ul>
 					</div>";
 					$prevPN = $pageNum - 1;if($prevPN < 1){ $first = true; }else{ $first = false; }
-					$nextPN = $pageNum + 1;if($_SESSION['Blog']->getPage($nextPN,$pageSize)->size() > 0){ $last = false; }else{ $last = true; }
+					$nextPN = $pageNum + 1;if($_SESSION['Blog']->getPageLive($_SESSION['db']->con($_SESSION['dbName']),$nextPN,$pageSize,true)->size() > 0){ $last = false; }else{ $last = true; }
 					if(isset($_REQUEST['bpgs']) && $_REQUEST['bpgs'] != ""){ $prevPN .= "/".$_REQUEST['bpgs']; $nextPN .= "/".$_REQUEST['bpgs']; }
 					$s = "<div class=\"col-md-12\"><nav><ul class=\"pager\">";
 					if(!$first){ $s .= "<li class=\"previous\"><a class=\"bnavl\" href=\"/blog/admin/posts/".$prevPN."\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>"; }else{ $s .= "<li class=\"previous disabled\"><a class=\"bnavl\" href=\"#\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>"; }
@@ -297,10 +238,27 @@
 				break;
 				case "categories":
 					if(isset($_REQUEST['bpgn']) && $_REQUEST['bpgn'] != NULL){ $pageNum = $_REQUEST['bpgn']; }else{ $pageNum = 1; }
+					$blog = $_SESSION['Blog']->toArray();
+					$categories = $blog['Categories'];
 					echo "<div>
-						<h2>Categories</h2>
-						
-					</div>";
+						<button type=\"button\" class=\"btn btn-default\" onClick=\"setForm('bri=6')\">Create New Category</button>
+						 <table class=\"table\">
+							<tr><th>ID</th><th>Title</th><th class=\"hidden-xs hidden-sm\">Created</th><th>Actions</th></tr>";
+							foreach($categories as $key => $val){ 
+								echo "<tr><td>".$val['ID']."</td><td>".$val['Definition']."</td><td>".date("Y-m-d g:i a",$val['Created'])."</td><td>
+									<div class=\"btn-group\">
+									  <button type=\"button\" class=\"btn btn-default dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">
+										 <span class=\"glyphicon glyphicon-cog\" aria-hidden=\"true\"></span> <span class=\"caret\"></span>
+									  </button>
+									  <ul class=\"dropdown-menu dropdown-menu-right\">
+										<li><a onClick=\"setForm('bri=7',".$val['ID'].")\"><span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span> Edit</a></li>
+										<li><a onClick=\"setForm('bri=9',".$val['ID'].")\"><span class=\"glyphicon glyphicon-ban-circle\" aria-hidden=\"true\"></span>Delete</a></li>
+									  </ul>
+									</div>
+								</td></tr>";
+							}
+							
+					echo "</table></div>";
 				break;
 			}	
 			echo "</div>
