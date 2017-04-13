@@ -1,7 +1,7 @@
 <?php
-	require_once("_php/DBObj/dbobj.php");
+	require_once("_php/DBObj2/dbobj.php");
 	session_start();
-	
+	error_reporting(E_ALL);
 	$_SESSION['db'] = new Sql();
 	$_SESSION['db']->init($_SESSION['dbHost'],$_SESSION['dbuser'],$_SESSION['dbPass']);
 	$_SESSION['db']->connect($_SESSION['dbName']);
@@ -80,7 +80,7 @@
 						  <div class=\"form-group\">
 							  <div class=\"checkbox\">
 								<label>
-								  <input id=\"Make Live\" type=\"checkbox\" > Make Live
+								  <input id=\"Active\" type=\"checkbox\" > Make Live
 								</label>
 							  </div>
 						  </div>
@@ -162,13 +162,11 @@
 						$in = array("Title"=>$_REQUEST['Title'],"Author"=>$u['ID'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$_REQUEST['Active'],"HTML"=>$_REQUEST['HTML']);
 						$post->initMysql($in);
 					}
-					
 					if($id == 0){ //Generate Parent Relationship
 						$r = new Relation();
 						$r->initMysql(array("ID"=>0,"Created"=>0,"Updated"=>0,"RID"=>$b['ID'],"KID"=>3));
 						$post->setParentRel($r);
 					}
-					
 					//Generate Relations for Selected Categories
 					$icats = explode(",",$_REQUEST['Categories']);
 					for($i = 0; $i < count($icats); $i++){
@@ -179,7 +177,7 @@
 								if($id != 0 && $post->getCategories()->size() > 0){ //Check For Duplicate Relations
 									$dup = false;
 									$pcat = $post->getCategories()->getFirstNode();
-									while($pcat!= NULL){
+									while($pcat != NULL){
 										$pca = $pcat->readNode()->toArray();
 										if($icats[$i] == $pca['KID']){ $dup = true; break; }
 										$pcat = $pcat->getNext();
@@ -206,7 +204,6 @@
 							$pcat = $pcat->getNext();
 						}
 					}
-					
 					//Write to Database {and Update Session (obsolete)}
 					$data = array();
 					if($post->dbWrite($_SESSION['db']->con($_SESSION['dbName']))){ 

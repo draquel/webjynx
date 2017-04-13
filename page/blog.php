@@ -157,7 +157,7 @@
 		if(!isset($_SESSION['User']) || $_SESSION['User'] == NULL){
 			/* Login Page */
 			$inc = 1; include("page/user.php");
-		}elseif(!$_SESSION['User']->getRelation("Group")->hasRel(11)){ 
+		}elseif(!$_SESSION['User']->getRelation("Group")->hasRel(6)){ 
 			include("page/401.php");
 		}else{
 			/* Blog Admin Console */
@@ -184,21 +184,13 @@
 					while($post != NULL){ 
 						$p = $post->readNode();
 						$a = $p->toArray();
-						$html .= "<tr><td>".$a['ID']."</td><td>".$a['Title']."</td><td>";
-						if($_SESSION['Users']->size() > 0){ 
-							$user = $_SESSION['Users']->getFirstNode();
-							while($user != NULL){ 
-								$u = $user->readNode()->toArray();
-								if($u['ID'] == $a['Author']){ $html .= $u['First']." ".$u['Last']; break; } 
-								$user = $user->getNext();
-							}
-						}
+						$html .= "<tr><td>".$a['ID']."</td><td>".$a['Title']."</td><td>".$a['_Signature']."</td>";
 						if(count($a['Rels']['Category']) > 0){
 							$html .= "<td class=\"hidden-xs\">";
 							for($i = 0; $i < count($a['Rels']['Category']); $i++){ $c = $a['Rels']['Category'][$i]; $html .= "<h6 class=\"blog-adm-post-categories\"><span class=\"label label-default\">".$c['Definition']."</span></h6>";  }
 							$html .= "</td>";
 						}else{ $html .= "<td class=\"hidden-xs\"></td>"; }
-						$html .= "</td><td class=\"hidden-xs hidden-sm\">".date("Y-m-d g:i a",$a['Created'])."</td>
+						$html .= "<td class=\"hidden-xs hidden-sm\">".date("Y-m-d g:i a",$a['Created'])."</td>
 						<td>
 						<div class=\"btn-group\">
 						  <button type=\"button\" class=\"btn btn-default dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">

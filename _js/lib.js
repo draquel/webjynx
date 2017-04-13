@@ -54,7 +54,7 @@
 		window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};
 		ga.l=+new Date;
 		if(ga){
-			ga('create', id, 'auto');
+			ga('create', id, {'siteSpeedSampleRate': 100});
 			return true;
 		}else{ return false; }
 	}

@@ -1,6 +1,6 @@
 <?php
 	header('Content-type: application/xml');
-	require_once("_php/DBObj/dbobj.php");
+	require_once("_php/DBObj2/dbobj.php");
 	$db = array();
 	$db['dbName'] = "DBObj";
 	$db['dbuser'] = "root";

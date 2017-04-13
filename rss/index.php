@@ -1,5 +1,5 @@
 <?php
-	include("../_php/DBObj/dbobj.php");
+	require_once("../_php/DBObj2/dbobj.php");
 	session_start();
 
 	$_SESSION['dbName'] = "DBObj";

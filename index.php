@@ -18,15 +18,14 @@
 Author: Dan Raquel (draquel@webjynx.com)-->
 <?php
 	error_reporting(E_ALL);
-	/*require_once("_php/lib.php");*/
-	require_once("_php/DBObj/dbobj.php");
+	require_once("_php/DBObj2/dbobj.php");
 	session_start();
 	
 	//Initialize Site Data
 	$_SESSION['Title'] = "WebJynx Toolkit";
 	$_SESSION['Domain'] = "dev.webjynx.com";
 	if($_SERVER['SERVER_NAME'] == "dev2.webjynx.com"){ $_SESSION['dbHost'] = "localhost"; }else{ $_SESSION['dbHost'] = "webjynxrds.cjzpxtjfv2ad.us-east-1.rds.amazonaws.com"; }
-	$_SESSION['dbName'] = "DBObj";
+	$_SESSION['dbName'] = "DBObj_2.0";
 	$_SESSION['dbuser'] = "root";
 	$_SESSION['dbPass'] = "Ed17i0n!";
 	$_SESSION['Blog_GCS_ID'] = "011020224819443845085:btxae4osafm";
@@ -61,7 +60,7 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 	if(!isset($_SESSION['Users']) || $reset){
 		/*echo "USERS LOADED <BR>";*/
 		$_SESSION['Users'] = new DLList();
-		$sql = "SELECT u.*, group_concat(distinct concat(r.ID,':',r.RID,':',r.KID,':',r.Key,':',r.Code,':',r.Definition) separator ';') AS `Groups`, group_concat(distinct concat(`p`.`ID`,':',`p`.`Created`,':',`p`.`Updated`,':',`p`.`Name`,':',`p`.`PID`,':',`p`.`Primary`,':',`p`.`Region`,':',`p`.`Area`,':',`p`.`Number`,':',`p`.`Ext`) separator ';') AS `Phones`, group_concat(distinct concat(`a`.`ID`,':',`a`.`Created`,':',`a`.`Updated`,':',`a`.`Name`,':',`a`.`PID`,':',`a`.`Primary`,':',`a`.`Address`,':',`a`.`Address2`,':',`a`.`City`,':',`a`.`State`,':',`a`.`Zip`) separator ';') AS `Addresses`, group_concat(distinct concat(`e`.`ID`,':',`e`.`Created`,':',`e`.`Updated`,':',`e`.`Name`,':',`e`.`PID`,':',`e`.`Primary`,':',`e`.`Address`) separator ';') AS `Emails` FROM Users u LEFT JOIN Relationships r ON u.ID = r.RID AND r.Key = 'Group' LEFT JOIN `Addresses` `a` on `a`.`PID` = `u`.`ID` LEFT JOIN `Phones` `p` on `p`.`PID` = `u`.`ID` LEFT JOIN `Emails` `e` on `e`.`PID` = `u`.`ID` GROUP BY u.ID ORDER BY u.Created DESC";
+		$sql = "SELECT u.*, group_concat(distinct concat(r.ID,':',r.RID,':',r.KID,':',r.Key,':',r.Code,':',r.Definition) separator ';') AS `Groups`, group_concat(distinct concat(`p`.`DBO_ID`,':',`p`.`Name`,':',`p`.`PID`,':',`p`.`Primary`,':',`p`.`Region`,':',`p`.`Area`,':',`p`.`Number`,':',`p`.`Ext`) separator ';') AS `Phones`, group_concat(distinct concat(`a`.`DBO_ID`,':',`a`.`Name`,':',`a`.`PID`,':',`a`.`Primary`,':',`a`.`Address`,':',`a`.`Address2`,':',`a`.`City`,':',`a`.`State`,':',`a`.`Zip`) separator ';') AS `Addresses`, group_concat(distinct concat(`e`.`DBO_ID`,':',`e`.`Name`,':',`e`.`PID`,':',`e`.`Primary`,':',`e`.`Address`) separator ';') AS `Emails` FROM DBObj d INNER JOIN Users u ON d.ID = u.DBO_ID LEFT JOIN Relationships r ON d.ID = r.RID AND r.Key = 'Group' LEFT JOIN `Addresses` `a` on `a`.`PID` = `d`.`ID` LEFT JOIN `Phones` `p` on `p`.`PID` = `d`.`ID` LEFT JOIN `Emails` `e` on `e`.`PID` = `d`.`ID` GROUP BY d.ID ORDER BY d.Created DESC";
 		$res = mysqli_query($_SESSION['db']->con($_SESSION['dbName']),$sql);
 		while($row = mysqli_fetch_array($res)){
 			$u = new User(NULL);
