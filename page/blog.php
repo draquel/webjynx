@@ -42,7 +42,7 @@
 				}
 			break;
 			case "c": /* CATEGORY PAGE */
-				$posts = $_SESSION['Blog']->getCategoryPageLive($_SESSION['db']->con($_SESSION['dbName']),$pageNum,$_REQUEST['bpgi']);
+				$posts = $_SESSION['Blog']->getRelPage($_SESSION['db']->con($_SESSION['dbName']),$pageNum,"Category",$_REQUEST['bpgi']);
 				$post = $posts->getFirstNode();
 				$html = "<h2>Category: ".$_REQUEST['bpgi']."</h2>";
 				while($post != NULL){
@@ -52,7 +52,7 @@
 				}
 				$bpage .= $html;
 				$prevPN = $pageNum - 1;if($prevPN < 1){ $first = true; }else{ $first = false; }
-				$nextPN = $pageNum + 1;if($_SESSION['Blog']->getCategoryPageLive($_SESSION['db']->con($_SESSION['dbName']),$nextPN,$_REQUEST['bpgi'])->size() > 0){ $last = false; }else{ $last = true; }
+				$nextPN = $pageNum + 1;if($_SESSION['Blog']->getRelPage($_SESSION['db']->con($_SESSION['dbName']),$nextPN,"Category",$_REQUEST['bpgi'])->size() > 0){ $last = false; }else{ $last = true; }
 				$s = "<div class=\"col-md-12\"><nav><ul class=\"pager\">";
 				if(!$first){ $s .= "<li class=\"previous\"><a class=\"bnavl\" href=\"/blog/c/".$_REQUEST['bpgi']."/".$prevPN."\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>"; }else{ $s .= "<li class=\"previous disabled\"><a class=\"bnavl\" href=\"#\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>"; }
 				if(!$last){ $s .= "<li class=\"next\"><a class=\"bnavl\" href=\"/blog/c/".$_REQUEST['bpgi']."/".$nextPN."\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>"; }else{ $s .= "<li class=\"next disabled\"><a class=\"bnavl\" href=\"#\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>"; }
@@ -61,7 +61,7 @@
 				$display_sidebar = true;
 			break;
 			case "u": /* AUTHOR PAGE */
-				$posts = $_SESSION['Blog']->getAuthorPageLive($_SESSION['db']->con($_SESSION['dbName']),$pageNum,$_REQUEST['bpgi']);
+				$posts = $_SESSION['Blog']->getAuthorPage($_SESSION['db']->con($_SESSION['dbName']),$pageNum,$_REQUEST['bpgi']);
 				$post = $posts->getFirstNode();
 				$html = "<h2>Author: ".$_REQUEST['bpgi']."</h2>";
 				while($post != NULL){
@@ -71,7 +71,7 @@
 				}
 				$bpage .= $html;
 				$prevPN = $pageNum - 1;if($prevPN < 1){ $first = true; }else{ $first = false; }
-				$nextPN = $pageNum + 1;if($_SESSION['Blog']->getAuthorPageLive($_SESSION['db']->con($_SESSION['dbName']),$nextPN,$_REQUEST['bpgi'])->size() > 0){ $last = false; }else{ $last = true; }
+				$nextPN = $pageNum + 1;if($_SESSION['Blog']->getAuthorPage($_SESSION['db']->con($_SESSION['dbName']),$nextPN,$_REQUEST['bpgi'])->size() > 0){ $last = false; }else{ $last = true; }
 				$s = "<div class=\"col-md-12\"><nav><ul class=\"pager\">";
 				if(!$first){ $s .= "<li class=\"previous\"><a class=\"bnavl\" href=\"/blog/u/".$_REQUEST['bpgi']."/".$prevPN."\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>"; }else{ $s .= "<li class=\"previous disabled\"><a class=\"bnavl\" href=\"#\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>"; }
 				if(!$last){ $s .= "<li class=\"next\"><a class=\"bnavl\" href=\"/blog/u/".$_REQUEST['bpgi']."/".$nextPN."\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>"; }else{ $s .= "<li class=\"next disabled\"><a class=\"bnavl\" href=\"#\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>"; }
@@ -80,7 +80,7 @@
 				$display_sidebar = true;
 			break;
 			case "a": /* ARCHIVE PAGE */
-				$posts = $_SESSION['Blog']->getArchivePageLive($_SESSION['db']->con($_SESSION['dbName']),$pageNum,$_REQUEST['bpgi']);
+				$posts = $_SESSION['Blog']->getArchivePage($_SESSION['db']->con($_SESSION['dbName']),$pageNum,$_REQUEST['bpgi']);
 				$post = $posts->getFirstNode();
 				$html = "<h2>Archive: ".date("F Y",strtotime($_REQUEST['bpgi']."01"))."</h2>";
 				while($post != NULL){
@@ -90,7 +90,7 @@
 				}
 				$bpage .= $html;
 				$prevPN = $pageNum - 1;if($prevPN < 1){ $first = true; }else{ $first = false; }
-				$nextPN = $pageNum + 1;if($_SESSION['Blog']->getArchivePageLive($_SESSION['db']->con($_SESSION['dbName']),$nextPN,$_REQUEST['bpgi'])->size() > 0){ $last = false; }else{ $last = true; }
+				$nextPN = $pageNum + 1;if($_SESSION['Blog']->getArchivePage($_SESSION['db']->con($_SESSION['dbName']),$nextPN,$_REQUEST['bpgi'])->size() > 0){ $last = false; }else{ $last = true; }
 				$s = "<div class=\"col-md-12\"><nav><ul class=\"pager\">";
 				if(!$first){ $s .= "<li class=\"previous\"><a class=\"bnavl\" href=\"/blog/a/".$_REQUEST['bpgi']."/".$prevPN."\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>"; }else{ $s .= "<li class=\"previous disabled\"><a class=\"bnavl\" href=\"#\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>";}
 				if(!$last){ $s .= "<li class=\"next\"><a class=\"bnavl\" href=\"/blog/a/".$_REQUEST['bpgi']."/".$nextPN."\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>"; }else{ $s .= "<li class=\"next disabled\"><a class=\"bnavl\" href=\"#\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>"; }
@@ -99,7 +99,7 @@
 				$display_sidebar = true;
 			break;
 			default: /* MAIN PAGE */
-				$posts = $_SESSION['Blog']->getPageLive($_SESSION['db']->con($_SESSION['dbName']),$pageNum);
+				$posts = $_SESSION['Blog']->getPage($_SESSION['db']->con($_SESSION['dbName']),$pageNum);
 				$post = $posts->getFirstNode();
 				$html = "";
 				while($post != NULL){
@@ -109,7 +109,7 @@
 				}
 				$bpage .= $html;
 				$prevPN = $pageNum - 1;if($prevPN < 1){ $first = true; }else{ $first = false; }
-				$nextPN = $pageNum + 1;if($_SESSION['Blog']->getPageLive($_SESSION['db']->con($_SESSION['dbName']),$nextPN)->size() > 0){ $last = false; }else{ $last = true; }
+				$nextPN = $pageNum + 1;if($_SESSION['Blog']->getPage($_SESSION['db']->con($_SESSION['dbName']),$nextPN)->size() > 0){ $last = false; }else{ $last = true; }
 				$s = "<div class=\"col-md-12\"><nav><ul class=\"pager\">";
 				if(!$first){ $s .= "<li class=\"previous\"><a class=\"bnavl\" href=\"/blog/".$prevPN."\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>"; }else{ $s .= "<li class=\"previous disabled\"><a class=\"bnavl\" href=\"#\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>"; }
 				if(!$last){ $s .= "<li class=\"next\"><a class=\"bnavl\" href=\"/blog/".$nextPN."\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>"; }else{ $s .= "<li class=\"next disabled\"><a class=\"bnavl\" href=\"#\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>"; }
@@ -137,9 +137,9 @@
 				<gcse:search></gcse:search>";
 			}
 			$sidebar .= "<div class=\"sidebar-module sidebar-module-inset\"><h4>About</h4><p>".$blog['Description']."</p></div><div class=\"sidebar-module\"><h4>Archives</h4><ol class=\"list-unstyled\">";
-			if($_SESSION['Blog']->getPosts()->size() > 0){
-				$archive = $_SESSION['Blog']->getPosts()->getArchive();
-				foreach($archive as $k => $v){ $sidebar .= "<li><a class=\"bnavl\" href=\"/blog/a/".$k."\">".date("M Y",strtotime($k."01"))."</a></li>"; }
+			$archDates = $_SESSION['Blog']->getArchiveDates($_SESSION['db']->con($_SESSION['dbName']));
+			if($archDates && count($archDates) > 0){
+				foreach($archDates as $v){ $sidebar .= "<li><a class=\"bnavl\" href=\"/blog/a/".$v."\">".date("M Y",strtotime($v."01"))."</a></li>"; }
 			}
 			$sidebar .= "</ol></div><div class=\"sidebar-module\"><h4>Categories</h4><ol class=\"list-unstyled\">";
 			$cat = $_SESSION['Blog']->getCategories()->getFirstNode();
@@ -179,7 +179,7 @@
 						<button type=\"button\" class=\"btn btn-default\" onClick=\"setForm('bri=1')\">Create New Post</button>
 						  <table class=\"table\">
 							<tr><th>ID</th><th>Title</th><th>Author</th><th class=\"hidden-xs\">Categories</th><th class=\"hidden-xs hidden-sm\">Created</th><th>Actions</th></tr>";
-					$posts = $_SESSION['Blog']->getPageLive($_SESSION['db']->con($_SESSION['dbName']),$pageNum,$pageSize,true);
+					$posts = $_SESSION['Blog']->getPage($_SESSION['db']->con($_SESSION['dbName']),$pageNum,$pageSize,true);
 					$post = $posts->getFirstNode();
 					while($post != NULL){ 
 						$p = $post->readNode();
@@ -218,7 +218,7 @@
 					  </ul>
 					</div>";
 					$prevPN = $pageNum - 1;if($prevPN < 1){ $first = true; }else{ $first = false; }
-					$nextPN = $pageNum + 1;if($_SESSION['Blog']->getPageLive($_SESSION['db']->con($_SESSION['dbName']),$nextPN,$pageSize,true)->size() > 0){ $last = false; }else{ $last = true; }
+					$nextPN = $pageNum + 1;if($_SESSION['Blog']->getPage($_SESSION['db']->con($_SESSION['dbName']),$nextPN,$pageSize,true)->size() > 0){ $last = false; }else{ $last = true; }
 					if(isset($_REQUEST['bpgs']) && $_REQUEST['bpgs'] != ""){ $prevPN .= "/".$_REQUEST['bpgs']; $nextPN .= "/".$_REQUEST['bpgs']; }
 					$s = "<div class=\"col-md-12\"><nav><ul class=\"pager\">";
 					if(!$first){ $s .= "<li class=\"previous\"><a class=\"bnavl\" href=\"/blog/admin/posts/".$prevPN."\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>"; }else{ $s .= "<li class=\"previous disabled\"><a class=\"bnavl\" href=\"#\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>"; }
@@ -230,24 +230,25 @@
 				break;
 				case "categories":
 					if(isset($_REQUEST['bpgn']) && $_REQUEST['bpgn'] != NULL){ $pageNum = $_REQUEST['bpgn']; }else{ $pageNum = 1; }
-					$blog = $_SESSION['Blog']->toArray();
-					$categories = $blog['Categories'];
 					echo "<div>
 						<button type=\"button\" class=\"btn btn-default\" onClick=\"setForm('bri=6')\">Create New Category</button>
 						 <table class=\"table\">
 							<tr><th>ID</th><th>Title</th><th class=\"hidden-xs hidden-sm\">Created</th><th>Actions</th></tr>";
-							foreach($categories as $key => $val){ 
-								echo "<tr><td>".$val['ID']."</td><td>".$val['Definition']."</td><td>".date("Y-m-d g:i a",$val['Created'])."</td><td>
+							$cat = $_SESSION['Blog']->getCategories()->getFirstNode();
+							while($cat != NULL){
+								$c = $cat->readNode()->toArray();
+								echo "<tr><td>".$c['ID']."</td><td>".$c['Definition']."</td><td>".date("Y-m-d g:i a",$c['Created'])."</td><td>
 									<div class=\"btn-group\">
 									  <button type=\"button\" class=\"btn btn-default dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">
 										 <span class=\"glyphicon glyphicon-cog\" aria-hidden=\"true\"></span> <span class=\"caret\"></span>
 									  </button>
 									  <ul class=\"dropdown-menu dropdown-menu-right\">
-										<li><a onClick=\"setForm('bri=7',".$val['ID'].")\"><span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span> Edit</a></li>
-										<li><a onClick=\"setForm('bri=9',".$val['ID'].")\"><span class=\"glyphicon glyphicon-ban-circle\" aria-hidden=\"true\"></span>Delete</a></li>
+										<li><a onClick=\"setForm('bri=7',".$c['ID'].")\"><span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span> Edit</a></li>
+										<li><a onClick=\"setForm('bri=9',".$c['ID'].")\"><span class=\"glyphicon glyphicon-ban-circle\" aria-hidden=\"true\"></span>Delete</a></li>
 									  </ul>
 									</div>
 								</td></tr>";
+								$cat = $cat->getNext();
 							}
 							
 					echo "</table></div>";

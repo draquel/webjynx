@@ -48,7 +48,7 @@
 			switch($_REQUEST['bri']){
 				case 1: //Create Post Form
 					$blog = $_SESSION['Blog']->toArray();
-					$cats = $blog['Categories'];
+					$bcat = $_SESSION['Blog']->getCategories()->getFirstNode();
 					$html = "
 					  <div class=\"alert hidden\"></div>
 					  <form enctype=\"multipart/form-data\">
@@ -72,7 +72,7 @@
 						  <div class=\"form-group\">
 							<label>Categories</label>
 							<select multiple class=\"form-control\" id=\"Categories\">";
-						foreach($cats as $val){ $html .= "<option value=\"".$val['KID']."\">".$val['Definition']."</option>"; }
+						while($bcat != NULL){ $bca = $bcat->readNode()->toArray(); $html .= "<option value=\"".$bca['KID']."\">".$bca['Definition']."</option>"; $bcat = $bcat->getNext(); }
 						$html .= "
 							</select>
 						  </div>
@@ -210,7 +210,7 @@
 						$data[] = 1;
 						if($id == 0){ 
 							$data[] = "Post Created!"; 
-							$_SESSION['Blog']->getPosts()->insertFirst($post);
+							$_SESSION['Blog']->getContent()->insertFirst($post);
 							$a = $post->toArray();
 							$id = $a['ID'];
 							if(isset($_FILES["coverImage"])){ $img_path = "img/blog/".$id.".".end((explode(".", $_FILES["coverImage"]["name"]))); $in["CoverImage"] = "/".$img_path; }
@@ -218,11 +218,11 @@
 							$post->dbWrite($_SESSION['db']->con($_SESSION['dbName']));
 						}else{ 
 							$data[] = "Post Updated!";
-							$bp = $_SESSION['Blog']->getPosts()->getFirstNode();
+							$bp = $_SESSION['Blog']->getContent()->getFirstNode();
 							$i = 0;
 							while($bp != NULL){
 								$bpa = $bp->readNode()->toArray();
-								if($bpa['ID' ]== $id){ $_SESSION['Blog']->getPosts()->getNodeAt($i)->data = $post; break; }
+								if($bpa['ID' ]== $id){ $_SESSION['Blog']->getContent()->getNodeAt($i)->data = $post; break; }
 								$i++;
 								$bp = $bp->getNext();
 							}
@@ -259,11 +259,11 @@
 					if($post->dbDelete($_SESSION['db']->con($_SESSION['dbName']))){ 
 						$data[] = 1;
 						$data[] = "Post Deleted!";
-						$bp = $_SESSION['Blog']->getPosts()->getFirstNode();
+						$bp = $_SESSION['Blog']->getContent()->getFirstNode();
 						$i = 0;
 						while($bp != NULL){
 							$bpa = $bp->readNode()->toArray();
-							if($bpa['ID']== $id){ $_SESSION['Blog']->getPosts()->deleteNodeAt($i); break; }
+							if($bpa['ID']== $id){ $_SESSION['Blog']->getContent()->deleteNodeAt($i); break; }
 							$i++;
 							$bp = $bp->getNext();
 						}

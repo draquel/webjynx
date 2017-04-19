@@ -87,7 +87,7 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 				break;
 				case "p":
 					$_SESSION['db']->connect($_SESSION['dbName']); $_SESSION['Page']['Current'] = NULL; $found = false;					
-					$page = $_SESSION['Blog']->getPostPageLive($_SESSION['db']->con($_SESSION['dbName']),$_REQUEST['bpgi']);
+					$page = $_SESSION['Blog']->getContentPage($_SESSION['db']->con($_SESSION['dbName']),$_REQUEST['bpgi']);
 					$post = $page->getFirstNode(); while($post != NULL){ $a = $post->readNode()->toArray(); if($a['ID'] == $_REQUEST['bpgi']){ $found = true; $_SESSION['Page']['Current'] = $post; break; } $post = $post->getNext();	}
 					if(!$found){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = $_SERVER['REQUEST_URI']; }
 					else{ $_SESSION['Page']['meta-title'] = "Blog Post - ".$a['Title']; $_SESSION['Page']['meta-description'] = $a['Description']; $_SESSION['Page']['meta-keywords'] = implode(",",$a['Keywords']); if($a['CoverImage'] != NULL && $a['CoverImage'] != ""){ $_SESSION['Page']['meta-og-image'] = $a['CoverImage']; list($_SESSION['Page']['meta-og-image-width'], $_SESSION['Page']['meta-og-image-height'], $_SESSION['Page']['meta-og-image-type']) = getimagesize("https://".$_SESSION['Domain'].$a['CoverImage']); $_SESSION['Page']['meta-og-type'] = "article"; } }
