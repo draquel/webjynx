@@ -268,6 +268,7 @@
 							$bp = $bp->getNext();
 						}
 						$pa = $post->toArray();
+						unlink(rtrim($_SERVER['DOCUMENT_ROOT'],"/").$pa['CoverImage']);
 					}
 					else{ $data[] = 0; $data[] = "Error!"; }
 					echo json_encode($data);
