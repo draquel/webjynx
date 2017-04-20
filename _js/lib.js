@@ -59,7 +59,7 @@
 		}else{ return false; }
 	}
 	//Track page view
-	function gaTrack(path, title) {
+	function gaTrack(path = window.location.pathname, title = document.title) {
 		if(ga){
 			ga('set', { page: path, title: title });
 			ga('send', 'pageview');
@@ -99,4 +99,21 @@
 				cacheImage.src = images[i];
 			}
 		}else{ if($.isFunction(Callback)){ Callback(); } }
+	}
+	//Session Handling Functions
+	function setSessTimeout(){
+		window.sess_left_sec = 20*60;
+		sessTime_left();
+	}
+	function resetSessTimeout(){ window.sess_left_sec = 20*60; }
+	function sessTime_left(){
+		window.sess_left_sec--;
+		var sec = 0; var left_min = Math.floor(window.sess_left_sec / 60);
+		if(left_min === 0){ sec = window.sess_left_sec; }
+		else{ sec = window.sess_left_sec - (left_min * 60); }
+		if(sec < 10){ sec = "0"+sec; }
+		var page_output = left_min + ":" +sec;
+		//document.getElementById("sessTimeout").innerHTML = page_output;
+		if(window.sess_left_sec > 0){ setTimeout(function(){ sessTime_left(); }, 1000);}
+		else{ location.reload(); }
 	}
