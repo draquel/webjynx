@@ -267,6 +267,7 @@
 							$i++;
 							$bp = $bp->getNext();
 						}
+						$pa = $post->toArray();
 					}
 					else{ $data[] = 0; $data[] = "Error!"; }
 					echo json_encode($data);
