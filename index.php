@@ -20,45 +20,23 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 	error_reporting(E_ALL);
 	require_once("_php/DBObj2/dbobj.php");
 	session_start();
-	
-	//Initialize Site Data
-	$_SESSION['Title'] = "WebJynx Toolkit";
-	$_SESSION['Domain'] = "dev.webjynx.com";
-	if($_SERVER['SERVER_NAME'] == "dev2.webjynx.com"){ $_SESSION['dbHost'] = "localhost"; }else{ $_SESSION['dbHost'] = "webjynxrds.cjzpxtjfv2ad.us-east-1.rds.amazonaws.com"; }
-	$_SESSION['dbName'] = "DBObj_2.0";
-	$_SESSION['dbuser'] = "root";
-	$_SESSION['dbPass'] = "Ed17i0n!";
-	$_SESSION['Blog_GCS_ID'] = "011020224819443845085:btxae4osafm";
-	
-	if(isset($_REQUEST['reset']) && ($_REQUEST['reset'] == 1 || $_REQUEST['reset'] == "true" || $_REQUEST['reset'] == "yes")){ $reset = true; }else{ $reset = false; }
-	if(!isset($_SESSION['Pages']) || $reset){
-		/*echo "PAGES LOADED <BR>";*/
-		$_SESSION['Pages'] = array(
-			array("id"=>0,"meta-title"=>"HTTP 404 - Page Not Found","meta-description"=>"HTTP 404 - Page Not Found","meta-keywords"=>NULL,"path-ui"=>"/404","path-file"=>"/page/404.php"),
-			array("id"=>1,"meta-title"=>"HTTP 401 - Unauthorized","meta-description"=>"HTTP 401 - Unauthorized","meta-keywords"=>NULL,"path-ui"=>"/401","path-file"=>"/page/401.php"),
-			array("id"=>2,"meta-title"=>"Blog","meta-description"=>"Our Blog","path-ui"=>"/blog/","meta-keywords"=>NULL,"path-file"=>"/page/blog.php"),
-			array("id"=>3,"meta-title"=>"Authorize User","meta-description"=>"Authorized User Page","path-ui"=>"/auth/","meta-keywords"=>NULL,"path-file"=>"/page/user.php"),
-			array("id"=>4,"meta-title"=>"Index","meta-description"=>"Welcome to our home page!","meta-keywords"=>NULL,"path-ui"=>"/","path-file"=>"/page/index.php"),
-			array("id"=>5,"meta-title"=>"About","meta-description"=>"We like stuff and want to work together on your things!","meta-keywords"=>NULL,"path-ui"=>"/about/","path-file"=>"/page/about/index.php"),
-			array("id"=>6,"meta-title"=>"Other","meta-description"=>"Some more stuff we think is neat.","meta-keywords"=>NULL,"path-ui"=>"/about/other","path-file"=>"/page/about/other.php"),
-			array("id"=>7,"meta-title"=>"Sitemap","meta-description"=>"A sitemap, just incase you get lost.","meta-keywords"=>NULL,"path-ui"=>"/sitemap","path-file"=>"/page/sitemap.php"),
-			array("id"=>8,"meta-title"=>"Class Testing","meta-description"=>"Class Unit Testing","meta-keywords"=>NULL,"path-ui"=>"/class","path-file"=>"/page/class.php")
-		);
-	}
-	if(!isset($_SESSION['db']) || $reset){
-		/*echo "DATABASE CONNECTED <BR>";*/
+	//Load Site Config
+	include("config.php");
+	//Initialize Session Datastructures
+	if(!isset($_SESSION['db']) || $_SESSION['Reset']){
+		//echo "DATABASE CONNECTED <BR>";
 		$_SESSION['db'] = new Sql();
 		$_SESSION['db']->init($_SESSION['dbHost'],$_SESSION['dbuser'],$_SESSION['dbPass']);
 		$_SESSION['db']->connect($_SESSION['dbName']);
 	}elseif(!$_SESSION['db']->con($_SESSION['dbName'])){ $_SESSION['db']->connect($_SESSION['dbName']);	}
-	if(!isset($_SESSION['Blog']) || $reset){
-		/*echo "BLOG LOADED <BR>";*/
+	if(!isset($_SESSION['Blog']) || $_SESSION['Reset']){
+		//echo "BLOG LOADED <BR>";
 		$_SESSION['Blog'] = new Blog(1);
 		$_SESSION['Blog']->dbRead($_SESSION['db']->con($_SESSION['dbName']));
 		$_SESSION['Blog']->load($_SESSION['db']->con($_SESSION['dbName']),false,true);
 	}
-	if(!isset($_SESSION['Users']) || $reset){
-		/*echo "USERS LOADED <BR>";*/
+	if(!isset($_SESSION['Users']) || $_SESSION['Reset']){
+		//echo "USERS LOADED <BR>";
 		$_SESSION['Users'] = new DLList();
 		$sql = "SELECT u.*, group_concat(distinct concat(r.ID,':',r.RID,':',r.KID,':',r.Key,':',r.Code,':',r.Definition) separator ';') AS `Groups`, group_concat(distinct concat(`p`.`DBO_ID`,':',`p`.`Name`,':',`p`.`PID`,':',`p`.`Primary`,':',`p`.`Region`,':',`p`.`Area`,':',`p`.`Number`,':',`p`.`Ext`) separator ';') AS `Phones`, group_concat(distinct concat(`a`.`DBO_ID`,':',`a`.`Name`,':',`a`.`PID`,':',`a`.`Primary`,':',`a`.`Address`,':',`a`.`Address2`,':',`a`.`City`,':',`a`.`State`,':',`a`.`Zip`) separator ';') AS `Addresses`, group_concat(distinct concat(`e`.`DBO_ID`,':',`e`.`Name`,':',`e`.`PID`,':',`e`.`Primary`,':',`e`.`Address`) separator ';') AS `Emails` FROM DBObj d INNER JOIN Users u ON d.ID = u.DBO_ID LEFT JOIN Relationships r ON d.ID = r.RID AND r.Key = 'Group' LEFT JOIN `Addresses` `a` on `a`.`PID` = `d`.`ID` LEFT JOIN `Phones` `p` on `p`.`PID` = `d`.`ID` LEFT JOIN `Emails` `e` on `e`.`PID` = `d`.`ID` GROUP BY d.ID ORDER BY d.Created DESC";
 		$res = mysqli_query($_SESSION['db']->con($_SESSION['dbName']),$sql);
@@ -68,7 +46,7 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 			$_SESSION['Users']->insertLast($u);
 		}
 	}
-	if(!isset($_SESSION['User']) || $reset){ $_SESSION['User'] = NULL; }
+	if(!isset($_SESSION['User']) || $_SESSION['Reset']){ $_SESSION['User'] = NULL; }
 	$_SESSION['Error'] = array("404"=>array("path-file"=>NULL,"path-ui"=>NULL),"401"=>NULL);
 	//Process Page Address
 	if(isset($_REQUEST['pg']) && $_REQUEST['pg'] != "" && $_REQUEST['pg'] != NULL){	
@@ -124,22 +102,22 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 		//Title, Meta-Description, Meta-Keywords & Open Graph Meta		
 			echo "<title>".$_SESSION['Title']." - ".$_SESSION['Page']['meta-title']."</title>
 			<meta property=\"og:title\" content=\"".$_SESSION['Title']." - ".$_SESSION['Page']['meta-title']."\" />
-			<meta property=\"og:url\" content=\"https://".$_SESSION['Domain'].$_SERVER['REQUEST_URI']."\" />
+			<meta property=\"og:url\" content=\"".$_SESSION['Domain'].$_SERVER['REQUEST_URI']."\" />
 			<meta name=\"description\" content=\"".$_SESSION['Page']['meta-description']."\">
 			<meta property=\"og:description\" content=\"".$_SESSION['Page']['meta-description']."\" />
 			<meta name=\"keywords\" content=\"".$_SESSION['Page']['meta-keywords']."\">";
 			if(isset($_SESSION['Page']['meta-og-type'])){ echo "<meta property=\"og:type\" content=\"".$_SESSION['Page']['meta-og-type']."\" />";}
 			else{ echo "<meta property=\"og:type\" content=\"website\" />"; }
 			if(isset($_SESSION['Page']['meta-og-image'])){
-				echo "<meta property=\"og:image\" content=\"http://".$_SESSION['Domain'].$_SESSION['Page']['meta-og-image']."\" />
-				<meta property=\"og:image:secure_url\" content=\"https://".$_SESSION['Domain'].$_SESSION['Page']['meta-og-image']."\" />
+				echo "<meta property=\"og:image\" content=\"".$_SESSION['Domain'].$_SESSION['Page']['meta-og-image']."\" />
+				<meta property=\"og:image:secure_url\" content=\"".$_SESSION['Domain'].$_SESSION['Page']['meta-og-image']."\" />
 				<meta property=\"og:image:type\" content=\"image/".pathinfo($_SESSION['Page']['meta-og-image'],PATHINFO_EXTENSION)."\">
 				<meta property=\"og:image:height\" content=\"".$_SESSION['Page']['meta-og-image-height']."\" />
 				<meta property=\"og:image:width\" content=\"".$_SESSION['Page']['meta-og-image-width']."\" />";
 			}else{
-				list($_SESSION['Page']['meta-og-image-width'], $_SESSION['Page']['meta-og-image-height'], $_SESSION['Page']['meta-og-image-type']) = getimagesize("https://".$_SESSION['Domain']."/img/logo.png");
-				echo "<meta property=\"og:image\" content=\"http://".$_SESSION['Domain']."/img/logo.png\" />
-				<meta property=\"og:image:secure_url\" content=\"https://".$_SESSION['Domain']."/img/logo.png\" />
+				list($_SESSION['Page']['meta-og-image-width'], $_SESSION['Page']['meta-og-image-height'], $_SESSION['Page']['meta-og-image-type']) = getimagesize($_SESSION['Domain']."/img/logo.png");
+				echo "<meta property=\"og:image\" content=\"".$_SESSION['Domain']."/img/logo.png\" />
+				<meta property=\"og:image:secure_url\" content=\"".$_SESSION['Domain']."/img/logo.png\" />
 				<meta property=\"og:image:type\" content=\"image/".pathinfo("/img/logo.png",PATHINFO_EXTENSION)."\">
 				<meta property=\"og:image:height\" content=\"".$_SESSION['Page']['meta-og-image-height']."\" />
 				<meta property=\"og:image:width\" content=\"".$_SESSION['Page']['meta-og-image-width']."\" />"; 

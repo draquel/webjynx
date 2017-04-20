@@ -2,17 +2,20 @@
 	require_once("../_php/DBObj2/dbobj.php");
 	session_start();
 
-	$_SESSION['dbName'] = "DBObj_2.0";
+	//Load Site Config
+	include("../config.php");
+	
+	//Initialize Session Datastructures
 	$_SESSION['db'] = new Sql();
-	$_SESSION['db']->init("webjynxrds.cjzpxtjfv2ad.us-east-1.rds.amazonaws.com","root","Ed17i0n!");
+	$_SESSION['db']->init($_SESSION['dbHost'],$_SESSION['dbuser'],$_SESSION['dbPass']);
 	$_SESSION['db']->connect($_SESSION['dbName']);
+	if(!isset($_SESSION['Blog']) || $_SESSION['Reset']){
+		$_SESSION['Blog'] = new Blog(1);
+		$_SESSION['Blog']->dbRead($_SESSION['db']->con($_SESSION['dbName']));
+		$_SESSION['Blog']->load($_SESSION['db']->con($_SESSION['dbName']),false,true);
+	}
 	
-	$_SESSION['Blog'] = new Blog(1);
-	$_SESSION['Blog']->dbRead($_SESSION['db']->con($_SESSION['dbName']));
-	//$_SESSION['Blog']->load($_SESSION['db']->con($_SESSION['dbName']));
-	
+	//Output RSS Feed
 	header("Content-Type:application/xml");
-	
-	$_SESSION['Domain']= "dev.webjynx.com";
-	echo $_SESSION['Blog']->rssGenFeed($_SESSION['db']->con($_SESSION['dbName']),"https://".$_SESSION['Domain'],$_SERVER['PHP_SELF'],"/blog/p/");
+	echo $_SESSION['Blog']->rssGenFeed($_SESSION['db']->con($_SESSION['dbName']),$_SESSION['Domain'],$_SERVER['PHP_SELF'],"/blog/p/");
 ?>
