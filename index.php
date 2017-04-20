@@ -139,7 +139,7 @@ Author: Dan Raquel (draquel@webjynx.com)-->
     <body role="document">
        <!--Start Page-->
         <div id="page" class="container-fluid">
-            <nav id="menu" class="navbar navbar-default navbar-static-top<?php if($_SESSION['Page']['path-file'] == "/page/index.php" /*|| (isset($_REQUEST['bpg']) && $_REQUEST['bpg'] == "admin") || $_SESSION['Page']['path-file'] == "/page/user.php"*/){ echo " hidden"; } ?>">
+            <nav id="menu" class="navbar navbar-default navbar-static-top<?php if($_SESSION['Page']['path-file'] == "/page/index.php"){ echo " hidden"; } ?>">
               <div class="container-fluid">
                 <div class="navbar-header">
                   <button aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
@@ -204,4 +204,4 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 		</script>
     </body>
 </html>
-<?php $_SESSION['db']->disconnect($_SESSION['dbName']); session_write_close(); ?>
+<?php session_write_close(); ?>

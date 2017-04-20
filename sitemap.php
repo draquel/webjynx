@@ -19,11 +19,12 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"> 
 <?php
 	foreach($_SESSION['Pages'] as $page){
+		if($page['id'] < 3){ continue; }
 		echo "
-		<url>
-		  <loc>".$_SESSION['Domain'].$page['path-ui']."</loc>
-		  <changefreq>weekly</changefreq>
-		</url>";
+			<url>
+			  <loc>".$_SESSION['Domain'].$page['path-ui']."</loc>
+			  <changefreq>weekly</changefreq>
+			</url>";
 	}
 	
 	$posts = $_SESSION['Blog']->getContent();
@@ -42,7 +43,7 @@
 		$c = $cat->readNode()->toArray();
 		echo "
 			<url>
-			  <loc>".$db['url']."blog/c/".$c['Definition']."/</loc>
+			  <loc>".$_SESSION['Domain']."blog/c/".$c['Definition']."/</loc>
 		  	  <changefreq>daily</changefreq>
 			</url>";
 		$cat = $cat->getNext();	
@@ -51,7 +52,7 @@
 	foreach($arc as $k => $v){
 		echo "
 			<url>
-			  <loc>".$db['url']."blog/a/".$k."/</loc>
+			  <loc>".$_SESSION['Domain']."blog/a/".$k."/</loc>
 		  	  <changefreq>daily</changefreq>
 			</url>";
 	}
