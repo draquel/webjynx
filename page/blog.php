@@ -26,7 +26,7 @@
 		if(isset($_REQUEST['bpgn']) && $_REQUEST['bpgn'] != NULL){ $pageNum = $_REQUEST['bpgn']; }else{ $pageNum = 1; }
 		switch($_REQUEST['bpg']){
 			case "p": /* POST PAGE */
-				$html = $_SESSION['Page']['Current']->readNode()->view(array("<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\">{Title}</h2><p class=\"blog-post-meta\">{Created} by <a class=\"bnavl\" href=\"/blog/u/{_Signature}\">{_Signature}</a></p></div><div class=\"blog-post-body col-md-12\"><img class=\"img-responsive img-thumbnail center-block\" src=\"{CoverImage}\" alt=\"{Title}\" >{HTML}<hr></div><div class=\"col-md-6\"><h6 class=\"blog-post-categories\">{Category}</h6></div><div class=\"col-sm-6 text-right\"><div class=\"addthis_inline_share_toolbox\"></div></div></div>","<a class=\"bnavl\" href=\"/blog/c/{Definition}\"><span class=\"label label-default\">{Definition}</span></a>"));
+				$html = $_SESSION['Page']['Current']->readNode()->view(array("<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\">{Title}</h2><p class=\"blog-post-meta\">{Published} by <a class=\"bnavl\" href=\"/blog/u/{_Signature}\">{_Signature}</a></p></div><div class=\"blog-post-body col-md-12\"><img class=\"img-responsive img-thumbnail center-block\" src=\"{CoverImage}\" alt=\"{Title}\" >{HTML}<hr></div><div class=\"col-md-6\"><h6 class=\"blog-post-categories\">{Category}</h6></div><div class=\"col-sm-6 text-right\"><div class=\"addthis_inline_share_toolbox\"></div></div></div>","<a class=\"bnavl\" href=\"/blog/c/{Definition}\"><span class=\"label label-default\">{Definition}</span></a>"));
 				$bpage .= $html;
 				if($_SESSION['Page']['Current'] != NULL){
 					$prev = $_SESSION['Page']['Current']->getPrev(); 
@@ -47,7 +47,7 @@
 				$html = "<h2>Category: ".$_REQUEST['bpgi']."</h2>";
 				while($post != NULL){
 					$p = $post->readNode();
-					$html .= $p->view(array("<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/{ID}\">{Title}</a></h2><p class=\"blog-post-meta\">{Created} by <a class=\"bnavl\" href=\"/blog/u/{_Signature}\">{_Signature}</a></p></div><div class=\"blog-post-body col-md-12\">{HTML}<hr></div></div>"));
+					$html .= $p->view(array("<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/{ID}\">{Title}</a></h2><p class=\"blog-post-meta\">{Published} by <a class=\"bnavl\" href=\"/blog/u/{_Signature}\">{_Signature}</a></p></div><div class=\"blog-post-body col-md-12\">{HTML}<hr></div></div>"));
 					$post = $post->getNext();
 				}
 				$bpage .= $html;
@@ -66,7 +66,7 @@
 				$html = "<h2>Author: ".$_REQUEST['bpgi']."</h2>";
 				while($post != NULL){
 					$p = $post->readNode();
-					$html .= $p->view(array("<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/{ID}\">{Title}</a></h2><p class=\"blog-post-meta\">{Created} by {_Signature}</p></div><div class=\"blog-post-body col-md-12\">{HTML}<hr></div><div class=\"col-md-12\"><h6 class=\"blog-post-categories\">{Category}</h6></div></div>","<a class=\"bnavl\" href=\"/blog/c/{Definition}\"><span class=\"label label-default\">{Definition}</span></a>"));
+					$html .= $p->view(array("<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/{ID}\">{Title}</a></h2><p class=\"blog-post-meta\">{Published} by {_Signature}</p></div><div class=\"blog-post-body col-md-12\">{HTML}<hr></div><div class=\"col-md-12\"><h6 class=\"blog-post-categories\">{Category}</h6></div></div>","<a class=\"bnavl\" href=\"/blog/c/{Definition}\"><span class=\"label label-default\">{Definition}</span></a>"));
 					$post = $post->getNext();
 				}
 				$bpage .= $html;
@@ -85,7 +85,7 @@
 				$html = "<h2>Archive: ".date("F Y",strtotime($_REQUEST['bpgi']."01"))."</h2>";
 				while($post != NULL){
 					$p = $post->readNode();
-					$html .= $p->view(array("<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/{ID}\">{Title}</a></h2><p class=\"blog-post-meta\">{Created} by <a class=\"bnavl\" href=\"/blog/u/{_Signature}\">{_Signature}</a></p></div><div class=\"blog-post-body col-md-12\">{HTML}<hr></div><div class=\"col-md-12\"><h6 class=\"blog-post-categories\">{Category}</h6></div></div>","<a class=\"bnavl\" href=\"/blog/c/{Definition}\"><span class=\"label label-default\">{Definition}</span></a>"));
+					$html .= $p->view(array("<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/{ID}\">{Title}</a></h2><p class=\"blog-post-meta\">{Published} by <a class=\"bnavl\" href=\"/blog/u/{_Signature}\">{_Signature}</a></p></div><div class=\"blog-post-body col-md-12\">{HTML}<hr></div><div class=\"col-md-12\"><h6 class=\"blog-post-categories\">{Category}</h6></div></div>","<a class=\"bnavl\" href=\"/blog/c/{Definition}\"><span class=\"label label-default\">{Definition}</span></a>"));
 					$post = $post->getNext();
 				}
 				$bpage .= $html;
@@ -104,7 +104,7 @@
 				$html = "";
 				while($post != NULL){
 					$p = $post->readNode();
-					$html .= $p->view(array("<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/{ID}\">{Title}</a></h2><p class=\"blog-post-meta\">{Created} by <a class=\"bnavl\" href=\"/blog/u/{_Signature}\">{_Signature}</a></p></div><div class=\"blog-post-body col-md-12\">{HTML}<hr></div><div class=\"col-md-12\"><h6 class=\"blog-post-categories\">{Category}</h6></div></div>","<a class=\"bnavl\" href=\"/blog/c/{Definition}\"><span class=\"label label-default\">{Definition}</span></a>"));
+					$html .= $p->view(array("<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/{ID}\">{Title}</a></h2><p class=\"blog-post-meta\">{Published} by <a class=\"bnavl\" href=\"/blog/u/{_Signature}\">{_Signature}</a></p></div><div class=\"blog-post-body col-md-12\">{HTML}<hr></div><div class=\"col-md-12\"><h6 class=\"blog-post-categories\">{Category}</h6></div></div>","<a class=\"bnavl\" href=\"/blog/c/{Definition}\"><span class=\"label label-default\">{Definition}</span></a>"));
 					$post = $post->getNext();
 				}
 				$bpage .= $html;
@@ -178,8 +178,8 @@
 					$html = "
 						<button type=\"button\" class=\"btn btn-default\" onClick=\"setForm('bri=1')\">Create New Post</button>
 						  <table class=\"table\">
-							<tr><th>ID</th><th>Title</th><th>Author</th><th class=\"hidden-xs\">Categories</th><th class=\"hidden-xs hidden-sm\">Created</th><th>Actions</th></tr>";
-					$posts = $_SESSION['Blog']->getPage($_SESSION['db']->con($_SESSION['dbName']),$pageNum,$pageSize,true);
+							<tr><th>ID</th><th>Title</th><th>Author</th><th class=\"hidden-xs\">Categories</th><th class=\"hidden-xs hidden-sm\">Created</th><th class=\"hidden-xs hidden-sm\">Published</th><th>Actions</th></tr>";
+					$posts = $_SESSION['Blog']->getPage($_SESSION['db']->con($_SESSION['dbName']),$pageNum,$pageSize,true,true);
 					$post = $posts->getFirstNode();
 					while($post != NULL){ 
 						$p = $post->readNode();
@@ -190,7 +190,7 @@
 							for($i = 0; $i < count($a['Rels']['Category']); $i++){ $c = $a['Rels']['Category'][$i]; $html .= "<h6 class=\"blog-adm-post-categories\"><span class=\"label label-default\">".$c['Definition']."</span></h6>";  }
 							$html .= "</td>";
 						}else{ $html .= "<td class=\"hidden-xs\"></td>"; }
-						$html .= "<td class=\"hidden-xs hidden-sm\">".date("Y-m-d g:i a",$a['Created'])."</td>
+						$html .= "<td class=\"hidden-xs hidden-sm\">".date("Y-m-d g:i a",$a['Created'])."</td><td class=\"hidden-xs hidden-sm\">".date("Y-m-d g:i a",$a['Published'])."</td>
 						<td>
 						<div class=\"btn-group\">
 						  <button type=\"button\" class=\"btn btn-default dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">

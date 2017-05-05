@@ -66,8 +66,8 @@
 							<input type=\"text\" class=\"form-control\" id=\"Keywords\" placeholder=\"Keywords\">
 						  </div>
 						  <div class=\"form-group\">
-							<label for=\"dateTime\">Publish Date</label>
-							<input type=\"text\" class=\"form-control datetimepicker\" id=\"dateTime\" >
+							<label for=\"Published\">Publish Date</label>
+							<input type=\"text\" class=\"form-control datetimepicker\" id=\"Published\" >
 						  </div>
 						  <div class=\"form-group\">
 							<label for=\"coverImage\">Cover Image</label>
@@ -119,14 +119,14 @@
 						  </div>";
 					if($a['Created'] > time()){
 						$html .= "<div class=\"form-group\">
-								<label for=\"dateTime\">Publish Date</label>
-								<input type=\"text\" class=\"form-control datetimepicker\" id=\"dateTime\" value=\"".date("m/d/Y g:i A",$a['Created'])."\" >
+								<label for=\"Published\">Publish Date</label>
+								<input type=\"text\" class=\"form-control datetimepicker\" id=\"Published\" value=\"".date("m/d/Y g:i A",$a['Created'])."\" >
 							  </div>";
 					}else{
 						$html .= "<div class=\"form-group\">
-								<label for=\"dateTime\">Publish Date</label>
+								<label for=\"Published\">Publish Date</label>
 								<div><label>".date("m/d/Y g:i A",$a['Created'])."</label></div>
-								<input type=\"hidden\" class=\"form-control\" id=\"dateTime\" value=\"".date("m/d/Y g:i A",$a['Created'])."\" >
+								<input type=\"hidden\" class=\"form-control\" id=\"Published\" value=\"".date("m/d/Y g:i A",$a['Created'])."\" >
 							  </div>";
 					}
 					$html .= "<div class=\"form-group\">
@@ -165,17 +165,22 @@
 				case 3: //Create and Update Post Records (Forms BRI: 1 & 2)
 					$u = $_SESSION['User']->toArray();
 					$b = $_SESSION['Blog']->toArray();
+					
+					$dateTime = explode(" ",$_REQUEST['Published']);
+					$date = explode("/",$dateTime[0]);
+					$_REQUEST['Published'] = strtotime($date[2].'-'.$date[0].'-'.$date[1].' '.$dateTime[1].' '.$dateTime[2]);
+					
 					if(isset($_REQUEST['ID']) && $_REQUEST['ID'] != 0 && $_REQUEST['ID'] != NULL){ //Update
 						$id = $_REQUEST['ID'];
 						$post = new Post($id);
 						$post->dbRead($_SESSION['db']->con($_SESSION['dbName']));
-						$in = array("Title"=>$_REQUEST['Title'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$_REQUEST['Active'],"HTML"=>$_REQUEST['HTML']);
+						$in = array("Title"=>$_REQUEST['Title'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$_REQUEST['Active'],"HTML"=>$_REQUEST['HTML'],"Published"=>$_REQUEST['Published']);
 						if(isset($_FILES["coverImage"])){ $img_path = "img/blog/".$id.".".end((explode(".", $_FILES["coverImage"]["name"]))); $in["CoverImage"] = "/".$img_path; }
 						$post->initMysql($in);
 					}else{ //Create
 						$id = 0;
 						$post = new Post(0);
-						$in = array("Title"=>$_REQUEST['Title'],"Author"=>$u['ID'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$_REQUEST['Active'],"HTML"=>$_REQUEST['HTML']);
+						$in = array("Title"=>$_REQUEST['Title'],"Author"=>$u['ID'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$_REQUEST['Active'],"HTML"=>$_REQUEST['HTML'],"Published"=>$_REQUEST['Published']);
 						$post->initMysql($in);
 					}
 					if($id == 0){ //Generate Parent Relationship
