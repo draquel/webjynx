@@ -66,6 +66,10 @@
 							<input type=\"text\" class=\"form-control\" id=\"Keywords\" placeholder=\"Keywords\">
 						  </div>
 						  <div class=\"form-group\">
+							<label for=\"dateTime\">Publish Date</label>
+							<input type=\"text\" class=\"form-control datetimepicker\" id=\"dateTime\" >
+						  </div>
+						  <div class=\"form-group\">
 							<label for=\"coverImage\">Cover Image</label>
 							<input type=\"file\" id=\"coverImage\" accept=\"image/jpeg,image/png,image/gif\">
 						  </div>
@@ -112,8 +116,20 @@
 						  <div class=\"form-group\">
 							<label for=\"metaKeywords\">Meta Keywords</label>
 							<input type=\"text\" class=\"form-control\" id=\"Keywords\" placeholder=\"Keywords\" value=\"". implode(",",$a['Keywords']) ."\">
-						  </div>
-						  <div class=\"form-group\">
+						  </div>";
+					if($a['Created'] > time()){
+						$html .= "<div class=\"form-group\">
+								<label for=\"dateTime\">Publish Date</label>
+								<input type=\"text\" class=\"form-control datetimepicker\" id=\"dateTime\" value=\"".date("m/d/Y g:i A",$a['Created'])."\" >
+							  </div>";
+					}else{
+						$html .= "<div class=\"form-group\">
+								<label for=\"dateTime\">Publish Date</label>
+								<div><label>".date("m/d/Y g:i A",$a['Created'])."</label></div>
+								<input type=\"hidden\" class=\"form-control\" id=\"dateTime\" value=\"".date("m/d/Y g:i A",$a['Created'])."\" >
+							  </div>";
+					}
+					$html .= "<div class=\"form-group\">
 							<label for=\"coverImage\">Cover Image</label>
 							<input type=\"file\" id=\"coverImage\">
 						  </div>
