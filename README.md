@@ -35,7 +35,13 @@
   
 ### Basic Usage
 ```php
-	$obj = new DBObj($id,"Posts");
+	//Create New DBObj
+	$obj = new DBObj(0,"Posts");
+	$obj->initMysql(array('Created'=>time(),'Updated'=>time()));
+	$obj->dbWrite($mysqli_db_connection);
+
+	//Edit existing DBObj
+	$obj = new DBObj($id,);
 	$obj->dbRead($mysqli_db_connection);
 	$a = $obj->toArray();
 	
