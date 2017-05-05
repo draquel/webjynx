@@ -20,6 +20,7 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 	error_reporting(E_ALL);
 	require_once("_php/DBObj2/dbobj.php");
 	session_start();
+	if(isset($_REQUEST['reset']) && ($_REQUEST['reset'] == 1 || $_REQUEST['reset'] == "true" || $_REQUEST['reset'] == "yes")){ $_SESSION['Reset'] = true; }else{ $_SESSION['Reset'] = false; }
 	//Load Site Config
 	include("config.php");
 	//Initialize Session Datastructures
@@ -124,6 +125,7 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 			}
 		//Concatenate CSS Files
 			$css = file_get_contents("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
+			$css .= file_get_contents("css/bootstrap-datetimepicker.min.css");
 			$css .= file_get_contents("css/trumbowyg.min.css");
 			$css .= file_get_contents("css/main.css");
 			$css .= file_get_contents("css/blog.css");
@@ -131,7 +133,7 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 		//Load JS Libs
 			$js ="<!--Start Head Loader--><script type=\"text/javascript\">";
 			$js .= file_get_contents("_js/head.min.js");
-        	$js .= "head.load(\"https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js\",\"/_js/bootstrap.min.js\",\"https://www.google-analytics.com/analytics.js\",\"https://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-57bf0be13e45dd09\",\"/_js/trumbowyg.min.js\",\"/_js/lib.js\"); </script><!--End Head Loader-->";
+        	$js .= "head.load(\"https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js\",\"/_js/moment.min.js\",\"/_js/bootstrap.min.js\",\"https://www.google-analytics.com/analytics.js\",\"https://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-57bf0be13e45dd09\",\"/_js/bootstrap-datetimepicker.min.js\",\"/_js/trumbowyg.min.js\",\"/_js/lib.js\"); </script><!--End Head Loader-->";
 			echo $js;
 		?>
     </head>
@@ -195,7 +197,7 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 				$.trumbowyg.svgPath = '/img/trumbowyg_icons.svg';
 				//$(".trumbowyg").trumbowyg({ btns: [	['viewHTML'],['formatting'],'btnGrp-semantic',['superscript', 'subscript'],['link'],['insertImage'],'btnGrp-justify','btnGrp-lists',['horizontalRule'],['removeformat'],['fullscreen'] ],autogrow: true	});
 			/* Google Analytics */
-				gaTracker("UA-83229001-1");
+				gaTracker("<?php echo $_SESSION['Google']['gaID']; ?>");
 				gaTrack();
 			/* Mobile Menu - Toggle Page Scroll Lock */
 				//$(".navbar-toggle").click(function(){ if($("body").hasClass("noscroll")){ $("body").removeClass("noscroll"); }else{ $("body").addClass("noscroll"); } });

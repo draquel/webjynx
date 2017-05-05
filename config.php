@@ -6,9 +6,9 @@
 	$_SESSION['dbName'] = "DBObj_2.0";
 	$_SESSION['dbuser'] = "root";
 	$_SESSION['dbPass'] = "Ed17i0n!";
-	$_SESSION['Blog_GCS_ID'] = "011020224819443845085:btxae4osafm";
+	$_SESSION['Google'] = array('gaID'=>'UA-83229001-1','ssID'=>'011020224819443845085:btxae4osafm');
+	//$_SESSION['MailChimp'] = array('apiKey'=>null,'listID'=>null);
 	
-	if(isset($_REQUEST['reset']) && ($_REQUEST['reset'] == 1 || $_REQUEST['reset'] == "true" || $_REQUEST['reset'] == "yes")){ $_SESSION['Reset'] = true; }else{ $_SESSION['Reset'] = false; }
 	if(!isset($_SESSION['Pages']) || $_SESSION['Reset']){
 		$_SESSION['Pages'] = array(
 			array("id"=>0,"meta-title"=>"HTTP 404 - Page Not Found","meta-description"=>"HTTP 404 - Page Not Found","meta-keywords"=>NULL,"path-ui"=>"/404","path-file"=>"/page/404.php"),
