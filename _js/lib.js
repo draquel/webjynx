@@ -1,9 +1,6 @@
 // Form Handling
-	function setForm(){
-		"use strict";
-		if(arguments.length > 0){
-			var datastr = arguments[0];
-			if(arguments.length > 1){ datastr += "&i="+arguments[1]; } 
+	function setForm(datastr = null,callback = null){
+		if(datastr != null){
 			$.ajax({url:'/ajax.php',method:'POST',async:true,dataType:"json",data:datastr,
 				complete: function(xhr){
 					var data = JSON.parse(xhr.responseText);
@@ -14,16 +11,15 @@
 						btns: [	['viewHTML'],['formatting'],'btnGrp-semantic',['superscript','subscript'],['link'],['insertImage'],'btnGrp-justify','btnGrp-lists',['horizontalRule'],['removeformat'] ],
 						autogrow: true
 					});
-					$(".modal-body").find("form").submitForm();
+					$(".datetimepicker").datetimepicker({minDate:moment()});
+					$(".modal-body").find("form").submitForm(callback);
 					$('#Modal').modal('show');
 				}
 			});
 			return true;
 		}else{ return false; }
 	}
-	//Implement FormData() for submission to support file uploads 
-	jQuery.fn.submitForm = function(){
-		"use strict";
+	jQuery.fn.submitForm = function(callback = null){
 		$(this).submit(function(e){
 			e.preventDefault();
 			var formData = new FormData();
@@ -39,11 +35,15 @@
       			contentType: false,
 				complete: function(xhr){
 					var data = JSON.parse(xhr.responseText);
-					if(data[0]){
-						$(".modal-body > .alert").html("<strong>Congratulations!</strong> "+data[1]).addClass("alert-success").removeClass("hidden");
-						$(".modal-body button[type=submit]").addClass("hidden");
-						setTimeout(function(){ $('#Modal').modal('hide'); location.reload(); },2000);
-					}else{ $(".modal-body > .alert").addClass("alert-danger").removeClass("hidden").html("<strong>Opps!</strong> "+data[1]); }
+					if(callback == null){
+						if(data[0]){
+							$(".modal-body > .alert").html("<strong>Congratulations!</strong> "+data[1]).addClass("alert-success").removeClass("hidden");
+							$(".modal-body button[type=submit]").addClass("hidden");
+							setTimeout(function(){ $('#Modal').modal('hide'); location.reload(); },2000);
+						}else{ $(".modal-body > .alert").addClass("alert-danger").removeClass("hidden").html("<strong>Opps!</strong> "+data[1]); }
+					}else{
+						callback(data);
+					}
 				}
 			});
 		});

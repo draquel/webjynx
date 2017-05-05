@@ -125,7 +125,7 @@
 			if(isset($_SESSION['Blog_GCS_ID']) && $_SESSION['Blog_GCS_ID'] != ""){
 				$sidebar .= "<script>
 				  (function() {
-					var cx = '".$_SESSION['Blog_GCS_ID']."';
+					var cx = '".$_SESSION['Google']['ssID']."';
 					var gcse = document.createElement('script');
 					gcse.type = 'text/javascript';
 					gcse.async = true;
@@ -197,9 +197,9 @@
 							 <span class=\"glyphicon glyphicon-cog\" aria-hidden=\"true\"></span> <span class=\"caret\"></span>
 						  </button>
 						  <ul class=\"dropdown-menu dropdown-menu-right\">
-							<li><a onClick=\"setForm('bri=2',".$a['ID'].")\"><span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span> Edit</a></li>
+							<li><a onClick=\"setForm('bri=2&i=".$a['ID']."')\"><span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span> Edit</a></li>
 							<!--<li><a><span class=\"glyphicon glyphicon-list\" aria-hidden=\"true\"></span>Categories</a></li>-->
-							<li><a onClick=\"setForm('bri=4',".$a['ID'].")\"><span class=\"glyphicon glyphicon-ban-circle\" aria-hidden=\"true\"></span>Delete</a></li>
+							<li><a onClick=\"setForm('bri=4&i=".$a['ID']."')\"><span class=\"glyphicon glyphicon-ban-circle\" aria-hidden=\"true\"></span>Delete</a></li>
 						  </ul>
 						</div>
 						</td></tr>";
@@ -243,8 +243,8 @@
 										 <span class=\"glyphicon glyphicon-cog\" aria-hidden=\"true\"></span> <span class=\"caret\"></span>
 									  </button>
 									  <ul class=\"dropdown-menu dropdown-menu-right\">
-										<li><a onClick=\"setForm('bri=7',".$c['ID'].")\"><span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span> Edit</a></li>
-										<li><a onClick=\"setForm('bri=9',".$c['ID'].")\"><span class=\"glyphicon glyphicon-ban-circle\" aria-hidden=\"true\"></span>Delete</a></li>
+										<li><a onClick=\"setForm('bri=7&i=".$c['ID']."')\"><span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span> Edit</a></li>
+										<li><a onClick=\"setForm('bri=9&i=".$c['ID']."')\"><span class=\"glyphicon glyphicon-ban-circle\" aria-hidden=\"true\"></span>Delete</a></li>
 									  </ul>
 									</div>
 								</td></tr>";
