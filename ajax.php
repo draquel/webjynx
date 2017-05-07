@@ -49,13 +49,18 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 			case 1: //Create Post Form
 				$blog = $_SESSION['Blog']->toArray();
 				$bcat = $_SESSION['Blog']->getCategories()->getFirstNode();
+				$user = $_SESSION['Users']->getFirstNode();
+				$ua = $_SESSION['User']->toArray();
 				$html = "
 				  <div class=\"alert hidden\"></div>
 				  <form enctype=\"multipart/form-data\">
 					  <input id=\"bri\" type=\"hidden\" value=\"3\">
-					  <div class=\"form-group\"><label for=\"postTitle\">Post Title</label><input type=\"text\" class=\"form-control\" id=\"Title\" placeholder=\"Title\"></div>
-					  <div class=\"form-group\"><label for=\"metaDescription\">Meta Description</label><input type=\"text\" class=\"form-control\" id=\"Description\" placeholder=\"Description\"></div>
-					  <div class=\"form-group\"><label for=\"metaKeywords\">Meta Keywords</label><input type=\"text\" class=\"form-control\" id=\"Keywords\" placeholder=\"Keywords\"></div>
+					  <div class=\"form-group\"><label for=\"Title\">Post Title</label><input type=\"text\" class=\"form-control\" id=\"Title\" placeholder=\"Title\"></div>
+					  <div class=\"form-group\"><label for=\"Description\">Meta Description</label><input type=\"text\" class=\"form-control\" id=\"Description\" placeholder=\"Description\"></div>
+					  <div class=\"form-group\"><label for=\"Keywords\">Meta Keywords</label><input type=\"text\" class=\"form-control\" id=\"Keywords\" placeholder=\"Keywords\"></div>
+					  <div class=\"form-group\"><label for=\"Author\">Author</label><select class=\"form-control\" id=\"Author\">";
+				while($user != NULL){ $u = $user->readNode()->toArray(); $html .= "<option value=\"".$u['ID']."\" ".($u['ID'] == $ua['ID'] ? " selected" : NULL ).">".$u['First']." ".$u['Last']."</option>";	$user = $user->getNext(); }
+				$html .= "</select></div>
 					  <div class=\"form-group\"><label for=\"Published\">Publish Date</label><input type=\"text\" class=\"form-control datetimepicker\" id=\"Published\" ></div>
 					  <div class=\"form-group\"><label for=\"coverImage\">Cover Image</label><input type=\"file\" id=\"coverImage\" accept=\"image/jpeg,image/png,image/gif\"></div>
 					  <div class=\"form-group\"><label>Categories</label><select multiple class=\"form-control\" id=\"Categories\">";
@@ -75,6 +80,7 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 				$post->dbRead($_SESSION['db']->con($_SESSION['dbName']));
 				$a = $post->toArray();
 				$bcat = $_SESSION['Blog']->getCategories()->getFirstNode();
+				$user = $_SESSION['Users']->getFirstNode();
 				$html = "
 				  <div class=\"alert hidden\"></div>
 				  <form enctype=\"multipart/form-data\">
@@ -83,6 +89,9 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 					  <div class=\"form-group\"><label for=\"postTitle\">Post Title</label><input type=\"text\" class=\"form-control\" id=\"Title\" placeholder=\"Title\" value=\"".$a['Title']."\"></div>
 					  <div class=\"form-group\"><label for=\"metaDescription\">Meta Description</label><input type=\"text\" class=\"form-control\" id=\"Description\" placeholder=\"Description\" value=\"".$a['Description']."\"></div>
 					  <div class=\"form-group\"><label for=\"metaKeywords\">Meta Keywords</label><input type=\"text\" class=\"form-control\" id=\"Keywords\" placeholder=\"Keywords\" value=\"". implode(",",$a['Keywords']) ."\"></div>
+					  <div class=\"form-group\"><label for=\"Author\">Author</label><select class=\"form-control\" id=\"Author\">";
+				while($user != NULL){ $u = $user->readNode()->toArray(); $html .= "<option value=\"".$u['ID']."\" ".($u['ID'] == $a['Author'] ? " selected" : NULL ).">".$u['First']." ".$u['Last']."</option>"; $user = $user->getNext(); }
+				$html .= "</select></div>
 					  <div class=\"form-group\"><label for=\"Published\">Publish Date</label>".($a['Published'] > time() ? "<input type=\"text\" class=\"form-control datetimepicker\" id=\"Published\" value=\"".date("m/d/Y g:i A",$a['Published'])."\" >" : "<div><label>".date("m/d/Y g:i A",$a['Published'])."</label></div><input type=\"hidden\" class=\"form-control\" id=\"Published\" value=\"".date("m/d/Y g:i A",$a['Published'])."\" >")."</div>
 					  <div class=\"form-group\"><label for=\"coverImage\">Cover Image</label>".($a['CoverImage'] != NULL && $a['CoverImage'] != "" ? "<div><img class='img-responsive img-thumbnail' src='".$a['CoverImage']."' style='max-height:150px;max-width:400px;margin-bottom:15px;'></div>" : NULL)."<input type=\"file\" id=\"coverImage\"></div>
 					  <div class=\"form-group\"><label>Categories</label><select multiple class=\"form-control\" id=\"Categories\">";
@@ -106,22 +115,20 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 			case 3: //Create and Update Post Records (Forms BRI: 1 & 2)
 				$u = $_SESSION['User']->toArray();
 				$b = $_SESSION['Blog']->toArray();
-
 				$dateTime = explode(" ",$_REQUEST['Published']);
 				$date = explode("/",$dateTime[0]);
 				$_REQUEST['Published'] = strtotime($date[2].'-'.$date[0].'-'.$date[1].' '.$dateTime[1].' '.$dateTime[2]);
-
 				if(isset($_REQUEST['ID']) && $_REQUEST['ID'] != 0 && $_REQUEST['ID'] != NULL){ //Update
 					$id = $_REQUEST['ID'];
 					$post = new Post($id);
 					$post->dbRead($_SESSION['db']->con($_SESSION['dbName']));
-					$in = array("Title"=>$_REQUEST['Title'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$_REQUEST['Active'],"HTML"=>$_REQUEST['HTML'],"Published"=>$_REQUEST['Published']);
+					$in = array("Title"=>$_REQUEST['Title'],"Author"=>$_REQUEST['Author'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$_REQUEST['Active'],"HTML"=>$_REQUEST['HTML'],"Published"=>$_REQUEST['Published']);
 					if(isset($_FILES["coverImage"])){ $img_path = "img/blog/".$id.".".end((explode(".", $_FILES["coverImage"]["name"]))); $in["CoverImage"] = "/".$img_path; }
 					$post->initMysql($in);
 				}else{ //Create
 					$id = 0;
 					$post = new Post(0);
-					$in = array("Title"=>$_REQUEST['Title'],"Author"=>$u['ID'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$_REQUEST['Active'],"HTML"=>$_REQUEST['HTML'],"Published"=>$_REQUEST['Published']);
+					$in = array("Title"=>$_REQUEST['Title'],"Author"=>$_REQUEST['Author'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$_REQUEST['Active'],"HTML"=>$_REQUEST['HTML'],"Published"=>$_REQUEST['Published']);
 					$post->initMysql($in);
 				}
 				if($id == 0){ //Generate Parent Relationship
