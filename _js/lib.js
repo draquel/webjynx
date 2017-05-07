@@ -36,6 +36,7 @@
 				complete: function(xhr){
 					var data = JSON.parse(xhr.responseText);
 					if(callback == null){
+						$("#Modal").stop().animate({scrollTop: $("#Modal .modal-content").offset().top},250);
 						if(data[0]){
 							$(".modal-body > .alert").html("<strong>Congratulations!</strong> "+data[1]).addClass("alert-success").removeClass("hidden");
 							$(".modal-body button[type=submit]").addClass("hidden");
