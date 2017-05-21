@@ -2,23 +2,33 @@
 	$_SESSION['db'] = new Sql();
 	$_SESSION['db']->init($_SESSION['dbHost'],$_SESSION['dbuser'],$_SESSION['dbPass']);
 	$_SESSION['db']->connect($_SESSION['dbName']);
-	$blog = $_SESSION['Blog']->toArray();	//Create getMeta() for this - too expensive
+	$blog = $_SESSION['Blog']->toArray(); //Create getMeta() for this - too expensive
 ?>
 <!-- Page Specific Styles -->
-	<style>.blue_bg{ background-image:url('/img/stock_head1.svg'); } </style>
+	<style>.blue_bg{ background-image:url('/img/stock_head1.svg'); }</style>
 <!--Page Content -->
     <div id="pg" class="container-fluid">
-    <?php //No Headline Image on Post Page
-		if($_REQUEST['bpg'] != "p" && (!isset($inc) || !$inc)){ echo "<div class=\"row blue_bg\"><div></div></div>"; }
-	?>
-        
 <?php
+	//No Headline Image on Post Page
+	if($_REQUEST['bpg'] != "p" && (!isset($inc) || !$inc)){ echo "<div class=\"row blue_bg\"><div></div></div>"; }
 	/*DEBUG OUTPUT::*/
-	/*echo "bpg: ".$_REQUEST['bpg']."<br>";
-	echo "bpgi: ".$_REQUEST['bpgi']."<br>";
-	echo "bpgn: ".$_REQUEST['bpgn']."<br>";
-	echo "bpgs: ".$_REQUEST['bpgs']."<br>";*/
-		
+	/*
+		echo "bpg: ".$_REQUEST['bpg']."<br>";
+		echo "bpgi: ".$_REQUEST['bpgi']."<br>";
+		echo "bpgn: ".$_REQUEST['bpgn']."<br>";
+		echo "bpgs: ".$_REQUEST['bpgs']."<br>";
+	*/
+	
+	// HTML View Definitions
+	$view = array();
+	$view['post_p'] = "<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\">{Title}</h2><p class=\"blog-post-meta\">{Published} by <a class=\"bnavl\" href=\"/blog/u/{_Signature}\">{_Signature}</a></p></div><div class=\"blog-post-body col-md-12\"><img class=\"img-responsive img-thumbnail center-block\" src=\"{CoverImage}\" alt=\"{Title}\" >{HTML}<hr></div><div class=\"col-md-6\"><h6 class=\"blog-post-categories\">{Category}</h6></div><div class=\"col-sm-6 text-right\"><div class=\"addthis_inline_share_toolbox\"></div></div></div>";
+	$view['post_c'] = "<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/{ID}\">{Title}</a></h2><p class=\"blog-post-meta\">{Published} by <a class=\"bnavl\" href=\"/blog/u/{_Signature}\">{_Signature}</a></p></div><div class=\"blog-post-body col-md-12\">{HTML}<hr></div></div>";
+	$view['post_u'] = "<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/{ID}\">{Title}</a></h2><p class=\"blog-post-meta\">{Published} by {_Signature}</p></div><div class=\"blog-post-body col-md-12\">{HTML}<hr></div><div class=\"col-md-12\"><h6 class=\"blog-post-categories\">{Category}</h6></div></div>";
+	$view['post_a'] = "<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/{ID}\">{Title}</a></h2><p class=\"blog-post-meta\">{Published} by <a class=\"bnavl\" href=\"/blog/u/{_Signature}\">{_Signature}</a></p></div><div class=\"blog-post-body col-md-12\">{HTML}<hr></div><div class=\"col-md-12\"><h6 class=\"blog-post-categories\">{Category}</h6></div></div>";
+	$view['post'] = "<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/{ID}\">{Title}</a></h2><p class=\"blog-post-meta\">{Published} by <a class=\"bnavl\" href=\"/blog/u/{_Signature}\">{_Signature}</a></p></div><div class=\"blog-post-body col-md-12\">{HTML}<hr></div><div class=\"col-md-12\"><h6 class=\"blog-post-categories\">{Category}</h6></div></div>";
+	$view['Category'] = "<a class=\"bnavl\" href=\"/blog/c/{Definition}\"><span class=\"label label-default\">{Definition}</span></a>";
+	
+	
 	if($_REQUEST['bpg'] != "admin"){
 		$bpage = "<div class=\"row\">
 			<div class=\"blog-header col-xs-12 col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1\"><h1 class=\"blog-title\">".$blog['Title']."</h1><p class=\"lead blog-description\">".$blog['Description']."</p></div>
@@ -26,7 +36,7 @@
 		if(isset($_REQUEST['bpgn']) && $_REQUEST['bpgn'] != NULL){ $pageNum = $_REQUEST['bpgn']; }else{ $pageNum = 1; }
 		switch($_REQUEST['bpg']){
 			case "p": /* POST PAGE */
-				$html = $_SESSION['Page']['Current']->readNode()->view(array("<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\">{Title}</h2><p class=\"blog-post-meta\">{Published} by <a class=\"bnavl\" href=\"/blog/u/{_Signature}\">{_Signature}</a></p></div><div class=\"blog-post-body col-md-12\"><img class=\"img-responsive img-thumbnail center-block\" src=\"{CoverImage}\" alt=\"{Title}\" >{HTML}<hr></div><div class=\"col-md-6\"><h6 class=\"blog-post-categories\">{Category}</h6></div><div class=\"col-sm-6 text-right\"><div class=\"addthis_inline_share_toolbox\"></div></div></div>","<a class=\"bnavl\" href=\"/blog/c/{Definition}\"><span class=\"label label-default\">{Definition}</span></a>"));
+				$html = $_SESSION['Page']['Current']->readNode()->view(array($view['post_p'],$view['Category']));
 				$bpage .= $html;
 				if($_SESSION['Page']['Current'] != NULL){
 					$prev = $_SESSION['Page']['Current']->getPrev(); 
@@ -47,7 +57,7 @@
 				$html = "<h2>Category: ".$_REQUEST['bpgi']."</h2>";
 				while($post != NULL){
 					$p = $post->readNode();
-					$html .= $p->view(array("<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/{ID}\">{Title}</a></h2><p class=\"blog-post-meta\">{Published} by <a class=\"bnavl\" href=\"/blog/u/{_Signature}\">{_Signature}</a></p></div><div class=\"blog-post-body col-md-12\">{HTML}<hr></div></div>"));
+					$html .= $p->view(array($view['post_c']));
 					$post = $post->getNext();
 				}
 				$bpage .= $html;
@@ -66,7 +76,7 @@
 				$html = "<h2>Author: ".$_REQUEST['bpgi']."</h2>";
 				while($post != NULL){
 					$p = $post->readNode();
-					$html .= $p->view(array("<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/{ID}\">{Title}</a></h2><p class=\"blog-post-meta\">{Published} by {_Signature}</p></div><div class=\"blog-post-body col-md-12\">{HTML}<hr></div><div class=\"col-md-12\"><h6 class=\"blog-post-categories\">{Category}</h6></div></div>","<a class=\"bnavl\" href=\"/blog/c/{Definition}\"><span class=\"label label-default\">{Definition}</span></a>"));
+					$html .= $p->view(array($view['post_u'],$view['Category']));
 					$post = $post->getNext();
 				}
 				$bpage .= $html;
@@ -85,7 +95,7 @@
 				$html = "<h2>Archive: ".date("F Y",strtotime($_REQUEST['bpgi']."01"))."</h2>";
 				while($post != NULL){
 					$p = $post->readNode();
-					$html .= $p->view(array("<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/{ID}\">{Title}</a></h2><p class=\"blog-post-meta\">{Published} by <a class=\"bnavl\" href=\"/blog/u/{_Signature}\">{_Signature}</a></p></div><div class=\"blog-post-body col-md-12\">{HTML}<hr></div><div class=\"col-md-12\"><h6 class=\"blog-post-categories\">{Category}</h6></div></div>","<a class=\"bnavl\" href=\"/blog/c/{Definition}\"><span class=\"label label-default\">{Definition}</span></a>"));
+					$html .= $p->view(array($view['post_a'],$view['Category']));
 					$post = $post->getNext();
 				}
 				$bpage .= $html;
@@ -104,7 +114,7 @@
 				$html = "";
 				while($post != NULL){
 					$p = $post->readNode();
-					$html .= $p->view(array("<div class=\"blog-post col-md-12\"><div class=\"blog-post-head col-md-12\"><h2 class=\"blog-post-title\"><a class=\"bnavl\" href=\"/blog/p/{ID}\">{Title}</a></h2><p class=\"blog-post-meta\">{Published} by <a class=\"bnavl\" href=\"/blog/u/{_Signature}\">{_Signature}</a></p></div><div class=\"blog-post-body col-md-12\">{HTML}<hr></div><div class=\"col-md-12\"><h6 class=\"blog-post-categories\">{Category}</h6></div></div>","<a class=\"bnavl\" href=\"/blog/c/{Definition}\"><span class=\"label label-default\">{Definition}</span></a>"));
+					$html .= $p->view(array($view['post'],$view['Category']));
 					$post = $post->getNext();
 				}
 				$bpage .= $html;
@@ -166,9 +176,11 @@
 						<ul class=\"nav nav-pills nav-stacked\">
 						  <li role=\"presentation\"><a href=\"/blog/admin/\">Posts</a></li>
 						  <li role=\"presentation\"><a href=\"/blog/admin/categories\">Categories</a></li>
+						  <li role=\"presentation\"><a href=\"/blog/admin/users\">Users</a></li>
 						</ul>
 					</div>
 					<div class=\"blog-console-content col-sm-9 col-md-10\">";
+			if(!isset($_REQUEST['bpgi'])){ $_REQUEST['bpgi'] = NULL; }
 			switch($_REQUEST['bpgi']){
 				default:
 					if(isset($_REQUEST['bpgn']) && $_REQUEST['bpgn'] != NULL){ $pageNum = $_REQUEST['bpgn']; }else{ $pageNum = 1; }
@@ -244,6 +256,9 @@
 					}
 					$html .= "</table></div>";
 					echo $html;
+				break;
+				case "users":
+					
 				break;
 			}	
 			echo "</div>

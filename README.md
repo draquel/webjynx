@@ -18,6 +18,7 @@
 * Google Analytics - https://www.google.com/analytics/
 * Trumbowyg - https://github.com/Alex-D/Trumbowyg
 * Bootstrap-datetimepicker - https://github.com/Eonasdan/bootstrap-datetimepicker
+* Lightbox 2 - http://lokeshdhakar.com/projects/lightbox2/
 
 #### PHP 7
 * php-xml 

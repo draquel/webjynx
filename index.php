@@ -21,73 +21,8 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 	require_once("_php/DBObj2/dbobj.php");
 	session_start();
 	if(isset($_REQUEST['reset']) && ($_REQUEST['reset'] == 1 || $_REQUEST['reset'] == "true" || $_REQUEST['reset'] == "yes")){ $_SESSION['Reset'] = true; }else{ $_SESSION['Reset'] = false; }
-	//Load Site Config
 	include("config.php");
-	//Initialize Session Datastructures
-	if(!isset($_SESSION['db']) || $_SESSION['Reset']){
-		//echo "DATABASE CONNECTED <BR>";
-		$_SESSION['db'] = new Sql();
-		$_SESSION['db']->init($_SESSION['dbHost'],$_SESSION['dbuser'],$_SESSION['dbPass']);
-		$_SESSION['db']->connect($_SESSION['dbName']);
-	}elseif(!$_SESSION['db']->con($_SESSION['dbName'])){ $_SESSION['db']->connect($_SESSION['dbName']);	}
-	if(!isset($_SESSION['Blog']) || $_SESSION['Reset']){
-		//echo "BLOG LOADED <BR>";
-		$_SESSION['Blog'] = new Blog(1);
-		$_SESSION['Blog']->dbRead($_SESSION['db']->con($_SESSION['dbName']));
-		$_SESSION['Blog']->load($_SESSION['db']->con($_SESSION['dbName']),false,true);
-	}
-	if(!isset($_SESSION['Users']) || $_SESSION['Reset']){
-		//echo "USERS LOADED <BR>";
-		$_SESSION['Users'] = new DLList();
-		$sql = "SELECT d.*, u.*, group_concat(distinct concat(r.ID,':',r.RID,':',r.KID,':',r.Key,':',r.Code,':',r.Definition) separator ';') AS `Groups`, group_concat(distinct concat(`p`.`DBO_ID`,':',`p`.`Name`,':',`p`.`PID`,':',`p`.`Primary`,':',`p`.`Region`,':',`p`.`Area`,':',`p`.`Number`,':',`p`.`Ext`) separator ';') AS `Phones`, group_concat(distinct concat(`a`.`DBO_ID`,':',`a`.`Name`,':',`a`.`PID`,':',`a`.`Primary`,':',`a`.`Address`,':',`a`.`Address2`,':',`a`.`City`,':',`a`.`State`,':',`a`.`Zip`) separator ';') AS `Addresses`, group_concat(distinct concat(`e`.`DBO_ID`,':',`e`.`Name`,':',`e`.`PID`,':',`e`.`Primary`,':',`e`.`Address`) separator ';') AS `Emails` FROM DBObj d INNER JOIN Users u ON d.ID = u.DBO_ID LEFT JOIN Relationships r ON d.ID = r.RID AND r.Key = 'Group' LEFT JOIN `Addresses` `a` on `a`.`PID` = `d`.`ID` LEFT JOIN `Phones` `p` on `p`.`PID` = `d`.`ID` LEFT JOIN `Emails` `e` on `e`.`PID` = `d`.`ID` GROUP BY d.ID ORDER BY d.Created DESC";
-		$res = mysqli_query($_SESSION['db']->con($_SESSION['dbName']),$sql);
-		while($row = mysqli_fetch_array($res)){
-			$u = new User(NULL);
-			$u->initMysql($row);
-			$_SESSION['Users']->insertLast($u);
-		}
-	}
-	if(!isset($_SESSION['User']) || $_SESSION['Reset']){ $_SESSION['User'] = NULL; }
-	$_SESSION['Error'] = array("404"=>array("path-file"=>NULL,"path-ui"=>NULL),"401"=>NULL);
-	//Process Page Address
-	if(isset($_REQUEST['pg']) && $_REQUEST['pg'] != "" && $_REQUEST['pg'] != NULL){	
-		$found = false; 
-		foreach($_SESSION['Pages'] as $page){ if($page['path-ui'] == "/".strtolower($_REQUEST['pg'])){ $found = true; $_SESSION['Page'] = $page; if(!file_exists(ltrim($page['path-file'],"/"))){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-file'] = $page['path-file']; } break; } }
-		if(!$found){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = "/".$_REQUEST['pg']; }
-	}else{ $_SESSION['Page'] = $_SESSION['Pages'][4]; }
-	//Process Blog Page
-	if($_SESSION['Page']['path-file'] == "/page/blog.php"){
-		if(isset($_REQUEST['bpg'])){
-			switch($_REQUEST['bpg']){
-				default:
-					if($_REQUEST['bpg'] != NULL && $_REQUEST['bpg'] != ""){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = $_SERVER['REQUEST_URI'];  }
-					if(isset($_REQUEST['bpgi']) && $_REQUEST['bpgi'] != NULL && $_REQUEST['bpgi'] != ""){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = $_SERVER['REQUEST_URI'];  }
-					if(isset($_REQUEST['bpgn']) && !is_numeric($_REQUEST['bpgn']) && $_REQUEST['bpgn'] != NULL && $_REQUEST['bpgn'] != ""){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = $_SERVER['REQUEST_URI']; }
-				break;
-				case "p":
-					$_SESSION['db']->connect($_SESSION['dbName']); $_SESSION['Page']['Current'] = NULL; $found = false;					
-					$page = $_SESSION['Blog']->getContentPage($_SESSION['db']->con($_SESSION['dbName']),$_REQUEST['bpgi']);
-					$post = $page->getFirstNode(); while($post != NULL){ $a = $post->readNode()->toArray(); if($a['ID'] == $_REQUEST['bpgi']){ $found = true; $_SESSION['Page']['Current'] = $post; break; } $post = $post->getNext();	}
-					if(!$found){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = $_SERVER['REQUEST_URI']; }
-					else{ $_SESSION['Page']['meta-title'] = "Blog Post - ".$a['Title']; $_SESSION['Page']['meta-description'] = $a['Description']; $_SESSION['Page']['meta-keywords'] = implode(",",$a['Keywords']); if($a['CoverImage'] != NULL && $a['CoverImage'] != ""){ $_SESSION['Page']['meta-og-image'] = $a['CoverImage']; list($_SESSION['Page']['meta-og-image-width'], $_SESSION['Page']['meta-og-image-height'], $_SESSION['Page']['meta-og-image-type']) = getimagesize("https://".$_SESSION['Domain'].$a['CoverImage']); $_SESSION['Page']['meta-og-type'] = "article"; } }
-				break;
-				case "c": $_SESSION['Page']['meta-title'] = "Blog Category - ".$_REQUEST['bpgi']; $_SESSION['Page']['meta-description'] = "Listing of blog entries tagged in ".$_REQUEST['bpgi']; break;
-				case "u": $_SESSION['Page']['meta-title'] = "Blog Author - ".$_REQUEST['bpgi']; $_SESSION['Page']['meta-description'] = "Listing of blog entries written by ".$_REQUEST['bpgi']; break;
-				case "a": $_SESSION['Page']['meta-title'] = "Blog Archive - ".date("F Y",strtotime($_REQUEST['bpgi'])); $_SESSION['Page']['meta-description'] = "Listing of blog entries posted in ".date("F, Y",strtotime($_REQUEST['bpgi']));	break;
-				case "admin": $_SESSION['Page']['meta-title'] = "Blog Administration"; $_SESSION['Page']['meta-description'] = "Blog Admin Console"; if($_REQUEST['bpgi']){ $_SESSION['Page']['meta-title'] .= " - ".ucfirst($_REQUEST['bpgi']); } break;
-			}
-		}else{
-			$_REQUEST['bpg'] = NULL;
-			if(isset($_REQUEST['bpgi']) && $_REQUEST['bpgi'] != NULL && $_REQUEST['bpgi'] != ""){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = $_SERVER['REQUEST_URI']; }
-			if(isset($_REQUEST['bpgn']) && !is_numeric($_REQUEST['bpgn']) && $_REQUEST['bpgn'] != NULL && $_REQUEST['bpgn'] != ""){ $_SESSION['Page'] = $_SESSION['Pages'][0]; $_SESSION['Error']['404']['path-ui'] = $_SERVER['REQUEST_URI']; }
-		}
-	}
-	//Process User Page
-	if($_SESSION['Page']['path-file'] == "/page/user.php"){
-		$upage = "";
-	}
-	//HTTP 404
-	if($_SESSION['Page']['id'] == 0){ header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404); }
+	include("header.php");
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns#" lang="en">
@@ -127,13 +62,15 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 			$css = file_get_contents("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
 			$css .= file_get_contents("css/bootstrap-datetimepicker.min.css");
 			$css .= file_get_contents("css/trumbowyg.min.css");
+			$css .= file_get_contents("css/lightbox.css");
 			$css .= file_get_contents("css/main.css");
 			$css .= file_get_contents("css/blog.css");
+			$css .= file_get_contents("css/media.css");
 			echo "<style>".$css."</style>";
 		//Load JS Libs
 			$js ="<!--Start Head Loader--><script type=\"text/javascript\">";
 			$js .= file_get_contents("_js/head.min.js");
-        	$js .= "head.load(\"https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js\",\"/_js/moment.min.js\",\"/_js/bootstrap.min.js\",\"https://www.google-analytics.com/analytics.js\",\"https://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-57bf0be13e45dd09\",\"/_js/bootstrap-datetimepicker.min.js\",\"/_js/trumbowyg.min.js\",\"/_js/lib.js\"); </script><!--End Head Loader-->";
+        	$js .= "head.load(\"https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js\",\"/_js/moment.min.js\",\"/_js/bootstrap.min.js\",\"/_js/lightbox.js\",\"https://www.google-analytics.com/analytics.js\",\"https://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-57bf0be13e45dd09\",\"/_js/bootstrap-datetimepicker.min.js\",\"/_js/trumbowyg.min.js\",\"/_js/lib.js\"); </script><!--End Head Loader-->";
 			echo $js;
 		?>
     </head>
@@ -181,7 +118,7 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 				var to = 250;
 				$("#page").fadeIn(to);
 			/* Navigation */
-				$("#page").on("click","ul.nav a, .navbar-brand, .navl, .bnavl", function(event){ event.preventDefault(); if($(this).attr("href") != "#"){ var alink = $(this); $("#page").fadeOut(to,function(){ window.location.assign(alink.attr("href")); }); } });
+				$("#page").on("click","ul.nav a, .navbar-brand, .navl, .bnavl, .mnavl", function(event){ event.preventDefault(); if($(this).attr("href") != "#"){ var alink = $(this); $("#page").fadeOut(to,function(){ window.location.assign(alink.attr("href")); }); } });
 				$("ul.nav a").each(function(index){ if($(this).attr("href") === window.location.pathname ){ $(this).parent().addClass("active");} });
 			/* Window Scroll Event - Content Fade In */
 				$(window).scroll(function(){
@@ -195,7 +132,6 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 				$("img").each(function(){ if($(this).attr("src") == ""){ $(this).addClass("hidden"); } });
 			/* Trumbowyg Editor */
 				$.trumbowyg.svgPath = '/img/trumbowyg_icons.svg';
-				//$(".trumbowyg").trumbowyg({ btns: [	['viewHTML'],['formatting'],'btnGrp-semantic',['superscript', 'subscript'],['link'],['insertImage'],'btnGrp-justify','btnGrp-lists',['horizontalRule'],['removeformat'],['fullscreen'] ],autogrow: true	});
 			/* Google Analytics */
 				gaTracker("<?php echo $_SESSION['Google']['gaID']; ?>");
 				gaTrack();

@@ -27,6 +27,12 @@
 					$post->dbRead($_SESSION['db']->con($_SESSION['dbName']));
 					echo "<p>".var_dump($post->toArray())."</p>";
 				?>
+               <h2>Media</h2>
+                <?php
+					$media = new Media(19);
+					$media->dbRead($_SESSION['db']->con($_SESSION['dbName']));
+					echo "<p>".var_dump($media->toArray())."</p>";
+				?>
                 <h2>Person</h2>
                 <?php
 					$person = new Person(2,"Contacts");
@@ -65,13 +71,14 @@
 					echo "<p>".var_dump($contact->toArray())."</p>";
 				?>
                 <h2>User</h2>
+                <pre>
                 <?php
 					$user = new User(2);
 					$user->dbRead($_SESSION['db']->con($_SESSION['dbName']));
 					$user->setContactInfo($_SESSION['db']->con($_SESSION['dbName']));
-					echo "<p>".var_dump($user->toArray())."</p>";
+					echo var_dump($user->toArray());
 				?>
-                
+                </pre>
                 <hr>
                 
                 <h2>Blog</h2>
@@ -83,6 +90,18 @@
 						$_SESSION['Blog']->load($_SESSION['db']->con($_SESSION['dbName']));
 					}
 					echo var_dump($_SESSION['Blog']->toArray());
+				?>
+                </pre>
+                
+                <h2>MediaLibrary</h2>
+                <pre>
+                <?php
+					if(!isset($_SESSION['Blog'])){
+						$_SESSION['Media'] = new MediaLibrary(18);
+						$_SESSION['Media']->dbRead($_SESSION['db']->con($_SESSION['dbName']));
+						$_SESSION['Media']->load($_SESSION['db']->con($_SESSION['dbName']));
+					}
+					echo var_dump($_SESSION['Media']->toArray());
 				?>
                 </pre>
             </div>

@@ -45,6 +45,10 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 	}
 /*Blog Requests*/
 	if(isset($_REQUEST['bri']) && $_REQUEST['bri'] != NULL && $_REQUEST['bri'] != ""){
+		if(!isset($_SESSION['User']) || !$_SESSION['User']->getRelation("Group")->hasRel(6)){
+			header("HTTP/1.1 401 Unauthorized");
+    		exit;
+		}
 		switch($_REQUEST['bri']){
 			case 1: //Create Post Form
 				$blog = $_SESSION['Blog']->toArray();
@@ -71,6 +75,7 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 					  <div class=\"form-group\"><button type=\"submit\" class=\"btn btn-default\">Create</button></div>
 				  </form>
 				";
+				$html = preg_replace('/(\v|\s)+/', ' ', $html);
 				$data = array("Create New Post",$html);
 				echo json_encode($data);
 			break;
@@ -109,6 +114,7 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 					  <div class=\"form-group\"><button type=\"submit\" class=\"btn btn-default\">Update</button></div>
 				  </form>
 				";
+				$html = preg_replace('/(\v|\s)+/', ' ', $html);
 				$data = array("Edit Post",$html);
 				echo json_encode($data);
 			break;
@@ -277,6 +283,7 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 				echo json_encode($data);
 			break;
 			case 8; //Create and Update Category Records (Forms BRI: 6 & 7)
+				// NEEDS UPDATING TO USE OO FUNCTIONALITY OF DBObj() CLASS
 				$time = time();
 				if(isset($_REQUEST['ID']) && $_REQUEST['ID'] != 0 && $_REQUEST['ID'] != NULL){ $id = $_REQUEST['ID']; $sql = "Update `Keys` SET Definition = \"".$_REQUEST['Title']."\", Updated = ".$time." WHERE ID = ".$_REQUEST['ID']; }
 				else{ $id = 0; $sql = "INSERT INTO `Keys` (`Key`,`Code`,`Definition`,`Created`,`Updated`) VALUES(\"Category\",\"\",\"".$_REQUEST['Title']."\",".$time.",".$time.")"; }
@@ -309,10 +316,9 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 				echo json_encode($data);
 			break;
 			case 10: // Delete Category (Form BRI: 9)
+				// NEEDS UPDATING TO USE OO FUNCTIONALITY OF DBObj() CLASS
 				$id = $_REQUEST['ID'];
 				$sql1 = "DELETE FROM `Keys` WHERE ID = ".$id; $sql2 = "DELETE FROM Relations WHERE KID = ".$id.";";
-				//error_log("SQL DBObj->Relation1: ".$sql1);
-				//error_log("SQL DBObj->Relation2: ".$sql2);
 				if(mysqli_query($_SESSION['db']->con($_SESSION['dbName']),$sql1) && mysqli_query($_SESSION['db']->con($_SESSION['dbName']),$sql2)){
 					$data[] = 1;
 					$data[] = "Category Deleted!";
@@ -328,6 +334,20 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 			break;
 		}
 		if(isset($_SESSION['db'])){ $_SESSION['db']->disconnect($_SESSION['dbName']); }
+	}
+	if(isset($_REQUEST['mri']) && $_REQUEST['mri'] != NULL && $_REQUEST['mri'] != ""){
+		if(!isset($_SESSION['User']) || !$_SESSION['User']->getRelation("Group")->hasRel(6)){
+			header("HTTP/1.1 401 Unauthorized");
+    		exit;
+		}
+		switch($_REQUEST['mri']){
+			case 1:
+				
+			break;
+			default:
+				echo "BAD MRI"; 
+			break;
+		}
 	}
 }else{ echo "BAD REQUEST"; }
 /*$_SESSION['db']->disconnect($_SESSION['dbName']);*/

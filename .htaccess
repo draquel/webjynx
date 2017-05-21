@@ -4,7 +4,6 @@ RewriteBase /
 #AWS ELB Force SSL
 RewriteCond %{ENV:REDIRECT_STATUS} ^$
 RewriteCond %{HTTP:X-Forwarded-Proto} !https
-RewriteCond %{HTTP_HOST} !dev2.webjynx.com
 RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
 # Fix Relative Bootstrap paths
@@ -24,6 +23,18 @@ RewriteCond %{ENV:REDIRECT_STATUS} ^$
 RewriteRule ^blog/(.+)/$ /index.php?pg=blog/&bpg=$1 [L]
 RewriteCond %{ENV:REDIRECT_STATUS} ^$
 RewriteRule ^blog/(.+)$ /index.php?pg=blog/&bpgn=$1 [L]
+
+# DBObj MediaLibrary Rules
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^media/(.+)/(.+)/(.+)/(.+)$ /index.php?pg=media/&mpg=$1&mpgi=$2&mpgn=$3&mpgs=$4 [L]
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^media/(.+)/(.+)/(.+)$ /index.php?pg=media/&mpg=$1&mpgi=$2&mpgn=$3 [L]
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^media/(.+)/(.+)$ /index.php?pg=media/&mpg=$1&mpgi=$2&mpgn=1 [L]
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^media/(.+)/$ /index.php?pg=media/&mpg=$1 [L]
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^media/(.+)$ /index.php?pg=media/&mpgn=$1 [L]
 
 # DBObj User Rules
 RewriteCond %{ENV:REDIRECT_STATUS} ^$
