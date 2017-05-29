@@ -1,0 +1,4 @@
+img/blog/*
+img/media/*
+test.php
+db_upgrade.php
