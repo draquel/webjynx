@@ -8,9 +8,9 @@ RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
 # Fix Relative Bootstrap paths
 RewriteCond %{ENV:REDIRECT_STATUS} ^$
-RewriteRule ^.*/bootstrap.min.css.map$ /css/bootstrap.min.css.map [L]
+RewriteRule ^.*/bootstrap.min.css.map$ /lib/bootstrap/dist/css/bootstrap.min.css.map [L]
 RewriteCond %{ENV:REDIRECT_STATUS} ^$
-RewriteRule ^.*/fonts/glyphicons-halflings-regular.(.*)$ /fonts/glyphicons-halflings-regular.$1 [L]
+RewriteRule ^.*/fonts/glyphicons-halflings-regular.(.*)$ /lib/bootstrap/dist/fonts/glyphicons-halflings-regular.$1 [L]
 
 # DBObj Blog Rules
 RewriteCond %{ENV:REDIRECT_STATUS} ^$

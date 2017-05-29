@@ -7,10 +7,11 @@
 
 	$_SESSION['Title'] = "WebJynx Toolkit";
 	$_SESSION['Domain'] = "https://dev.webjynx.com";
-	if($_SERVER['SERVER_NAME'] == "dev2.webjynx.com"){ $_SESSION['dbHost'] = "localhost"; }else{ $_SESSION['dbHost'] = "webjynxrds.cjzpxtjfv2ad.us-east-1.rds.amazonaws.com"; }
-	$_SESSION['dbName'] = "DBObj_2.0";
-	$_SESSION['dbuser'] = "root";
-	$_SESSION['dbPass'] = "Ed17i0n!";
+	$_SESSION['db'] = array("Name"=>"DBObj_2.0",
+							"Host"=>"webjynxrds.cjzpxtjfv2ad.us-east-1.rds.amazonaws.com",
+						    "User"=>"root",
+						    "Pass"=>"Ed17i0n!"
+						   );
 	$_SESSION['Google'] = array('gaID'=>'UA-83229001-1','ssID'=>'011020224819443845085:btxae4osafm');
 	$_SESSION['MailChimp'] = array('apiKey'=>null,'listID'=>null);
 	

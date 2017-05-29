@@ -6,14 +6,14 @@
 	
 	//Initialize Session Datastructures
 	if(!isset($_SESSION['db']) || $_SESSION['Reset']){
-		$_SESSION['db'] = new Sql();
-		$_SESSION['db']->init($_SESSION['dbHost'],$_SESSION['dbuser'],$_SESSION['dbPass']);
-		$_SESSION['db']->connect($_SESSION['dbName']);
-	}elseif(!$_SESSION['db']->con($_SESSION['dbName'])){ $_SESSION['db']->connect($_SESSION['dbName']);	}
+		$_SESSION['db']['Obj'] = new Sql();
+		$_SESSION['db']['Obj']->init($_SESSION['db']['Host'],$_SESSION['db']['User'],$_SESSION['db']['Pass']);
+		$_SESSION['db']['Obj']->connect($_SESSION['db']['Name']);
+	}elseif(!$_SESSION['db']['Obj']->con($_SESSION['db']['Name'])){ $_SESSION['db']['Obj']->connect($_SESSION['db']['Name']);	}
 	if(!isset($_SESSION['Blog']) || $_SESSION['Blog']->getContent()->size() == 0 || $_SESSION['Reset']){
 		$_SESSION['Blog'] = new Blog(1);
-		$_SESSION['Blog']->dbRead($_SESSION['db']->con($_SESSION['dbName']));
-		$_SESSION['Blog']->load($_SESSION['db']->con($_SESSION['dbName']),true,true);
+		$_SESSION['Blog']->dbRead($_SESSION['db']['Obj']->con($_SESSION['db']['Name']));
+		$_SESSION['Blog']->load($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),true,true);
 	}
 ?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"> 

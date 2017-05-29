@@ -1,0 +1,12 @@
+[submodule "lib/lightbox2"]
+	path = lib/lightbox2
+	url = git://github.com/lokesh/lightbox2.git
+[submodule "lib/trumbowyg"]
+	path = lib/trumbowyg
+	url = git://github.com/Alex-D/Trumbowyg.git
+[submodule "lib/bootstrap-datetimepicker"]
+	path = lib/bootstrap-datetimepicker
+	url = git://github.com/Eonasdan/bootstrap-datetimepicker.git
+[submodule "lib/bootstrap"]
+	path = lib/bootstrap
+	url = git://github.com/twbs/bootstrap.git

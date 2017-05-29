@@ -1,19 +1,19 @@
 <!--Powered by:
-     __      __          __       _____                            
-    /\ \  __/\ \        /\ \     /\___ \                           
-    \ \ \/\ \ \ \     __\ \ \____\/__/\ \  __  __    ___    __  _  
-     \ \ \ \ \ \ \  /'__`\ \ '__`\  _\ \ \/\ \/\ \ /' _ `\ /\ \/'\ 
-      \ \ \_/ \_\ \/\  __/\ \ \L\ \/\ \_\ \ \ \_\ \/\ \/\ \\/>  </ 
+          __      __          __       _____                            
+        /\ \  __/\ \        /\ \     /\___ \                           
+       \ \ \/\ \ \ \     __\ \ \____\/__/\ \  __  __   ____    __  _  
+       \ \ \ \ \ \ \  /'__`\ \ '__`\  _\ \ \/\ \/\ \ /' _ `\ /\ \/'\ 
+       \ \ \_/ \_\ \/\  __/\ \ \L\ \/\ \_\ \ \ \_\ \/\ \/\ \\/>  </ 
        \ `\___x___/\ \____\\ \_,__/\ \____/\/`____ \ \_\ \_\/\_/\_\
-        '\/__//__/  \/____/ \/___/  \/___/  `/___/> \/_/\/_/\//\/_/
-												 \__/
-            ______                ___    __          __      
-           /\__  _\              /\_ \  /\ \      __/\ \__   
-           \/_/\ \/   ___     ___\//\ \ \ \ \/'\ /\_\ \ ,_\  
+       '\/__//__/  \/____/ \/___/  \/___/  `/___/> \/_/\/_/\//\/_/
+       	     								   \__/
+               ______                ___    __          __      
+             /\__  _\              /\_ \  /\ \      __/\ \__   
+            \/_/\ \/   ___     ___\//\ \ \ \ \/'\ /\_\ \ ,_\  
               \ \ \  / __`\  / __`\\ \ \ \ \ , < \/\ \ \ \/  
-               \ \ \/\ \L\ \/\ \L\ \\_\ \_\ \ \\`\\ \ \ \ \_ 
-                \ \_\ \____/\ \____//\____\\ \_\ \_\ \_\ \__\
-                 \/_/\/___/  \/___/ \/____/ \/_/\/_/\/_/\/__/
+              \ \ \/\ \L\ \/\ \L\ \\_\ \_\ \ \\`\\ \ \ \ \_ 
+              \ \_\ \____/\ \____//\____\\ \_\ \_\ \_\ \__\
+              \/_/\/___/  \/___/ \/____/ \/_/\/_/\/_/\/__/
 
 Author: Dan Raquel (draquel@webjynx.com)-->
 <?php
@@ -33,46 +33,23 @@ Author: Dan Raquel (draquel@webjynx.com)-->
         <meta name='viewport' content="width=device-width, initial-scale=1">
         <link rel="icon" href="/img/favicon.ico">
         <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
-        <link rel="alternate" type="application/atom+xml" title="<?php echo $_SESSION['Title']; ?>" href="http://<?php echo $_SESSION['Domain']; ?>/rss/">
-        <?php
-		//Title, Meta-Description, Meta-Keywords & Open Graph Meta		
-			echo "<title>".$_SESSION['Title']." - ".$_SESSION['Page']['meta-title']."</title>
-			<meta property=\"og:title\" content=\"".$_SESSION['Title']." - ".$_SESSION['Page']['meta-title']."\" />
-			<meta property=\"og:url\" content=\"".$_SESSION['Domain'].$_SERVER['REQUEST_URI']."\" />
-			<meta name=\"description\" content=\"".$_SESSION['Page']['meta-description']."\">
-			<meta property=\"og:description\" content=\"".$_SESSION['Page']['meta-description']."\" />
-			<meta name=\"keywords\" content=\"".$_SESSION['Page']['meta-keywords']."\">";
-			if(isset($_SESSION['Page']['meta-og-type'])){ echo "<meta property=\"og:type\" content=\"".$_SESSION['Page']['meta-og-type']."\" />";}
-			else{ echo "<meta property=\"og:type\" content=\"website\" />"; }
-			if(isset($_SESSION['Page']['meta-og-image'])){
-				echo "<meta property=\"og:image\" content=\"".$_SESSION['Domain'].$_SESSION['Page']['meta-og-image']."\" />
-				<meta property=\"og:image:secure_url\" content=\"".$_SESSION['Domain'].$_SESSION['Page']['meta-og-image']."\" />
-				<meta property=\"og:image:type\" content=\"image/".pathinfo($_SESSION['Page']['meta-og-image'],PATHINFO_EXTENSION)."\">
-				<meta property=\"og:image:height\" content=\"".$_SESSION['Page']['meta-og-image-height']."\" />
-				<meta property=\"og:image:width\" content=\"".$_SESSION['Page']['meta-og-image-width']."\" />";
-			}else{
-				list($_SESSION['Page']['meta-og-image-width'], $_SESSION['Page']['meta-og-image-height'], $_SESSION['Page']['meta-og-image-type']) = getimagesize($_SESSION['Domain']."/img/logo.png");
-				echo "<meta property=\"og:image\" content=\"".$_SESSION['Domain']."/img/logo.png\" />
-				<meta property=\"og:image:secure_url\" content=\"".$_SESSION['Domain']."/img/logo.png\" />
-				<meta property=\"og:image:type\" content=\"image/".pathinfo("/img/logo.png",PATHINFO_EXTENSION)."\">
-				<meta property=\"og:image:height\" content=\"".$_SESSION['Page']['meta-og-image-height']."\" />
-				<meta property=\"og:image:width\" content=\"".$_SESSION['Page']['meta-og-image-width']."\" />"; 
-			}
-		//Concatenate CSS Files
-			$css = file_get_contents("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
-			$css .= file_get_contents("css/bootstrap-datetimepicker.min.css");
-			$css .= file_get_contents("css/trumbowyg.min.css");
-			$css .= file_get_contents("css/lightbox.css");
-			$css .= file_get_contents("css/main.css");
-			$css .= file_get_contents("css/blog.css");
-			$css .= file_get_contents("css/media.css");
-			echo "<style>".$css."</style>";
-		//Load JS Libs
-			$js ="<!--Start Head Loader--><script type=\"text/javascript\">";
-			$js .= file_get_contents("_js/head.min.js");
-        	$js .= "head.load(\"https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js\",\"/_js/moment.min.js\",\"/_js/bootstrap.min.js\",\"/_js/lightbox.js\",\"https://www.google-analytics.com/analytics.js\",\"https://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-57bf0be13e45dd09\",\"/_js/bootstrap-datetimepicker.min.js\",\"/_js/trumbowyg.min.js\",\"/_js/lib.js\"); </script><!--End Head Loader-->";
-			echo $js;
-		?>
+	<?php
+	//Title, Meta-Description, Meta-Keywords, RSS Feed & Open Graph Meta		
+		echo "<link rel=\"alternate\" type=\"application/atom+xml\" title=\"".$_SESSION['Title']."\" href=\"".$_SESSION['Domain']."/rss/\">";
+		echo "<title>".$_SESSION['Title']." - ".$_SESSION['Page']['meta-title']."</title><meta property=\"og:title\" content=\"".$_SESSION['Title']." - ".$_SESSION['Page']['meta-title']."\" /><meta property=\"og:url\" content=\"".$_SESSION['Domain'].$_SERVER['REQUEST_URI']."\" /><meta name=\"description\" content=\"".$_SESSION['Page']['meta-description']."\"><meta property=\"og:description\" content=\"".$_SESSION['Page']['meta-description']."\" /><meta name=\"keywords\" content=\"".$_SESSION['Page']['meta-keywords']."\">";
+		if(isset($_SESSION['Page']['meta-og-type'])){ echo "<meta property=\"og:type\" content=\"".$_SESSION['Page']['meta-og-type']."\" />"; }else{ echo "<meta property=\"og:type\" content=\"website\" />"; }
+		if(isset($_SESSION['Page']['meta-og-image'])){ echo "<meta property=\"og:image\" content=\"".$_SESSION['Domain'].$_SESSION['Page']['meta-og-image']."\" /><meta property=\"og:image:secure_url\" content=\"".$_SESSION['Domain'].$_SESSION['Page']['meta-og-image']."\" /><meta property=\"og:image:type\" content=\"image/".pathinfo($_SESSION['Page']['meta-og-image'],PATHINFO_EXTENSION)."\"><meta property=\"og:image:height\" content=\"".$_SESSION['Page']['meta-og-image-height']."\" /><meta property=\"og:image:width\" content=\"".$_SESSION['Page']['meta-og-image-width']."\" />";	}
+		else{ list($_SESSION['Page']['meta-og-image-width'], $_SESSION['Page']['meta-og-image-height'], $_SESSION['Page']['meta-og-image-type']) = getimagesize($_SESSION['Domain']."/img/logo.png"); echo "<meta property=\"og:image\" content=\"".$_SESSION['Domain']."/img/logo.png\" /><meta property=\"og:image:secure_url\" content=\"".$_SESSION['Domain']."/img/logo.png\" /><meta property=\"og:image:type\" content=\"image/".pathinfo("/img/logo.png",PATHINFO_EXTENSION)."\"><meta property=\"og:image:height\" content=\"".$_SESSION['Page']['meta-og-image-height']."\" /><meta property=\"og:image:width\" content=\"".$_SESSION['Page']['meta-og-image-width']."\" />"; }
+	//Load Critical CSS
+		$css = file_get_contents("lib/bootstrap/dist/css/bootstrap.min.css");
+		$css .= file_get_contents("css/main.css");
+		echo "<style>".$css."</style>";
+	//Load JS Libs
+		$js ="<!--Start Head Loader--><script type=\"text/javascript\">";
+		$js .= file_get_contents("_js/head.min.js");
+		$js .= "head.load(\"https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js\",\"/_js/moment.min.js\",\"/lib/bootstrap/dist/js/bootstrap.min.js\",\"/lib/lightbox2/dist/js/lightbox.min.js\",\"https://www.google-analytics.com/analytics.js\",\"https://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-57bf0be13e45dd09\",\"/lib/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js\",\"/lib/trumbowyg/dist/trumbowyg.min.js\",\"/_js/lib.js\"); </script><!--End Head Loader-->";
+		echo $js;
+	?>
     </head>
    <!--End Header-->
     <body role="document">
@@ -87,7 +64,7 @@ Author: Dan Raquel (draquel@webjynx.com)-->
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                   </button>
-                  <a href="/" class="navbar-brand">Project Name</a>
+                  <a href="/" class="navbar-brand"><?php echo $_SESSION['Title'] ?></a>
                 </div>
                 <div class="navbar-collapse collapse" id="navbar"><?php $_REQUEST['dd'] = 1; include("menu.php"); ?></div>
               </div>
@@ -112,33 +89,43 @@ Author: Dan Raquel (draquel@webjynx.com)-->
             </div>
         </div>
        <!-- End Modal -->
+        <noscript id="deferred-styles">
+			<link rel="stylesheet" type="text/css" href="/lib/bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css">
+			<link rel="stylesheet" type="text/css" href="/lib/trumbowyg/dist/ui/trumbowyg.min.css">
+			<link rel="stylesheet" type="text/css" href="/lib/lightbox2/dist/css/lightbox.min.css">
+			<link rel="stylesheet" type="text/css" href="/css/blog.css">
+			<link rel="stylesheet" type="text/css" href="/css/media.css">
+		</noscript>
         <script type="text/javascript">
-		head.ready(function(){
-			$(document).ready(function(){
-				var to = 250;
-				$("#page").fadeIn(to);
-			/* Navigation */
-				$("#page").on("click","ul.nav a, .navbar-brand, .navl, .bnavl, .mnavl", function(event){ event.preventDefault(); if($(this).attr("href") != "#"){ var alink = $(this); $("#page").fadeOut(to,function(){ window.location.assign(alink.attr("href")); }); } });
-				$("ul.nav a").each(function(index){ if($(this).attr("href") === window.location.pathname ){ $(this).parent().addClass("active");} });
-			/* Window Scroll Event - Content Fade In */
-				$(window).scroll(function(){
-					$('.hideme').each(function(i){
-						var bottom_of_object = $(this).offset().top + ($(this).outerHeight() * 0.25);
-						var bottom_of_window = $(window).scrollTop() + $(window).height();
-						if( bottom_of_window > bottom_of_object ){ $(this).animate({'opacity':'1'},350); }
+			var loadDeferredStyles = function(){ var addStylesNode = document.getElementById("deferred-styles"); var replacement = document.createElement("div"); replacement.innerHTML = addStylesNode.textContent; document.body.appendChild(replacement);	addStylesNode.parentElement.removeChild(addStylesNode); };
+			var raf = requestAnimationFrame || mozRequestAnimationFrame || webkitRequestAnimationFrame || msRequestAnimationFrame;
+			if(raf){ raf(function() { window.setTimeout(loadDeferredStyles, 0); }); }else{window.addEventListener('load', loadDeferredStyles); }
+			head.ready(function(){
+				$(document).ready(function(){
+					var to = 350;
+					$("#page").fadeIn(to);
+				  /* Navigation */
+					$("#page").on("click","ul.nav a, .navbar-brand, .navl, .bnavl, .mnavl", function(event){ event.preventDefault(); if($(this).attr("href") != "#"){ var alink = $(this); $("#page").fadeOut(to,function(){ window.location.assign(alink.attr("href")); }); } });
+					$("ul.nav a").each(function(index){ if($(this).attr("href") === window.location.pathname ){ $(this).parent().addClass("active");} });
+				  /* Window Scroll Event - Content Fade In */
+					$(window).scroll(function(){
+						$('.hideme').each(function(i){
+							var bottom_of_object = $(this).offset().top + ($(this).outerHeight() * 0.25);
+							var bottom_of_window = $(window).scrollTop() + $(window).height();
+							if( bottom_of_window > bottom_of_object ){ $(this).animate({'opacity':'1'},350); }
+						});
 					});
+				  /* Hide Images with NULL src - needs improvement*/
+					$("img").each(function(){ if($(this).attr("src") == ""){ $(this).addClass("hidden"); } });
+				  /* Trumbowyg Editor */
+					$.trumbowyg.svgPath = '/lib/trumbowyg/dist/ui/icons.svg';
+				  /* Google Analytics */
+					gaTracker("<?php echo $_SESSION['Google']['gaID']; ?>");
+					gaTrack();
+				  /* Mobile Menu - Toggle Page Scroll Lock */
+					//$(".navbar-toggle").click(function(){ if($("body").hasClass("noscroll")){ $("body").removeClass("noscroll"); }else{ $("body").addClass("noscroll"); } });
 				});
-			/* Hide Images with NULL src - needs improvement*/
-				$("img").each(function(){ if($(this).attr("src") == ""){ $(this).addClass("hidden"); } });
-			/* Trumbowyg Editor */
-				$.trumbowyg.svgPath = '/img/trumbowyg_icons.svg';
-			/* Google Analytics */
-				gaTracker("<?php echo $_SESSION['Google']['gaID']; ?>");
-				gaTrack();
-			/* Mobile Menu - Toggle Page Scroll Lock */
-				//$(".navbar-toggle").click(function(){ if($("body").hasClass("noscroll")){ $("body").removeClass("noscroll"); }else{ $("body").addClass("noscroll"); } });
 			});
-		});
 		</script>
     </body>
 </html>
