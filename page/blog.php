@@ -1,15 +1,10 @@
-<?php
-	$_SESSION['db']['Obj'] = new Sql();
-	$_SESSION['db']['Obj']->init($_SESSION['db']['Host'],$_SESSION['db']['User'],$_SESSION['db']['Pass']);
-	$_SESSION['db']['Obj']->connect($_SESSION['db']['Name']);
-	$_SESSION['Blog']->load($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),false,true);
-	$blog = $_SESSION['Blog']->toArray(); //Create getMeta() for this - too expensive
-?>
 <!-- Page Specific Styles -->
 	<style>.blue_bg{ background-image:url('/img/stock_head1.svg'); }</style>
 <!--Page Content -->
     <div id="pg" class="container-fluid">
 <?php
+	$_SESSION['Blog']->load($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),false,true);
+	$blog = $_SESSION['Blog']->toArray(); //Create getMeta() for this - too expensive
 	//No Headline Image on Post Page
 	if($_REQUEST['bpg'] != "p" && (!isset($inc) || !$inc)){ echo "<div class=\"row blue_bg\"><div></div></div>"; }
 /*DEBUG OUTPUT::*/
