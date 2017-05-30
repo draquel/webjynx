@@ -1,4 +1,5 @@
 img/blog/*
 img/media/*
+lib/*
 test.php
 db_upgrade.php
