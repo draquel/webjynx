@@ -101,9 +101,9 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 			<link rel="stylesheet" type="text/css" href="/css/media.css">
 		</noscript>
         <script type="text/javascript">
-			var loadDeferredStyles = function(){ var addStylesNode = document.getElementById("deferred-styles"); var replacement = document.createElement("div"); replacement.innerHTML = addStylesNode.textContent; document.body.appendChild(replacement);	addStylesNode.parentElement.removeChild(addStylesNode); };
+			var loadDeferredStyles = function(){ var addStylesNode = document.getElementById("deferred-styles"); var replacement = document.createElement("div"); replacement.innerHTML = addStylesNode.textContent; document.body.appendChild(replacement); addStylesNode.parentElement.removeChild(addStylesNode); };
 			var raf = requestAnimationFrame || mozRequestAnimationFrame || webkitRequestAnimationFrame || msRequestAnimationFrame;
-			if(raf){ raf(function() { window.setTimeout(loadDeferredStyles, 0); }); }else{window.addEventListener('load', loadDeferredStyles); }
+			if(raf){ raf(function(){ window.setTimeout(loadDeferredStyles, 0); }); }else{window.addEventListener('load', loadDeferredStyles); }
 			head.ready(function(){
 				$(document).ready(function(){
 					var to = 350;
@@ -111,14 +111,10 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 				  /* Navigation */
 					$("#page").on("click","ul.nav a, .navbar-brand, .navl, .bnavl, .mnavl", function(event){ event.preventDefault(); if($(this).attr("href") != "#"){ var alink = $(this); $("#page").fadeOut(to,function(){ window.location.assign(alink.attr("href")); }); } });
 					$("ul.nav a").each(function(index){ if($(this).attr("href") === window.location.pathname ){ $(this).parent().addClass("active");} });
+				  /* Mobile Menu - Toggle Page Scroll Lock */
+					$(".navbar-toggle").click(function(){ if($("body").hasClass("noscroll")){ $("body").removeClass("noscroll"); }else{ $("body").addClass("noscroll"); } });
 				  /* Window Scroll Event - Content Fade In */
-					$(window).scroll(function(){
-						$('.hideme').each(function(i){
-							var bottom_of_object = $(this).offset().top + ($(this).outerHeight() * 0.25);
-							var bottom_of_window = $(window).scrollTop() + $(window).height();
-							if( bottom_of_window > bottom_of_object ){ $(this).animate({'opacity':'1'},350); }
-						});
-					});
+					$(window).scroll(function(){ $('.hideme').each(function(i){ var bottom_of_object = $(this).offset().top + ($(this).outerHeight() * 0.25); var bottom_of_window = $(window).scrollTop() + $(window).height(); if( bottom_of_window > bottom_of_object ){ $(this).animate({'opacity':'1'},350); }	});	});
 				  /* Hide Images with NULL src - needs improvement*/
 					$("img").each(function(){ if($(this).attr("src") == ""){ $(this).addClass("hidden"); } });
 				  /* Trumbowyg Editor */
@@ -126,8 +122,6 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 				  /* Google Analytics */
 					gaTracker("<?php echo $_SESSION['Google']['gaID']; ?>");
 					gaTrack();
-				  /* Mobile Menu - Toggle Page Scroll Lock */
-					//$(".navbar-toggle").click(function(){ if($("body").hasClass("noscroll")){ $("body").removeClass("noscroll"); }else{ $("body").addClass("noscroll"); } });
 				});
 			});
 		</script>
