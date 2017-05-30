@@ -10,3 +10,12 @@
 [submodule "lib/bootstrap"]
 	path = lib/bootstrap
 	url = git://github.com/twbs/bootstrap.git
+[submodule "lib/headjs"]
+	path = lib/headjs
+	url = git://github.com/headjs/headjs.git
+[submodule "lib/moment"]
+	path = lib/moment
+	url = git://github.com/moment/moment.git
+[submodule "lib/DBObj"]
+	path = lib/DBObj
+	url = https://github.com/draquel/DBObj.git
