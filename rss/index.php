@@ -1,5 +1,7 @@
 <?php
-	require_once("../_php/DBObj2/dbobj.php");
+	require_once("lib/DBObj/php/lib.php");
+	require_once("lib/DBObj/php/sql.class.php");
+	require_once("lib/DBObj/php/blog.class.php");
 	session_start();
 
 	//Load Site Config

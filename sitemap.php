@@ -1,6 +1,7 @@
 <?php
 	header('Content-type: application/xml');
-	require_once("_php/DBObj2/dbobj.php");
+	require_once("lib/DBObj/php/sql.class.php");
+	require_once("lib/DBObj/php/blog.class.php");
 	//Load Site Config
 	include("config.php");
 	

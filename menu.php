@@ -1,5 +1,5 @@
 <?php
-	require_once("_php/DBObj2/lib.php");
+	require_once("lib/DBObj/php/lib.php");
 	$menu = "<ul class=\"nav navbar-nav navbar-right\">
 	  <!--HOME-->
 	  <li class=\"dropdown\" data-toggle=\"collapse\" data-target=\".navbar-ex1-collapse\">

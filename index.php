@@ -18,7 +18,11 @@
 Author: Dan Raquel (draquel@webjynx.com)-->
 <?php
 	error_reporting(E_ALL);
-	require_once("_php/DBObj2/dbobj.php");
+	require_once("lib/DBObj/php/lib.php");
+	require_once("lib/DBObj/php/sql.class.php");
+	require_once("lib/DBObj/php/user.class.php");
+	require_once("lib/DBObj/php/blog.class.php");
+	require_once("lib/DBObj/php/mediaLibrary.class.php");
 	session_start();
 	if(isset($_REQUEST['reset']) && ($_REQUEST['reset'] == 1 || $_REQUEST['reset'] == "true" || $_REQUEST['reset'] == "yes")){ $_SESSION['Reset'] = true; }else{ $_SESSION['Reset'] = false; }
 	include("config.php");
@@ -46,8 +50,8 @@ Author: Dan Raquel (draquel@webjynx.com)-->
 		echo "<style>".$css."</style>";
 	//Load JS Libs
 		$js ="<!--Start Head Loader--><script type=\"text/javascript\">";
-		$js .= file_get_contents("_js/head.min.js");
-		$js .= "head.load(\"https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js\",\"/_js/moment.min.js\",\"/lib/bootstrap/dist/js/bootstrap.min.js\",\"/lib/lightbox2/dist/js/lightbox.min.js\",\"https://www.google-analytics.com/analytics.js\",\"https://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-57bf0be13e45dd09\",\"/lib/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js\",\"/lib/trumbowyg/dist/trumbowyg.min.js\",\"/_js/lib.js\"); </script><!--End Head Loader-->";
+		$js .= file_get_contents("lib/headjs/dist/1.0.0/head.min.js");
+		$js .= "head.load(\"https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js\",\"/lib/moment/min/moment.min.js\",\"/lib/bootstrap/dist/js/bootstrap.min.js\",\"/lib/lightbox2/dist/js/lightbox.min.js\",\"/lib/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js\",\"/lib/trumbowyg/dist/trumbowyg.min.js\",\"/lib/DBObj/js/lib.js\",\"https://www.google-analytics.com/analytics.js\",\"https://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-57bf0be13e45dd09\");</script><!--End Head Loader-->";
 		echo $js;
 	?>
     </head>

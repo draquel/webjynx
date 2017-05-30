@@ -10,8 +10,7 @@
 	$_SESSION['db'] = array("Name"=>"DBObj_2.0",
 							"Host"=>"webjynxrds.cjzpxtjfv2ad.us-east-1.rds.amazonaws.com",
 						    "User"=>"root",
-						    "Pass"=>"Ed17i0n!"
-						   );
+						    "Pass"=>"Ed17i0n!");
 	$_SESSION['Google'] = array('gaID'=>'UA-83229001-1','ssID'=>'011020224819443845085:btxae4osafm');
 	$_SESSION['MailChimp'] = array('apiKey'=>null,'listID'=>null);
 	

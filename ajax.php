@@ -1,5 +1,9 @@
 <?php
-require_once("_php/DBObj2/dbobj.php");
+require_once("lib/DBObj/php/lib.php");
+require_once("lib/DBObj/php/sql.class.php");
+require_once("lib/DBObj/php/user.class.php");
+require_once("lib/DBObj/php/blog.class.php");
+require_once("lib/DBObj/php/mediaLibrary.class.php");
 session_start();
 error_reporting(E_ALL);
 $_SESSION['db']['Obj'] = new Sql();
