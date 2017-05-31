@@ -123,7 +123,6 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 				echo json_encode($data);
 			break;
 			case 3: //Create and Update Post Records (Forms BRI: 1 & 2)
-				//$u = $_SESSION['User']->toArray();
 				$b = $_SESSION['Blog']->toArray();
 				$dateTime = explode(" ",$_REQUEST['Published']);
 				$date = explode("/",$dateTime[0]);
@@ -189,25 +188,12 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 					$data[] = 1;
 					if($id == 0){ 
 						$data[] = "Post Created!"; 
-						/*$_SESSION['Blog']->getContent()->insertFirst($post);*/
 						$a = $post->toArray();
 						$id = $a['ID'];
 						if(isset($_FILES["coverImage"])){ $img_path = "img/blog/".$id.".".end((explode(".", $_FILES["coverImage"]["name"]))); $in["CoverImage"] = "/".$img_path; }
 						$post->initMysql($in);
 						$post->dbWrite($_SESSION['db']['Obj']->con($_SESSION['db']['Name']));
-					}else{ 
-						$data[] = "Post Updated!";
-						/*
-						$bp = $_SESSION['Blog']->getContent()->getFirstNode();
-						$i = 0;
-						while($bp != NULL){
-							$bpa = $bp->readNode()->toArray();
-							if($bpa['ID' ]== $id){ $_SESSION['Blog']->getContent()->getNodeAt($i)->data = $post; break; }
-							$i++;
-							$bp = $bp->getNext();
-						}
-						*/
-					}
+					}else{ $data[] = "Post Updated!"; }
 					if(isset($_FILES["coverImage"]) && getimagesize($_FILES["coverImage"]["tmp_name"])){ move_uploaded_file($_FILES["coverImage"]["tmp_name"], $_SERVER['DOCUMENT_ROOT'].$img_path); }
 				}
 				else{ $data[] = 0; $data[] = "Error!"; }
@@ -239,16 +225,6 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 				if($post->dbDelete($_SESSION['db']['Obj']->con($_SESSION['db']['Name']))){ 
 					$data[] = 1;
 					$data[] = "Post Deleted!";
-					/*
-					$bp = $_SESSION['Blog']->getContent()->getFirstNode();
-					$i = 0;
-					while($bp != NULL){
-						$bpa = $bp->readNode()->toArray();
-						if($bpa['ID']== $id){ $_SESSION['Blog']->getContent()->deleteNodeAt($i); break; }
-						$i++;
-						$bp = $bp->getNext();
-					}
-					*/
 					$pa = $post->toArray();
 					unlink(rtrim($_SERVER['DOCUMENT_ROOT'],"/").$pa['CoverImage']);
 				}
@@ -432,7 +408,6 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 				echo json_encode($data);
 			break;
 			case 3: /* Create and Update Media Object */
-				//$u = $_SESSION['User']->toArray();
 				$m = $_SESSION['Media']->toArray();
 				if(isset($_REQUEST['ID']) && $_REQUEST['ID'] != 0 && $_REQUEST['ID'] != NULL){ //Update
 					$id = $_REQUEST['ID'];
@@ -529,7 +504,6 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 					$data[] = 1;
 					if($id == 0){ 
 						$data[] = "Media Added!"; 
-						/*$_SESSION['Media']->getContent()->insertFirst($media);*/
 						$a = $media->toArray();
 						$id = $a['ID'];
 						if(isset($_FILES["File"])){ $img_path = "img/media/".$id.".".end((explode(".", $_FILES["File"]["name"]))); $in["URI"] = "/".$img_path; $in['Type'] = $_FILES['File']['type']; }
@@ -537,16 +511,6 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 						$media->dbWrite($_SESSION['db']['Obj']->con($_SESSION['db']['Name']));
 					}else{ 
 						$data[] = "Media Updated!";
-						/*
-						$mo = $_SESSION['Media']->getContent()->getFirstNode();
-						$i = 0;
-						while($mo != NULL){
-							$moa = $mo->readNode()->toArray();
-							if($moa['ID' ]== $id){ $_SESSION['Media']->getContent()->getNodeAt($i)->data = $media; break; }
-							$i++;
-							$mo = $mo->getNext();
-						}
-						*/
 					}
 					if(isset($_FILES["File"]) && getimagesize($_FILES["File"]["tmp_name"])){ move_uploaded_file($_FILES["File"]["tmp_name"], $_SERVER['DOCUMENT_ROOT'].$img_path); }
 				}
@@ -578,16 +542,6 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 				if($media->dbDelete($_SESSION['db']['Obj']->con($_SESSION['db']['Name']))){ 
 					$data[] = 1;
 					$data[] = "Post Deleted!";
-					/*
-					$mo = $_SESSION['Media']->getContent()->getFirstNode();
-					$i = 0;
-					while($mo != NULL){
-						$moa = $mo->readNode()->toArray();
-						if($moa['ID']== $id){ $_SESSION['Media']->getContent()->deleteNodeAt($i); break; }
-						$i++;
-						$mo = $mo->getNext();
-					}
-					*/
 					$ma = $media->toArray();
 					unlink(rtrim($_SERVER['DOCUMENT_ROOT'],"/").$ma['URI']);
 				}
@@ -714,7 +668,6 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 				$time = time();
 				if(isset($_REQUEST['ID']) && $_REQUEST['ID'] != 0 && $_REQUEST['ID'] != NULL){ $id = $_REQUEST['ID']; $sql = "Update `Keys` SET Definition = \"".$_REQUEST['Title']."\", Updated = ".$time." WHERE ID = ".$_REQUEST['ID']; }
 				else{ $id = 0; $sql = "INSERT INTO `Keys` (`Key`,`Code`,`Definition`,`Created`,`Updated`) VALUES(\"Gallery\",\"Media\",\"".$_REQUEST['Title']."\",".$time.",".$time.")"; }
-				//error_log("SQL DBObj->Relation: ".$sql);
 				if(mysqli_query($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),$sql)){
 					$data[] = 1;
 					if($id == 0){ $data[] = "Gallery Created!"; }else{ $data[] = "Gallery Updated!"; }
