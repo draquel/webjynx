@@ -1,7 +1,4 @@
 <?php
-	$_SESSION['db']['Obj'] = new Sql();
-	$_SESSION['db']['Obj']->init($_SESSION['db']['Host'],$_SESSION['db']['User'],$_SESSION['db']['Pass']);
-	$_SESSION['db']['Obj']->connect($_SESSION['db']['Name']);
 	$media = $_SESSION['Media']->toArray();
 ?>
 <!-- Page Specific Styles -->
@@ -23,7 +20,7 @@
 		<div class=\"media-header col-xs-12 col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1\"><h1 class=\"media-title\">".$media['Title']."</h1><p class=\"lead media-description\">".$media['Description']."</p></div>
 	<div class=\"media-main col-xs-12 col-sm-7 col-sm-offset-1 col-md-7 col-md-offset-1 col-lg-7 col-lg-offset-1\">";
 	if(isset($_REQUEST['pgn']) && $_REQUEST['pgn'] != NULL){ $pageNum = $_REQUEST['pgn']; }else{ $pageNum = 1; }
-	$medias = $_SESSION['Media']->getRelPage($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),$pageNum,"Gallery",$_REQUEST['pg']);
+	$medias = $_SESSION['Media']->getRelPage($pdo,$pageNum,"Gallery",$_REQUEST['pg']);
 	$media = $medias->getFirstNode();
 	$html = "<h2>".ucfirst($_REQUEST['pg'])."</h2>";
 	while($post != NULL){
@@ -33,7 +30,7 @@
 	}
 	$page .= $html;
 	$prevPN = $pageNum - 1;if($prevPN < 1){ $first = true; }else{ $first = false; }
-	$nextPN = $pageNum + 1;if($_SESSION['Media']->getRelPage($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),$nextPN,"Gallery",ucfirst($_REQUEST['pg']))->size() > 0){ $last = false; }else{ $last = true; }
+	$nextPN = $pageNum + 1;if($_SESSION['Media']->getRelPage($pdo,$nextPN,"Gallery",ucfirst($_REQUEST['pg']))->size() > 0){ $last = false; }else{ $last = true; }
 	$s = "<div class=\"col-md-12\"><nav><ul class=\"pager\">"
 	.(!$first ? "<li class=\"previous\"><a class=\"mnavl\" href=\"/".$_REQUEST['pg']."/".$prevPN."\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>" : "<li class=\"previous disabled\"><a class=\"mnavl\" href=\"#\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>")
 	.(!$last ? "<li class=\"next\"><a class=\"mnavl\" href=\"/".$_REQUEST['pg']."/".$nextPN."\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>" : "<li class=\"next disabled\"><a class=\"mnavl\" href=\"#\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>")
@@ -60,7 +57,7 @@
 			<gcse:search></gcse:search>";
 		}
 		$sidebar .= "<div class=\"sidebar-module sidebar-module-inset\"><h4>About</h4><p>".$media['Description']."</p></div><div class=\"sidebar-module\"><h4>Archives</h4><ol class=\"list-unstyled\">";
-		$archDates = $_SESSION['Media']->getArchiveDates($_SESSION['db']['Obj']->con($_SESSION['db']['Name']));
+		$archDates = $_SESSION['Media']->getArchiveDates($pdo);
 		if($archDates && count($archDates) > 0){ foreach($archDates as $v){ $sidebar .= "<li><a class=\"bnavl\" href=\"/blog/a/".$v."\">".date("M Y",strtotime($v."01"))."</a></li>"; }	}
 		$sidebar .= "</ol></div><div class=\"sidebar-module\"><h4>Categories</h4><ol class=\"list-unstyled\">";
 		$cat = $_SESSION['Media']->getCategories()->getFirstNode();

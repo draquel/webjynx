@@ -6,9 +6,11 @@ require_once("lib/DBObj/php/blog.class.php");
 require_once("lib/DBObj/php/mediaLibrary.class.php");
 session_start();
 error_reporting(E_ALL);
-$_SESSION['db']['Obj'] = new Sql();
-$_SESSION['db']['Obj']->init($_SESSION['db']['Host'],$_SESSION['db']['User'],$_SESSION['db']['Pass']);
-$_SESSION['db']['Obj']->connect($_SESSION['db']['Name']);
+/*$pdo = new Sql();
+$pdo->init($_SESSION['db']['Host'],$_SESSION['db']['User'],$_SESSION['db']['Pass']);
+$pdo->connect($_SESSION['db']['Name']);*/
+$pdo = new PDO("mysql:host=".$_SESSION['db']['Host'].";dbname=".$_SESSION['db']['Name'],$_SESSION['db']['User'],$_SESSION['db']['Pass']);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
 if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri']) || isset($_REQUEST['mri'])){
 /*Site Ajax Requests*/
@@ -27,7 +29,6 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 				echo "BAD ARI"; 
 			break;
 		}
-		if(isset($_SESSION['db'])){ $_SESSION['db']['Obj']->disconnect($_SESSION['db']['Name']); }
 	}
 /*User Requests*/
 	if(isset($_REQUEST['uri']) && $_REQUEST['uri'] != NULL && $_REQUEST['uri'] != ""){
@@ -35,7 +36,7 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 			case 1: //Login
 				$user = $_REQUEST['user']; $pass = $_REQUEST['pass']; $auth = false;
 				$_SESSION['User'] = new User(NULL);
-				$auth = $_SESSION['User']->login($user,$pass,$_SESSION['db']['Obj']->con($_SESSION['db']['Name']));
+				$auth = $_SESSION['User']->login($user,$pass,$pdo);
 				if($auth){ echo 1; }else{ $_SESSION['User'] = NULL; echo 2; }
 			break;
 			case 2: //Logout
@@ -45,7 +46,7 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 				echo "BAD URI"; 
 			break;
 		}
-		if(isset($_SESSION['db'])){ $_SESSION['db']['Obj']->disconnect($_SESSION['db']['Name']); }
+		if(isset($_SESSION['db'])){ $pdo->disconnect($_SESSION['db']['Name']); }
 	}
 /*Blog Requests*/
 	if(isset($_REQUEST['bri']) && $_REQUEST['bri'] != NULL && $_REQUEST['bri'] != ""){
@@ -86,7 +87,7 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 			case 2: //Edit Post Form
 				$id = $_REQUEST['i'];
 				$post = new Post($id);
-				$post->dbRead($_SESSION['db']['Obj']->con($_SESSION['db']['Name']));
+				$post->dbRead($pdo);
 				$a = $post->toArray();
 				$bcat = $_SESSION['Blog']->getCategories()->getFirstNode();
 				$user = $_SESSION['Users']->getFirstNode();
@@ -130,7 +131,7 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 				if(isset($_REQUEST['ID']) && $_REQUEST['ID'] != 0 && $_REQUEST['ID'] != NULL){ //Update
 					$id = $_REQUEST['ID'];
 					$post = new Post($id);
-					$post->dbRead($_SESSION['db']['Obj']->con($_SESSION['db']['Name']));
+					$post->dbRead($pdo);
 					$in = array("Title"=>$_REQUEST['Title'],"Author"=>$_REQUEST['Author'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$_REQUEST['Active'],"HTML"=>$_REQUEST['HTML'],"Published"=>$_REQUEST['Published']);
 					if(isset($_FILES["coverImage"])){ $ext = explode(".", $_FILES["File"]["name"]); $img_path = "img/blog/".$id.".".end($ext); $in["CoverImage"] = "/".$img_path; }
 					$post->initMysql($in);
@@ -178,13 +179,13 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 						$pca = $pcat->readNode()->toArray();
 						$obs = true;
 						foreach($icats as $c){ if($c == $pca['KID'] || $pca['KID'] == 3){ $obs = false; break; } }
-						if($obs){ $pcat->readNode()->dbDelete($_SESSION['db']['Obj']->con($_SESSION['db']['Name']));}
+						if($obs){ $pcat->readNode()->dbDelete($pdo);}
 						$pcat = $pcat->getNext();
 					}
 				}
 				//Write to Database {and Update Session (obsolete)}
 				$data = array();
-				if($post->dbWrite($_SESSION['db']['Obj']->con($_SESSION['db']['Name']))){ 
+				if($post->dbWrite($pdo)){ 
 					$data[] = 1;
 					if($id == 0){ 
 						$data[] = "Post Created!"; 
@@ -192,7 +193,7 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 						$id = $a['ID'];
 						if(isset($_FILES["coverImage"])){ $img_path = "img/blog/".$id.".".end((explode(".", $_FILES["coverImage"]["name"]))); $in["CoverImage"] = "/".$img_path; }
 						$post->initMysql($in);
-						$post->dbWrite($_SESSION['db']['Obj']->con($_SESSION['db']['Name']));
+						$post->dbWrite($pdo);
 					}else{ $data[] = "Post Updated!"; }
 					if(isset($_FILES["coverImage"]) && getimagesize($_FILES["coverImage"]["tmp_name"])){ move_uploaded_file($_FILES["coverImage"]["tmp_name"], $_SERVER['DOCUMENT_ROOT'].$img_path); }
 				}
@@ -202,7 +203,7 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 			case 4: //Delete Post Form
 				$id = $_REQUEST['i'];
 				$post = new Post($id);
-				$post->dbRead($_SESSION['db']['Obj']->con($_SESSION['db']['Name']));
+				$post->dbRead($pdo);
 				$a = $post->toArray();
 				$html = "
 				  <div class=\"alert hidden\"></div>
@@ -220,9 +221,9 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 			case 5: //Delete Post
 				$id = $_REQUEST['ID'];
 				$post = new Post($id);
-				$post->dbRead($_SESSION['db']['Obj']->con($_SESSION['db']['Name']));
+				$post->dbRead($pdo);
 
-				if($post->dbDelete($_SESSION['db']['Obj']->con($_SESSION['db']['Name']))){ 
+				if($post->dbDelete($pdo)){ 
 					$data[] = 1;
 					$data[] = "Post Deleted!";
 					$pa = $post->toArray();
@@ -271,10 +272,10 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 				if(isset($_REQUEST['ID']) && $_REQUEST['ID'] != 0 && $_REQUEST['ID'] != NULL){ $id = $_REQUEST['ID']; $sql = "Update `Keys` SET Definition = \"".$_REQUEST['Title']."\", Updated = ".$time." WHERE ID = ".$_REQUEST['ID']; }
 				else{ $id = 0; $sql = "INSERT INTO `Keys` (`Key`,`Code`,`Definition`,`Created`,`Updated`) VALUES(\"Category\",\"Post\",\"".$_REQUEST['Title']."\",".$time.",".$time.")"; }
 				//error_log("SQL DBObj->Relation: ".$sql);
-				if(mysqli_query($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),$sql)){
+				if(mysqli_query($pdo,$sql)){
 					$data[] = 1;
 					if($id == 0){ $data[] = "Category Created!"; }else{ $data[] = "Category Updated!"; }
-					$_SESSION['Blog']->load($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),false,true);
+					$_SESSION['Blog']->load($pdo,false,true);
 				}else{
 					$data[] = 0;
 					$data[] = "Error!";
@@ -302,10 +303,10 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 				// NEEDS UPDATING TO USE OO FUNCTIONALITY OF DBObj() CLASS
 				$id = $_REQUEST['ID'];
 				$sql1 = "DELETE FROM `Keys` WHERE ID = ".$id; $sql2 = "DELETE FROM Relations WHERE KID = ".$id.";";
-				if(mysqli_query($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),$sql1) && mysqli_query($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),$sql2)){
+				if(mysqli_query($pdo,$sql1) && mysqli_query($pdo,$sql2)){
 					$data[] = 1;
 					$data[] = "Category Deleted!";
-					$_SESSION['Blog']->load($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),false,true);
+					$_SESSION['Blog']->load($pdo,false,true);
 				}else{
 					$data[] = 0;
 					$data[] = "Error!";
@@ -316,7 +317,6 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 				echo "BAD BRI"; 
 			break;
 		}
-		if(isset($_SESSION['db'])){ $_SESSION['db']['Obj']->disconnect($_SESSION['db']['Name']); }
 	}
 /*Media Requests*/
 	if(isset($_REQUEST['mri']) && $_REQUEST['mri'] != NULL && $_REQUEST['mri'] != ""){
@@ -361,7 +361,7 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 			case 2:
 				$id = $_REQUEST['i'];
 				$media = new Media($id);
-				$media->dbRead($_SESSION['db']['Obj']->con($_SESSION['db']['Name']));
+				$media->dbRead($pdo);
 				$a = $media->toArray();
 				$mcat = $_SESSION['Media']->getCategories()->getFirstNode();
 				$mgal = $_SESSION['Media']->getGalleries()->getFirstNode();
@@ -412,7 +412,7 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 				if(isset($_REQUEST['ID']) && $_REQUEST['ID'] != 0 && $_REQUEST['ID'] != NULL){ //Update
 					$id = $_REQUEST['ID'];
 					$media = new Media($id);
-					$media->dbRead($_SESSION['db']['Obj']->con($_SESSION['db']['Name']));
+					$media->dbRead($pdo);
 					$in = array("Title"=>$_REQUEST['Title'],"Author"=>$_REQUEST['Author'],"Description"=>$_REQUEST['Description'],"Keywords"=>$_REQUEST['Keywords'],"Active"=>$_REQUEST['Active']);
 					if(isset($_FILES["File"])){	$ext = explode(".", $_FILES["File"]["name"]); $img_path = "img/media/".$id.".".end($ext); $in["URI"] = "/".$img_path; $in['Type'] = $_FILES['File']['type']; }
 					$media->initMysql($in);
@@ -486,7 +486,7 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 						$mga = $mgal->readNode()->toArray();
 						$obs = true;
 						foreach($igals as $g){ if($g == $mga['KID'] || $mga['KID'] == 10){ $obs = false; break; } }
-						if($obs){ $mgal->readNode()->dbDelete($_SESSION['db']['Obj']->con($_SESSION['db']['Name']));}
+						if($obs){ $mgal->readNode()->dbDelete($pdo);}
 						$mgal = $mgal->getNext();
 					}
 					$mcat = $media->getCategories()->getFirstNode();
@@ -494,13 +494,13 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 						$mca = $mcat->readNode()->toArray();
 						$obs = true;
 						foreach($icats as $c){ if($c == $mca['KID'] || $mca['KID'] == 10){ $obs = false; break; } }
-						if($obs){ $mcat->readNode()->dbDelete($_SESSION['db']['Obj']->con($_SESSION['db']['Name']));}
+						if($obs){ $mcat->readNode()->dbDelete($pdo);}
 						$mcat = $mcat->getNext();
 					}
 				}
 				//Write to Database {and Update Session (obsolete)}
 				$data = array();
-				if($media->dbWrite($_SESSION['db']['Obj']->con($_SESSION['db']['Name']))){ 
+				if($media->dbWrite($pdo)){ 
 					$data[] = 1;
 					if($id == 0){ 
 						$data[] = "Media Added!"; 
@@ -508,7 +508,7 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 						$id = $a['ID'];
 						if(isset($_FILES["File"])){ $img_path = "img/media/".$id.".".end((explode(".", $_FILES["File"]["name"]))); $in["URI"] = "/".$img_path; $in['Type'] = $_FILES['File']['type']; }
 						$media->initMysql($in);
-						$media->dbWrite($_SESSION['db']['Obj']->con($_SESSION['db']['Name']));
+						$media->dbWrite($pdo);
 					}else{ 
 						$data[] = "Media Updated!";
 					}
@@ -520,7 +520,7 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 			case 4: //Delete Media Form
 				$id = $_REQUEST['i'];
 				$media = new Media($id);
-				$post->dbRead($_SESSION['db']['Obj']->con($_SESSION['db']['Name']));
+				$post->dbRead($pdo);
 				$a = $media->toArray();
 				$html = "
 				  <div class=\"alert hidden\"></div>
@@ -538,8 +538,8 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 			case 5: //Delete Media
 				$id = $_REQUEST['ID'];
 				$media = new Media($id);
-				$media->dbRead($_SESSION['db']['Obj']->con($_SESSION['db']['Name']));
-				if($media->dbDelete($_SESSION['db']['Obj']->con($_SESSION['db']['Name']))){ 
+				$media->dbRead($pdo);
+				if($media->dbDelete($pdo)){ 
 					$data[] = 1;
 					$data[] = "Post Deleted!";
 					$ma = $media->toArray();
@@ -588,10 +588,10 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 				if(isset($_REQUEST['ID']) && $_REQUEST['ID'] != 0 && $_REQUEST['ID'] != NULL){ $id = $_REQUEST['ID']; $sql = "Update `Keys` SET Definition = \"".$_REQUEST['Title']."\", Updated = ".$time." WHERE ID = ".$_REQUEST['ID']; }
 				else{ $id = 0; $sql = "INSERT INTO `Keys` (`Key`,`Code`,`Definition`,`Created`,`Updated`) VALUES(\"Category\",\"Media\",\"".$_REQUEST['Title']."\",".$time.",".$time.")"; }
 				//error_log("SQL DBObj->Relation: ".$sql);
-				if(mysqli_query($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),$sql)){
+				if(mysqli_query($pdo,$sql)){
 					$data[] = 1;
 					if($id == 0){ $data[] = "Category Created!"; }else{ $data[] = "Category Updated!"; }
-					$_SESSION['Media']->load($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),false,true);
+					$_SESSION['Media']->load($pdo,false,true);
 				}else{
 					$data[] = 0;
 					$data[] = "Error!";
@@ -619,10 +619,10 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 				// NEEDS UPDATING TO USE OO FUNCTIONALITY OF DBObj() CLASS
 				$id = $_REQUEST['ID'];
 				$sql1 = "DELETE FROM `Keys` WHERE ID = ".$id; $sql2 = "DELETE FROM Relations WHERE KID = ".$id.";";
-				if(mysqli_query($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),$sql1) && mysqli_query($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),$sql2)){
+				if(mysqli_query($pdo,$sql1) && mysqli_query($pdo,$sql2)){
 					$data[] = 1;
 					$data[] = "Category Deleted!";
-					$_SESSION['Media']->load($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),false,true);
+					$_SESSION['Media']->load($pdo,false,true);
 				}else{
 					$data[] = 0;
 					$data[] = "Error!";
@@ -668,10 +668,10 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 				$time = time();
 				if(isset($_REQUEST['ID']) && $_REQUEST['ID'] != 0 && $_REQUEST['ID'] != NULL){ $id = $_REQUEST['ID']; $sql = "Update `Keys` SET Definition = \"".$_REQUEST['Title']."\", Updated = ".$time." WHERE ID = ".$_REQUEST['ID']; }
 				else{ $id = 0; $sql = "INSERT INTO `Keys` (`Key`,`Code`,`Definition`,`Created`,`Updated`) VALUES(\"Gallery\",\"Media\",\"".$_REQUEST['Title']."\",".$time.",".$time.")"; }
-				if(mysqli_query($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),$sql)){
+				if(mysqli_query($pdo,$sql)){
 					$data[] = 1;
 					if($id == 0){ $data[] = "Gallery Created!"; }else{ $data[] = "Gallery Updated!"; }
-					$_SESSION['Media']->load($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),false,true);
+					$_SESSION['Media']->load($pdo,false,true);
 				}else{
 					$data[] = 0;
 					$data[] = "Error!";
@@ -699,10 +699,10 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 				// NEEDS UPDATING TO USE OO FUNCTIONALITY OF DBObj() CLASS
 				$id = $_REQUEST['ID'];
 				$sql1 = "DELETE FROM `Keys` WHERE ID = ".$id; $sql2 = "DELETE FROM Relations WHERE KID = ".$id.";";
-				if(mysqli_query($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),$sql1) && mysqli_query($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),$sql2)){
+				if(mysqli_query($pdo,$sql1) && mysqli_query($pdo,$sql2)){
 					$data[] = 1;
 					$data[] = "Gallery Deleted!";
-					$_SESSION['Media']->load($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),false,true);
+					$_SESSION['Media']->load($pdo,false,true);
 				}else{
 					$data[] = 0;
 					$data[] = "Error!";
@@ -713,7 +713,6 @@ if(isset($_REQUEST['ari']) || isset($_REQUEST['uri']) || isset($_REQUEST['bri'])
 				echo "BAD MRI"; 
 			break;
 		}
-		if(isset($_SESSION['db'])){ $_SESSION['db']['Obj']->disconnect($_SESSION['db']['Name']); }
 	}
 }else{ echo "BAD REQUEST"; }
 session_write_close();

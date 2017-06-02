@@ -3,7 +3,7 @@
 <!--Page Content -->
     <div id="pg" class="container-fluid">
 <?php
-	$_SESSION['Blog']->load($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),false,true);
+	$_SESSION['Blog']->load($pdo,false,true);
 	$blog = $_SESSION['Blog']->toArray(); //Create getMeta() for this - too expensive
 	//No Headline Image on Post Page
 	if($_REQUEST['bpg'] != "p" && (!isset($inc) || !$inc)){ echo "<div class=\"row blue_bg\"><div></div></div>"; }
@@ -45,7 +45,7 @@
 				}
 			break;
 			case "c": /* CATEGORY PAGE */
-				$posts = $_SESSION['Blog']->getRelPage($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),$pageNum,"Category",$_REQUEST['bpgi']);
+				$posts = $_SESSION['Blog']->getRelPage($pdo,$pageNum,"Category",$_REQUEST['bpgi']);
 				$post = $posts->getFirstNode();
 				$html = "<h2>Category: ".$_REQUEST['bpgi']."</h2>";
 				while($post != NULL){
@@ -55,7 +55,7 @@
 				}
 				$bpage .= $html;
 				$prevPN = $pageNum - 1;if($prevPN < 1){ $first = true; }else{ $first = false; }
-				$nextPN = $pageNum + 1;if($_SESSION['Blog']->getRelPage($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),$nextPN,"Category",$_REQUEST['bpgi'])->size() > 0){ $last = false; }else{ $last = true; }
+				$nextPN = $pageNum + 1;if($_SESSION['Blog']->getRelPage($pdo,$nextPN,"Category",$_REQUEST['bpgi'])->size() > 0){ $last = false; }else{ $last = true; }
 				$s = "<div class=\"col-md-12\"><nav><ul class=\"pager\">"
 				.(!$first ? "<li class=\"previous\"><a class=\"bnavl\" href=\"/blog/c/".$_REQUEST['bpgi']."/".$prevPN."\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>" : "<li class=\"previous disabled\"><a class=\"bnavl\" href=\"#\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>")
 				.(!$last ? "<li class=\"next\"><a class=\"bnavl\" href=\"/blog/c/".$_REQUEST['bpgi']."/".$nextPN."\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>" : "<li class=\"next disabled\"><a class=\"bnavl\" href=\"#\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>")
@@ -64,7 +64,7 @@
 				$display_sidebar = true;
 			break;
 			case "u": /* AUTHOR PAGE */
-				$posts = $_SESSION['Blog']->getAuthorPage($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),$pageNum,$_REQUEST['bpgi']);
+				$posts = $_SESSION['Blog']->getAuthorPage($pdo,$pageNum,$_REQUEST['bpgi']);
 				$post = $posts->getFirstNode();
 				$html = "<h2>Author: ".$_REQUEST['bpgi']."</h2>";
 				while($post != NULL){
@@ -74,7 +74,7 @@
 				}
 				$bpage .= $html;
 				$prevPN = $pageNum - 1;if($prevPN < 1){ $first = true; }else{ $first = false; }
-				$nextPN = $pageNum + 1;if($_SESSION['Blog']->getAuthorPage($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),$nextPN,$_REQUEST['bpgi'])->size() > 0){ $last = false; }else{ $last = true; }
+				$nextPN = $pageNum + 1;if($_SESSION['Blog']->getAuthorPage($pdo,$nextPN,$_REQUEST['bpgi'])->size() > 0){ $last = false; }else{ $last = true; }
 				$s = "<div class=\"col-md-12\"><nav><ul class=\"pager\">"
 				.(!$first ? "<li class=\"previous\"><a class=\"bnavl\" href=\"/blog/u/".$_REQUEST['bpgi']."/".$prevPN."\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>" : "<li class=\"previous disabled\"><a class=\"bnavl\" href=\"#\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>")
 				.(!$last ? "<li class=\"next\"><a class=\"bnavl\" href=\"/blog/u/".$_REQUEST['bpgi']."/".$nextPN."\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>" : "<li class=\"next disabled\"><a class=\"bnavl\" href=\"#\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>")
@@ -83,7 +83,7 @@
 				$display_sidebar = true;
 			break;
 			case "a": /* ARCHIVE PAGE */
-				$posts = $_SESSION['Blog']->getArchivePage($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),$pageNum,$_REQUEST['bpgi']);
+				$posts = $_SESSION['Blog']->getArchivePage($pdo,$pageNum,$_REQUEST['bpgi']);
 				$post = $posts->getFirstNode();
 				$html = "<h2>Archive: ".date("F Y",strtotime($_REQUEST['bpgi']."01"))."</h2>";
 				while($post != NULL){
@@ -93,7 +93,7 @@
 				}
 				$bpage .= $html;
 				$prevPN = $pageNum - 1;if($prevPN < 1){ $first = true; }else{ $first = false; }
-				$nextPN = $pageNum + 1;if($_SESSION['Blog']->getArchivePage($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),$nextPN,$_REQUEST['bpgi'])->size() > 0){ $last = false; }else{ $last = true; }
+				$nextPN = $pageNum + 1;if($_SESSION['Blog']->getArchivePage($pdo,$nextPN,$_REQUEST['bpgi'])->size() > 0){ $last = false; }else{ $last = true; }
 				$s = "<div class=\"col-md-12\"><nav><ul class=\"pager\">"
 				.(!$first ? "<li class=\"previous\"><a class=\"bnavl\" href=\"/blog/a/".$_REQUEST['bpgi']."/".$prevPN."\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>" : "<li class=\"previous disabled\"><a class=\"bnavl\" href=\"#\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>")
 				.(!$last ? "<li class=\"next\"><a class=\"bnavl\" href=\"/blog/a/".$_REQUEST['bpgi']."/".$nextPN."\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>" : "<li class=\"next disabled\"><a class=\"bnavl\" href=\"#\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>")
@@ -102,7 +102,7 @@
 				$display_sidebar = true;
 			break;
 			default: /* MAIN PAGE */
-				$posts = $_SESSION['Blog']->getPage($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),$pageNum);
+				$posts = $_SESSION['Blog']->getPage($pdo,$pageNum);
 				$post = $posts->getFirstNode();
 				$html = "";
 				while($post != NULL){
@@ -112,7 +112,7 @@
 				}
 				$bpage .= $html;
 				$prevPN = $pageNum - 1;if($prevPN < 1){ $first = true; }else{ $first = false; }
-				$nextPN = $pageNum + 1;if($_SESSION['Blog']->getPage($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),$nextPN)->size() > 0){ $last = false; }else{ $last = true; }
+				$nextPN = $pageNum + 1;if($_SESSION['Blog']->getPage($pdo,$nextPN)->size() > 0){ $last = false; }else{ $last = true; }
 				$s = "<div class=\"col-md-12\"><nav><ul class=\"pager\">"
 				.(!$first ? "<li class=\"previous\"><a class=\"bnavl\" href=\"/blog/".$prevPN."\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>" : "<li class=\"previous disabled\"><a class=\"bnavl\" href=\"#\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>")
 				.(!$last ? "<li class=\"next\"><a class=\"bnavl\" href=\"/blog/".$nextPN."\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>" : "<li class=\"next disabled\"><a class=\"bnavl\" href=\"#\">Next <span aria-hidden=\"true\">&rarr;</span></a></li>")
@@ -140,7 +140,7 @@
 				<gcse:search></gcse:search>";
 			}
 			$sidebar .= "<div class=\"sidebar-module sidebar-module-inset\"><h4>About</h4><p>".$blog['Description']."</p></div><div class=\"sidebar-module\"><h4>Archives</h4><ol class=\"list-unstyled\">";
-			$archDates = $_SESSION['Blog']->getArchiveDates($_SESSION['db']['Obj']->con($_SESSION['db']['Name']));
+			$archDates = $_SESSION['Blog']->getArchiveDates($pdo);
 			if($archDates && count($archDates) > 0){ foreach($archDates as $v){ $sidebar .= "<li><a class=\"bnavl\" href=\"/blog/a/".$v."\">".date("M Y",strtotime($v."01"))."</a></li>"; }	}
 			$sidebar .= "</ol></div><div class=\"sidebar-module\"><h4>Categories</h4><ol class=\"list-unstyled\">";
 			$cat = $_SESSION['Blog']->getCategories()->getFirstNode();
@@ -182,7 +182,7 @@
 						<button type=\"button\" class=\"btn btn-default\" onClick=\"setForm('bri=1')\">Create New Post</button>
 						  <table class=\"table\">
 							<tr><th>ID</th><th>Title</th><th>Author</th><th class=\"hidden-xs\">Categories</th><th class=\"hidden-xs hidden-sm\">Created</th><th class=\"hidden-xs hidden-sm\">Published</th><th>Actions</th></tr>";
-					$posts = $_SESSION['Blog']->getPage($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),$pageNum,$pageSize,true,true);
+					$posts = $_SESSION['Blog']->getPage($pdo,$pageNum,$pageSize,true,true);
 					$post = $posts->getFirstNode();
 					while($post != NULL){ 
 						$p = $post->readNode();
@@ -220,7 +220,7 @@
 					  </ul>
 					</div>";
 					$prevPN = $pageNum - 1;if($prevPN < 1){ $first = true; }else{ $first = false; }
-					$nextPN = $pageNum + 1;if($_SESSION['Blog']->getPage($_SESSION['db']['Obj']->con($_SESSION['db']['Name']),$nextPN,$pageSize,true)->size() > 0){ $last = false; }else{ $last = true; }
+					$nextPN = $pageNum + 1;if($_SESSION['Blog']->getPage($pdo,$nextPN,$pageSize,true)->size() > 0){ $last = false; }else{ $last = true; }
 					if(isset($_REQUEST['bpgs']) && $_REQUEST['bpgs'] != ""){ $prevPN .= "/".$_REQUEST['bpgs']; $nextPN .= "/".$_REQUEST['bpgs']; }
 					$s = "<div class=\"col-md-12\"><nav><ul class=\"pager\">"
 					.(!$first ? "<li class=\"previous\"><a class=\"bnavl\" href=\"/blog/admin/posts/".$prevPN."\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>" : "<li class=\"previous disabled\"><a class=\"bnavl\" href=\"#\"><span aria-hidden=\"true\">&larr;</span> Previous</a></li>")
