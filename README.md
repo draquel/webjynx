@@ -42,7 +42,7 @@
 	$obj->dbWrite($mysqli_db_connection);
 
 	//Edit existing DBObj
-	$obj = new DBObj($id,);
+	$obj = new DBObj($id,"Posts");
 	$obj->dbRead($mysqli_db_connection);
 	$a = $obj->toArray();
 	
