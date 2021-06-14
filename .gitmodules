@@ -18,4 +18,4 @@
 	url = git://github.com/moment/moment.git
 [submodule "lib/DBObj"]
 	path = lib/DBObj
-	url = https://github.com/draquel/DBObj.git
+	url = git://github.com/draquel/DBObj.git
