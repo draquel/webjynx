@@ -23,7 +23,8 @@
 #### PHP 7
 * php-xml 
 * php-gd 
-* php-curl 
+* php-curl
+* draquel/DBObj - https://github.com/draquel/DBObj
 
 ## Documentation
 
